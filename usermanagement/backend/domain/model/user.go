@@ -1,5 +1,7 @@
 package model
 
+// User Model
+//
 // May required to add OIDC provider
 type User struct {
 	ID        int64  `json:"id"`

@@ -4,10 +4,10 @@ import "github.com/gin-gonic/gin"
 
 type IUserService interface {
 	// CRUD REST operations
-	createUser(c *gin.Context)
-	updateUser(c *gin.Context)
-	deleteUser(c *gin.Context)
-	getUser(c *gin.Context)
+	createUserRequest(c *gin.Context)
+	updateUserRequest(c *gin.Context)
+	deleteUserRequest(c *gin.Context)
+	getUserRequest(c *gin.Context)
 
 	// other HTTP requests
 	loginRequest(c *gin.Context)

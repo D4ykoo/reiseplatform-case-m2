@@ -4,18 +4,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func createUser(c *gin.Context) {
+func createUserRequest(c *gin.Context) {
 	return
 }
 
-func updateUser(c *gin.Context) {
+func updateUserRequest(c *gin.Context) {
 	return
 }
 
-func deleteUser(c *gin.Context) {
+func deleteUserRequest(c *gin.Context) {
 	return
 }
 
-func getUser(c *gin.Context) {
+func getUserRequest(c *gin.Context) {
 	return
 }
