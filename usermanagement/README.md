@@ -22,3 +22,6 @@ The project is separated in frontend and backend directories as well as resource
 │ 
 ├── resources
 ```
+
+## Additional Information
+* Project management done with self-hosted [Leantime](https://github.com/Leantime/leantime)
