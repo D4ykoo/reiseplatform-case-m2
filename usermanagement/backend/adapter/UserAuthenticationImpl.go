@@ -10,18 +10,30 @@ func loadJWTEnv(key string) {
 	// TODO: Load env file and get value
 }
 
-func createJWT(username string) *string {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{
-		"username": username,
-		"nbf":      time.Date(2015, 10, 10, 12, 0, 0, 0, time.UTC).Unix(),
-	})
+func createJWT(username string, secret string, test bool) (string, error) {
+	var token *jwt.Token
 
-	tokenString, err := token.SignedString("your-fav-secret")
-	if err != nil {
-		return nil
+	if test {
+		token = jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{
+			"username": username,
+			"iat":      time.Date(1991, 10, 5, 0, 0, 0, 0, time.UTC).Unix(),
+		})
+	} else {
+		token = jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{
+			"username": username,
+			"iat":      time.Now().Add(time.Hour * 1).Unix(),
+		})
 	}
 
-	return &tokenString
+	if secret == "" {
+		secret = "your-fav-secret" // TODO: Env value
+	}
+	tokenString, err := token.SignedString([]byte(secret))
+	if err != nil {
+		return "", err
+	}
+
+	return tokenString, err
 }
 
 func validateJWT(tokenString string) (bool, error) {
