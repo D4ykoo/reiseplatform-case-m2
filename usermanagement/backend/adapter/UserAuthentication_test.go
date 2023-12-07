@@ -22,5 +22,26 @@ func TestJWTBuilding(t *testing.T) {
 }
 
 func TestJWTValidating(t *testing.T) {
+	token := "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjY4NjYyMDgwMCwidXNlcm5hbWUiOiJ0ZXN0In0.CbmybuROnf_3ClsxXiYiTbK26Dc0e2zSwMeCZZz4guszI-q8LL6HO42HJTeAjQ0gDFRmL4PikQoP8QzdPC03yw"
+	valid, err, claims := validateJWT(token, jwtSecret)
 
+	if !valid || err != nil {
+		t.Fatalf(`validateJWT(%q, %q) = %t, %q, %q, is not true, nil, claims`, token, jwtSecret, valid, err, claims)
+	}
+
+	username := "test"
+	iat := 686620800
+
+	usernameClaim := string(claims["username"].(string))
+	iatClaim := int(claims["iat"].(float64))
+
+	uRes, uErr := regexp.MatchString(usernameClaim, username)
+
+	if !uRes || uErr != nil {
+		t.Fatalf(`username claim %q does not equal the test value: %q`, usernameClaim, username)
+	}
+
+	if iatClaim != 686620800 {
+		t.Fatalf(`iat claim %d does not equal the test value: %d`, iatClaim, iat)
+	}
 }
