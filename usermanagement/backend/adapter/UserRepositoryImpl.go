@@ -64,9 +64,36 @@ func updateUser(id int, user model.User) (int, error) {
 	return 1, nil
 }
 
-func deleteUser(id int) {
+func deleteUser(id int) (int, error) {
+	db, err := getDB()
 
+	if err != nil {
+		log.Panic("Error connecting to the database:", err)
+	}
+	result := db.Delete(id)
+
+	if result.Error != nil {
+		return 0, result.Error
+	}
+
+	return 1, nil
 }
-func getUser(id int) {
 
+func getUser(id int64) (int, error, *model.User) {
+	db, err := getDB()
+	var user model.User
+	if err != nil {
+		log.Panic("Error connecting to the database:", err)
+	}
+	result := db.First(&user, "id = ?", id)
+
+	if result.Error != nil {
+		return 0, result.Error, nil
+	}
+
+	if result.RowsAffected < 1 {
+		return 0, result.Error, nil
+	}
+
+	return 1, nil, &user
 }
