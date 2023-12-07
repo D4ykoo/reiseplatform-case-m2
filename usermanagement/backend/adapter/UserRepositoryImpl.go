@@ -66,11 +66,12 @@ func updateUser(id int, user model.User) (int, error) {
 
 func deleteUser(id int) (int, error) {
 	db, err := getDB()
+	var user model.User
 
 	if err != nil {
 		log.Panic("Error connecting to the database:", err)
 	}
-	result := db.Delete(id)
+	result := db.Delete(&user, "id = ", id)
 
 	if result.Error != nil {
 		return 0, result.Error
