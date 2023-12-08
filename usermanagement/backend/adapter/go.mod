@@ -1,4 +1,4 @@
-module github.com/D4ykoo/usermanagement/backend
+module github.com/D4ykoo/hotelmanagement/usermanagement/backend/adapter
 
 go 1.21.4
 

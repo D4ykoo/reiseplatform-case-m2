@@ -1,5 +1,3 @@
-module ports
+module github.com/D4ykoo/hotelmanagement/usermanagement/backend/ports
 
-go 1.21
-require "domain" v0.0.0
-replace "domain" => "../domain"
+go 1.21.4

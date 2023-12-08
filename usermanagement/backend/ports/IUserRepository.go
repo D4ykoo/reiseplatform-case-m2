@@ -1,6 +1,6 @@
 package ports
 
-import "domain/model"
+import "model"
 
 type IUserRepository interface {
 	createUser(user model.User)

@@ -1,6 +1,6 @@
-module domain
+module github.com/D4ykoo/hotelmanagement/usermanagement/backend/domain
 
-go 1.21
+go 1.21.4
 
 require github.com/gin-gonic/gin v1.9.1
 
