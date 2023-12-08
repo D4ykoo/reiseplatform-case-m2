@@ -43,7 +43,8 @@ func CreateUser(user model.User) (int64, error) {
 
 }
 
-func updateUser(id int, user model.User) (int, error) {
+// UpdateUser returns id, nil or 0 and error
+func UpdateUser(id int, user model.User) (int, error) {
 	db, err := getDB()
 
 	if err != nil {
@@ -64,7 +65,7 @@ func updateUser(id int, user model.User) (int, error) {
 	return 1, nil
 }
 
-func deleteUser(id int) (int, error) {
+func DeleteUser(id int) error {
 	db, err := getDB()
 	var user model.User
 
@@ -74,13 +75,13 @@ func deleteUser(id int) (int, error) {
 	result := db.Delete(&user, "id = ", id)
 
 	if result.Error != nil {
-		return 0, result.Error
+		return result.Error
 	}
 
-	return 1, nil
+	return nil
 }
 
-func getUser(id int64) (int, error, *model.User) {
+func GetUser(id int64) (error, *model.User) {
 	db, err := getDB()
 	var user model.User
 	if err != nil {
@@ -89,12 +90,12 @@ func getUser(id int64) (int, error, *model.User) {
 	result := db.First(&user, "id = ?", id)
 
 	if result.Error != nil {
-		return 0, result.Error, nil
+		return result.Error, nil
 	}
 
 	if result.RowsAffected < 1 {
-		return 0, result.Error, nil
+		return result.Error, nil
 	}
 
-	return 1, nil, &user
+	return nil, &user
 }
