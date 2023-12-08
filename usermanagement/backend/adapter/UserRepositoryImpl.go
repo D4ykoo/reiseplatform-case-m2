@@ -31,7 +31,7 @@ func getDB() (*gorm.DB, error) {
 	return db, nil
 }
 
-func createUser(user model.User) (int64, error) {
+func CreateUser(user model.User) (int64, error) {
 	db, err := getDB()
 
 	if err != nil {
