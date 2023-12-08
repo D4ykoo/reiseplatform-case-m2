@@ -10,7 +10,7 @@ func loadJWTEnv(key string) {
 	// TODO: Load env file and get value
 }
 
-func createJWT(username string, secret string, test bool) (string, error) {
+func CreateJWT(username string, secret string, test bool) (string, error) {
 	var token *jwt.Token
 
 	if test {
@@ -37,7 +37,7 @@ func createJWT(username string, secret string, test bool) (string, error) {
 }
 
 // last return value is used for testing purposes
-func validateJWT(tokenString string, secret string) (bool, error, jwt.MapClaims) {
+func ValidateJWT(tokenString string, secret string) (bool, error, jwt.MapClaims) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {

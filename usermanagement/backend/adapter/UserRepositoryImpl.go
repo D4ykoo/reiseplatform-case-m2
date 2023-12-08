@@ -1,10 +1,10 @@
 package adapter
 
 import (
-	"domain/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
+	"model"
 	"time"
 )
 
