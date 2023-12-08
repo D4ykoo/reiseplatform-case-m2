@@ -1,7 +1,7 @@
 package tests
 
 import (
-	adapter "github.com/D4ykoo/usermanagement/backend"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter"
 	"regexp"
 	"testing"
 )

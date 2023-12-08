@@ -1,10 +1,10 @@
 package adapter
 
 import (
+	model "github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
-	"model"
 	"time"
 )
 
