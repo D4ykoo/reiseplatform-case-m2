@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type Offer struct {
+type Travel struct {
 	ID          uuid.UUID
 	Hotel       Hotel
 	Vendor      Vendor
