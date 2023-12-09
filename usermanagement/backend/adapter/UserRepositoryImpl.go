@@ -99,3 +99,21 @@ func GetUser(id int64) (error, *model.User) {
 
 	return nil, &user
 }
+
+func ListUser() (*[]model.User, error) {
+	db, err := getDB()
+	var user []model.User
+
+	if err != nil {
+		log.Panic("Error connecting to the database:", err)
+		return nil, err
+	}
+
+	result := db.Find(&user)
+
+	if result.Error != nil || result.RowsAffected < 1 {
+		return nil, result.Error
+	}
+
+	return &user, nil
+}

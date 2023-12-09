@@ -85,6 +85,13 @@ func GetUserRequest(c *gin.Context) {
 }
 
 func ListUserRequest(c *gin.Context) {
-	// TODO
-	return
+	users, err := ListUser()
+
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		// TODO: Event push
+		return
+	}
+
+	c.JSON(http.StatusOK, users)
 }
