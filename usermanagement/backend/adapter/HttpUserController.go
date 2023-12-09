@@ -5,7 +5,9 @@ import (
 )
 
 func LoginRequest(c *gin.Context) {
+
 	// check if credentials are valid
+
 	// if valid create jwt
 	// return jwt and 200
 	return

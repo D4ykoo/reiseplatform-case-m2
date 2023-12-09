@@ -31,43 +31,61 @@ func getDB() (*gorm.DB, error) {
 	return db, nil
 }
 
-func CreateUser(user model.User) (int64, error) {
+func CreateUser(user model.User) error {
 	db, err := getDB()
+
+	dbUser := model.DBUser{
+		Model: gorm.Model{},
+		User:  user,
+		Salt:  "", // env salt
+	}
 
 	if err != nil {
 		log.Panic("Error connecting to the database:", err)
 	}
 
-	result := db.Create(&user)
-	return user.ID, result.Error
+	result := db.Create(&dbUser)
+	return result.Error
 
 }
 
 // UpdateUser returns id, nil or 0 and error
-func UpdateUser(id int, user model.User) (int, error) {
+func UpdateUser(user model.User) error {
 	db, err := getDB()
 
 	if err != nil {
 		log.Panic("Error connecting to the database:", err)
 	}
-	resIsPresent := db.First(&user, id)
+
+	dbUser := model.DBUser{
+		Model: gorm.Model{},
+		User:  user,
+		Salt:  "", // env salt
+	}
+
+	userByUname, err := getUserByUsername(user.Username)
+	if err != nil {
+		return err
+	}
+
+	resIsPresent := db.First(&dbUser, "id = ?", userByUname.ID)
 
 	if resIsPresent.Error != nil {
-		return 0, resIsPresent.Error
+		return resIsPresent.Error
 	}
 
 	// updates user when id is set, otherwise save -> check for id above
 	result := db.Save(&user)
 	if result.Error != nil {
-		return 0, result.Error
+		return result.Error
 	}
 
-	return 1, nil
+	return nil
 }
 
 func DeleteUser(id int) error {
 	db, err := getDB()
-	var user model.User
+	var user model.DBUser
 
 	if err != nil {
 		log.Panic("Error connecting to the database:", err)
@@ -81,9 +99,31 @@ func DeleteUser(id int) error {
 	return nil
 }
 
-func GetUser(id int64) (error, *model.User) {
+func getUserByUsername(username string) (*model.DBUser, error) {
 	db, err := getDB()
-	var user model.User
+	var user model.DBUser
+
+	if err != nil {
+		log.Panic("Error connecting to the database:", err)
+		return nil, err
+	}
+
+	result := db.First(&user, "username = ?", username)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	if result.RowsAffected < 1 {
+		return nil, result.Error
+	}
+
+	return &user, nil
+}
+
+func GetUser(id int64) (error, *model.DBUser) {
+	db, err := getDB()
+	var user model.DBUser
 	if err != nil {
 		log.Panic("Error connecting to the database:", err)
 	}
@@ -100,9 +140,9 @@ func GetUser(id int64) (error, *model.User) {
 	return nil, &user
 }
 
-func ListUser() (*[]model.User, error) {
+func ListUser() (*[]model.DBUser, error) {
 	db, err := getDB()
-	var user []model.User
+	var user []model.DBUser
 
 	if err != nil {
 		log.Panic("Error connecting to the database:", err)

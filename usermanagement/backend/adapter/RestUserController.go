@@ -14,7 +14,7 @@ func CreateUserRequest(c *gin.Context) {
 		// TODO: Event push
 		return
 	}
-	id, err := CreateUser(user)
+	err := CreateUser(user)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -22,7 +22,7 @@ func CreateUserRequest(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"status": "success", "id": id})
+	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
 func UpdateUserRequest(c *gin.Context) {
@@ -33,7 +33,7 @@ func UpdateUserRequest(c *gin.Context) {
 		// TODO: Event push
 		return
 	}
-	_, err := UpdateUser(int(user.ID), user)
+	err := UpdateUser(user)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
