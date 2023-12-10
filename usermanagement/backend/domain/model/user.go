@@ -33,3 +33,8 @@ type LoginUser struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
+
+type ResetUser struct {
+	OldLoginUser LoginUser
+	NewPassword  string `json:"newPassword"`
+}

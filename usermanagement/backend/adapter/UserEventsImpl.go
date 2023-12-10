@@ -12,7 +12,7 @@ import "github.com/IBM/sarama"
 // brokerUrls: e. g. ["localhost:8002"]
 //
 // Uses a random partitioner
-func InitProducer(brokerUrls []string) (sarama.SyncProducer, error) {
+func initProducer(brokerUrls []string) (sarama.SyncProducer, error) {
 	config := sarama.NewConfig()
 
 	config.Version = sarama.DefaultVersion
@@ -35,7 +35,7 @@ func InitProducer(brokerUrls []string) (sarama.SyncProducer, error) {
 //
 // No return error since it does not matter, just a local panic
 func SendEvent(brokerUrls []string, topic string, event ports.PostEvent, content string) {
-	producer, err := InitProducer(brokerUrls)
+	producer, err := initProducer(brokerUrls)
 
 	if err != nil {
 		log.Panic("Can not create SyncProducer: " + err.Error())

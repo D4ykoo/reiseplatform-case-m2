@@ -31,7 +31,8 @@ func (postEvent PostEvent) EnumIndex() int {
 	return int(postEvent)
 }
 
+// TODO: rewrite interface? i guess not completely hexagonal
 type IPostEvents interface {
-	InitProducer(brokerUrls []string)
+	initProducer(brokerUrls []string)
 	SendEvent(brokerUrls []string, topic string, event PostEvent, content string)
 }

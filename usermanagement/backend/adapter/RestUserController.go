@@ -2,26 +2,31 @@ package adapter
 
 import (
 	domain "github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/ports"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 )
 
+var brokerUrls = []string{""}
+var topic = ""
+
 func CreateUserRequest(c *gin.Context) {
 	var user domain.User
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		// TODO: Event push
+		SendEvent(brokerUrls, topic, ports.UserCreate, err.Error())
 		return
 	}
 	err := CreateUser(user)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		// TODO: Event push
+		SendEvent(brokerUrls, topic, ports.UserCreate, err.Error())
 		return
 	}
 
+	SendEvent(brokerUrls, topic, ports.UserCreate, user.Username)
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
@@ -30,17 +35,18 @@ func UpdateUserRequest(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		// TODO: Event push
+		SendEvent(brokerUrls, topic, ports.UserUpdate, err.Error())
 		return
 	}
 	err := UpdateUser(user)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		// TODO: Event push
+		SendEvent(brokerUrls, topic, ports.UserUpdate, err.Error())
 		return
 	}
 
+	SendEvent(brokerUrls, topic, ports.UserUpdate, user.Username)
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
@@ -49,7 +55,7 @@ func DeleteUserRequest(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		// TODO: Event push
+		SendEvent(brokerUrls, topic, ports.UserDelete, err.Error())
 		return
 	}
 
@@ -57,10 +63,11 @@ func DeleteUserRequest(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		// TODO: Event push
+		SendEvent(brokerUrls, topic, ports.UserDelete, err.Error())
 		return
 	}
 
+	SendEvent(brokerUrls, topic, ports.UserDelete, strconv.Itoa(id))
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
@@ -69,7 +76,7 @@ func GetUserRequest(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		// TODO: Event push
+		SendEvent(brokerUrls, topic, ports.UserGet, err.Error())
 		return
 	}
 
@@ -77,7 +84,7 @@ func GetUserRequest(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		// TODO: Event push
+		SendEvent(brokerUrls, topic, ports.UserGet, err.Error())
 		return
 	}
 
@@ -89,7 +96,7 @@ func ListUserRequest(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		// TODO: Event push
+		SendEvent(brokerUrls, topic, ports.UserGet, err.Error())
 		return
 	}
 
