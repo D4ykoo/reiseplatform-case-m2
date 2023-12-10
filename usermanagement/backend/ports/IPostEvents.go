@@ -32,5 +32,6 @@ func (postEvent PostEvent) EnumIndex() int {
 }
 
 type IPostEvents interface {
-	sendEvent(event PostEvent, content string)
+	InitProducer(brokerUrls []string)
+	SendEvent(brokerUrls []string, topic string, event PostEvent, content string)
 }
