@@ -7,9 +7,9 @@ import (
 )
 import "github.com/IBM/sarama"
 
-// InitProducer Instantiates a SyncProducer
+// initProducer Instantiates a SyncProducer
 //
-// brokerUrls: e. g. ["localhost:8002"]
+// brokerUrls: e. g. ["localhost:9092"]
 //
 // Uses a random partitioner
 func initProducer(brokerUrls []string) (sarama.SyncProducer, error) {

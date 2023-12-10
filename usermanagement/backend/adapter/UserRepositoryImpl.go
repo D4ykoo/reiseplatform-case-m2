@@ -1,17 +1,28 @@
 package adapter
 
 import (
+	"fmt"
 	model "github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
+	"os"
 	"time"
 )
 
-// TODO: ADD .env for db config
-// TODO: Verify connection pool is working
+// getDB returns a database connection from a configured database pool
 func getDB() (*gorm.DB, error) {
-	dsn := "host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=disable TimeZone=Europe/Berlin"
+	dsn := fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s",
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_NAME"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("SSL_TLS"),
+		os.Getenv("TIMEZONE"),
+	)
+
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
@@ -37,7 +48,7 @@ func CreateUser(user model.User) error {
 	dbUser := model.DBUser{
 		Model: gorm.Model{},
 		User:  user,
-		Salt:  "", // env salt
+		Salt:  os.Getenv("SALT"),
 	}
 
 	if err != nil {
@@ -60,7 +71,7 @@ func UpdateUser(user model.User) error {
 	dbUser := model.DBUser{
 		Model: gorm.Model{},
 		User:  user,
-		Salt:  "", // env salt
+		Salt:  os.Getenv("SALT"),
 	}
 
 	userByUname, err := getUserByUsername(user.Username)

@@ -3,12 +3,9 @@ package adapter
 import (
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
+	"os"
 	"time"
 )
-
-func loadJWTEnv(key string) {
-	// TODO: Load env file and get value
-}
 
 func CreateJWT(username string, secret string, test bool) (string, error) {
 	var token *jwt.Token
@@ -26,7 +23,7 @@ func CreateJWT(username string, secret string, test bool) (string, error) {
 	}
 
 	if secret == "" {
-		secret = "your-fav-secret" // TODO: Env value
+		secret = os.Getenv("JWT_SECRET")
 	}
 	tokenString, err := token.SignedString([]byte(secret))
 	if err != nil {
@@ -36,7 +33,7 @@ func CreateJWT(username string, secret string, test bool) (string, error) {
 	return tokenString, err
 }
 
-// last return value is used for testing purposes
+// ValidateJWT last return value is used for testing purposes
 func ValidateJWT(tokenString string, secret string) (bool, error, jwt.MapClaims) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
@@ -45,7 +42,7 @@ func ValidateJWT(tokenString string, secret string) (bool, error, jwt.MapClaims)
 		}
 
 		if secret == "" {
-			secret = "your-fav-secret" // TODO: Env value
+			secret = os.Getenv("JWT_SECRET")
 		}
 
 		// hmacSampleSecret is a []byte containing your secret, e.g. []byte("my_secret_key")

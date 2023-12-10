@@ -5,11 +5,12 @@ import (
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/ports"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os"
 	"strconv"
 )
 
-var brokerUrls = []string{""}
-var topic = ""
+var brokerUrls = []string{os.Getenv("BROKERS")}
+var topic = os.Getenv("TOPIC")
 
 func CreateUserRequest(c *gin.Context) {
 	var user domain.User
@@ -80,11 +81,11 @@ func GetUserRequest(c *gin.Context) {
 		return
 	}
 
-	err, user := GetUser(int64(id))
+	errGet, user := GetUser(int64(id))
 
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		SendEvent(brokerUrls, topic, ports.UserGet, err.Error())
+	if errGet != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": errGet.Error()})
+		SendEvent(brokerUrls, topic, ports.UserGet, errGet.Error())
 		return
 	}
 

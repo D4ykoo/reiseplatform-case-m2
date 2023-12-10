@@ -1,9 +1,15 @@
 package application
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/utils"
+	"github.com/gin-gonic/gin"
+	"os"
+)
 import "github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter"
 
 func main() {
+	utils.LoadFile()
+
 	router := gin.Default()
 
 	router.GET("/users", adapter.ListUserRequest)
@@ -16,5 +22,5 @@ func main() {
 	router.POST("/reset", adapter.ResetPasswordRequest)
 
 	// start server
-	router.Run() // TODO: Address from env file
+	router.Run(os.Getenv("DOMAIN"))
 }

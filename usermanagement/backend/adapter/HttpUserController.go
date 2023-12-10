@@ -6,6 +6,7 @@ import (
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os"
 )
 
 func LoginRequest(c *gin.Context) {
@@ -17,14 +18,18 @@ func LoginRequest(c *gin.Context) {
 	}
 
 	dbUser, err := getUserByUsername(user.Username)
+
+	brokerUrls := []string{os.Getenv("BROKERS")}
+
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		SendEvent(brokerUrls, topic, ports.Login, string(rune(http.StatusNotFound))+err.Error())
 		return
 	}
 
-	// TODO: env salt
-	isOk := utils.ComparePasswords(dbUser.Password, user.Password, []byte(""))
+	salt := []byte(os.Getenv("SALT"))
+
+	isOk := utils.ComparePasswords(dbUser.Password, user.Password, salt)
 
 	if !isOk {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
@@ -41,12 +46,12 @@ func LoginRequest(c *gin.Context) {
 		return
 	}
 
-	// TODO: set cookie or session storage
-	// return jwt and 200
 	c.JSON(http.StatusOK, gin.H{"status": "success", "jwt": jwt})
 }
 
 func ResetPasswordRequest(c *gin.Context) {
+	brokerUrls := []string{os.Getenv("BROKERS")}
+	salt := []byte(os.Getenv("SALT"))
 
 	// search user with pw
 	var user model.ResetUser
@@ -71,9 +76,7 @@ func ResetPasswordRequest(c *gin.Context) {
 		Body:   "your-reset-link",
 	})
 
-	// set the new val
-	// TODO: .env
-	isOk := utils.ComparePasswords(dbUser.Password, user.OldLoginUser.Username, []byte(""))
+	isOk := utils.ComparePasswords(dbUser.Password, user.OldLoginUser.Username, salt)
 
 	if !isOk {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
@@ -98,5 +101,5 @@ func ResetPasswordRequest(c *gin.Context) {
 	}
 
 	SendEvent(brokerUrls, topic, ports.Login, "user "+updatedUser.Username+"password reset")
-	c.JSON(http.StatusOK, gin.H{"status": "success", "jwt": jwt})
+	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
