@@ -30,6 +30,18 @@ func main() {
 	fmt.Println(hotel.ID)
 	ade := application.HotelServiceImpl{}
 	abc(ade)
-	ef := adapter.HotelRepositoryImpl{}
-	def(ef)
+	///
+
+	repo := adapter.NewHotelRepository()
+	newHotel := model.Hotel{ID: uuid.New(), Name: "Im weißen Rößl", Address: model.Address{Street: "Markt 47", State: "St. Wolfgang im Salzkammergut", Land: "Österreich"}}
+	repo.Save(newHotel)
+	len := repo.Count()
+	fmt.Println(len)
+	fmt.Println(repo.FindByID(newHotel.ID))
+	newHotel.Address.Street = "Markt 74"
+	repo.Update(newHotel)
+	fmt.Println(repo.FindByID(newHotel.ID))
+	repo.Delete(newHotel)
+	len = repo.Count()
+	fmt.Println(len)
 }

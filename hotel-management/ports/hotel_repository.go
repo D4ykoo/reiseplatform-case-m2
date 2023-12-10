@@ -7,8 +7,8 @@ import (
 
 type HotelRepository interface {
 	Save(model.Hotel)
-	Update(model.Hotel) model.Hotel
-	Delete(uuid.UUID) bool
+	Update(model.Hotel)
+	Delete(model.Hotel) bool
 	FindByID(uuid.UUID) model.Hotel
 	Count() int64
 }

@@ -2,30 +2,40 @@ package adapter
 
 import (
 	"github.com/google/uuid"
+	"github.com/mig3177/hotelmanagement/adapter/entities"
 	"github.com/mig3177/hotelmanagement/domain/model"
 )
 
 type HotelRepositoryImpl struct {
-	db ManagementDB
+	db CrudRepository[entities.HotelEntity]
 }
 
-func New() HotelRepositoryImpl {
+func NewHotelRepository() HotelRepositoryImpl {
 	return HotelRepositoryImpl{
-		db: NewDB(),
+		db: initPGConnection[entities.HotelEntity](),
 	}
 }
 
-// Save implements ports.HotelRepository.
-func (HotelRepositoryImpl) Save(model.Hotel) {
-	panic("unimplemented")
+func (repo HotelRepositoryImpl) Save(hotel model.Hotel) {
+	entity := entities.HotelEntity{ID: hotel.ID, Name: hotel.Name, Street: hotel.Address.Street, State: hotel.Address.State, Land: hotel.Address.Land, Description: hotel.Description}
+	repo.db.create(entity)
 }
 
-func (HotelRepositoryImpl) save(model.Hotel) {}
-func (HotelRepositoryImpl) Update(model.Hotel) model.Hotel {
-	return model.Hotel{}
+func (repo HotelRepositoryImpl) Update(hotel model.Hotel) {
+	entity := entities.HotelEntity{ID: hotel.ID, Name: hotel.Name, Street: hotel.Address.Street, State: hotel.Address.State, Land: hotel.Address.Land, Description: hotel.Description}
+	repo.db.update(entity)
 }
-func (HotelRepositoryImpl) Delete(uuid.UUID) bool {
-	return false
+
+func (repo HotelRepositoryImpl) Delete(hotel model.Hotel) bool {
+	entity := entities.HotelEntity{ID: hotel.ID, Name: hotel.Name, Street: hotel.Address.Street, State: hotel.Address.State, Land: hotel.Address.Land, Description: hotel.Description}
+	return repo.db.delete(entity)
 }
-func (HotelRepositoryImpl) FindByID(uuid.UUID) model.Hotel { return model.Hotel{} }
-func (HotelRepositoryImpl) Count() int64                   { return 0 }
+func (repo HotelRepositoryImpl) FindByID(id uuid.UUID) model.Hotel {
+	entity := repo.db.getBy("ID = ?", id.String())[0]
+	return model.Hotel{ID: entity.ID, Name: entity.Name, Address: model.Address{Street: entity.Street, State: entity.State, Land: entity.Land}, Description: entity.Description}
+}
+
+func (repo HotelRepositoryImpl) Count() int64 {
+	res := repo.db.getBy("ID != ?", "")
+	return int64(len(res))
+}
