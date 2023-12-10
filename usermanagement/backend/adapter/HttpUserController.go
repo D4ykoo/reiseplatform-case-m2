@@ -93,7 +93,7 @@ func ResetPasswordRequest(c *gin.Context) {
 	updatedUser.Firstname = dbUser.Firstname
 	updatedUser.Lastname = dbUser.Lastname
 
-	errUpdate := UpdateUser(updatedUser)
+	errUpdate := UpdateUser(dbUser.ID, updatedUser)
 
 	if errUpdate != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

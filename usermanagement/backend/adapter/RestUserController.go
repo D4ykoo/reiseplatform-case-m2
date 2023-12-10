@@ -33,13 +33,20 @@ func CreateUserRequest(c *gin.Context) {
 
 func UpdateUserRequest(c *gin.Context) {
 	var user domain.User
+	id, errID := strconv.Atoi(c.Param("id"))
 
+	if errID != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": errID.Error()})
+		SendEvent(brokerUrls, topic, ports.UserUpdate, errID.Error())
+		return
+	}
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		SendEvent(brokerUrls, topic, ports.UserUpdate, err.Error())
 		return
 	}
-	err := UpdateUser(user)
+
+	err := UpdateUser(uint(id), user)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -81,7 +88,7 @@ func GetUserRequest(c *gin.Context) {
 		return
 	}
 
-	errGet, user := GetUser(int64(id))
+	errGet, user := GetUser(uint(id))
 
 	if errGet != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": errGet.Error()})

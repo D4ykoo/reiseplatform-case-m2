@@ -16,11 +16,11 @@ POST http://localhost:8080/users
 }
 
 ### Update User
-PUT http://localhost:8080/users/1
+PUT http://localhost:8080/users/2
 
 {
-  "username": "test",
-  "firstname": "test",
+  "username": "test3",
+  "firstname": "test2",
   "lastname": "test",
   "email": "updatedtest@test.test",
   "password": "password"

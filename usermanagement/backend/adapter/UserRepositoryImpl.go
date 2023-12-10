@@ -28,6 +28,13 @@ func getDB() (*gorm.DB, error) {
 	if err != nil {
 		log.Panic(err)
 	}
+
+	// migrate the db model
+	errMigrate := db.AutoMigrate(&model.DBUser{})
+	if errMigrate != nil {
+		return nil, errMigrate
+	}
+
 	// Get generic database object sql.DB to use its functions
 	sqlDB, err := db.DB()
 
@@ -61,32 +68,27 @@ func CreateUser(user model.User) error {
 }
 
 // UpdateUser returns id, nil or 0 and error
-func UpdateUser(user model.User) error {
+func UpdateUser(updateID uint, user model.User) error {
 	db, err := getDB()
 
 	if err != nil {
 		log.Panic("Error connecting to the database:", err)
 	}
 
+	errUser, _ := GetUser(updateID)
+
+	if errUser != nil {
+		return err
+	}
+
 	dbUser := model.DBUser{
-		Model: gorm.Model{},
+		Model: gorm.Model{ID: updateID},
 		User:  user,
 		Salt:  os.Getenv("SALT"),
 	}
 
-	userByUname, err := getUserByUsername(user.Username)
-	if err != nil {
-		return err
-	}
-
-	resIsPresent := db.First(&dbUser, "id = ?", userByUname.ID)
-
-	if resIsPresent.Error != nil {
-		return resIsPresent.Error
-	}
-
 	// updates user when id is set, otherwise save -> check for id above
-	result := db.Save(&user)
+	result := db.Save(&dbUser)
 	if result.Error != nil {
 		return result.Error
 	}
@@ -96,12 +98,12 @@ func UpdateUser(user model.User) error {
 
 func DeleteUser(id int) error {
 	db, err := getDB()
-	var user model.DBUser
+	user := model.DBUser{Model: gorm.Model{ID: uint(id)}}
 
 	if err != nil {
 		log.Panic("Error connecting to the database:", err)
 	}
-	result := db.Delete(&user, "id = ", id)
+	result := db.Delete(&user)
 
 	if result.Error != nil {
 		return result.Error
@@ -132,7 +134,7 @@ func getUserByUsername(username string) (*model.DBUser, error) {
 	return &user, nil
 }
 
-func GetUser(id int64) (error, *model.DBUser) {
+func GetUser(id uint) (error, *model.DBUser) {
 	db, err := getDB()
 	var user model.DBUser
 	if err != nil {

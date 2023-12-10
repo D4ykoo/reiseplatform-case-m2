@@ -38,14 +38,14 @@ func SendEvent(brokerUrls []string, topic string, event ports.PostEvent, content
 	producer, err := initProducer(brokerUrls)
 
 	if err != nil {
-		log.Panic("Can not create SyncProducer: " + err.Error())
+		log.Print("Can not create SyncProducer: " + err.Error())
 		return
 	}
 
 	defer func(producer sarama.SyncProducer) {
 		err := producer.Close()
 		if err != nil {
-			log.Panic(err.Error())
+			log.Print(err.Error())
 		}
 	}(producer)
 
@@ -65,7 +65,7 @@ func SendEvent(brokerUrls []string, topic string, event ports.PostEvent, content
 	_, _, errSend := producer.SendMessage(msg)
 
 	if err != nil {
-		log.Panic("Can not push message: " + errSend.Error())
+		log.Print("Can not push message: " + errSend.Error())
 		return
 	}
 
