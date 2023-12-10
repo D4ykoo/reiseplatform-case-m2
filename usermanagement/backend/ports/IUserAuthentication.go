@@ -1,6 +1,6 @@
 package ports
 
 type IUserAuthentication interface {
-	createJWT()
-	validateJWT()
+	createJWT(username string, secret string, test bool) (string, error)
+	validateJWT(tokenString string, secret string) (bool, error, any)
 }

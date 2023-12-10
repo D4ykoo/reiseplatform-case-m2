@@ -20,7 +20,7 @@ func LoginRequest(c *gin.Context) {
 	dbUser, err := getUserByUsername(user.Username)
 
 	brokerUrls := []string{os.Getenv("BROKERS")}
-
+	topic := os.Getenv("TOPIC")
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		SendEvent(brokerUrls, topic, ports.Login, string(rune(http.StatusNotFound))+err.Error())
@@ -52,6 +52,7 @@ func LoginRequest(c *gin.Context) {
 func ResetPasswordRequest(c *gin.Context) {
 	brokerUrls := []string{os.Getenv("BROKERS")}
 	salt := []byte(os.Getenv("SALT"))
+	topic := os.Getenv("TOPIC")
 
 	// search user with pw
 	var user model.ResetUser
