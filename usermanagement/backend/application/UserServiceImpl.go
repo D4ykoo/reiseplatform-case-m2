@@ -3,11 +3,12 @@ package application
 import (
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/utils"
 	"github.com/gin-gonic/gin"
+	"log"
 	"os"
 )
 import "github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter"
 
-func main() {
+func RunWebServer() {
 	utils.LoadFile()
 
 	router := gin.Default()
@@ -22,5 +23,9 @@ func main() {
 	router.POST("/reset", adapter.ResetPasswordRequest)
 
 	// start server
-	router.Run(os.Getenv("DOMAIN"))
+	err := router.Run(os.Getenv("DOMAIN"))
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
 }

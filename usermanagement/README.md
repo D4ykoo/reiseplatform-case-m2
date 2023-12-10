@@ -17,6 +17,8 @@ The project is separated in frontend and backend directories as well as resource
 │   ├── domain
 │   │   └── model
 │   ├── ports
+│   ├── tests
+│   ├── utils
 │ 
 ├── frontend
 │ 
