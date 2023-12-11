@@ -93,9 +93,10 @@ function getAllUser() {
             </button>
           </td>
           <td class="w-3 h-3">
-            <button @click="editUser(user.id)" class="hover:scale-105">
+            <button onclick="edit_user_modal.showModal()" class="hover:scale-105">
               <i class="fi fi-sr-pencil"></i>
             </button>
+            <EditUserModal />
           </td>
         </tr>
       </tbody>
@@ -105,10 +106,12 @@ function getAllUser() {
 
 <script lang="ts">
   import CreateUserModal from "./CreateUserModal.vue"
+  import EditUserModal from "./EditUserModal.vue";
   export default {
     name: "UserManagement",
     components: {
-      CreateUserModal
+      CreateUserModal,
+      EditUserModal,
     }
     } 
 </script>
