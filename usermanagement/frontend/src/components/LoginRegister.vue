@@ -7,9 +7,10 @@
         role="tab"
         class="tab m-auto"
         aria-label="Login"
+        checked
       />
       <div role="tabpanel" class="tab-content p-10">
-        <label class="form-control w-full ">
+        <label class="form-control w-full">
           <div class="label">
             <span class="label-text">Username</span>
           </div>
@@ -33,7 +34,9 @@
             <span class="label-text-alt">Forgot password?</span>
           </div>
         </label>
-        <button class="btn btn-primary w-full mt-4">Login</button>
+        <button @click="login" class="btn btn-primary w-full mt-4">
+          Login
+        </button>
       </div>
 
       <input
@@ -42,7 +45,6 @@
         role="tab"
         class="tab"
         aria-label="Register"
-        checked
       />
       <div role="tabpanel" class="tab-content p-10">
         <div class="flex flex-row">
@@ -103,8 +105,27 @@
             class="input input-bordered w-full"
           />
         </label>
-        <button class="btn btn-primary mt-4 w-9/12 flex ml-auto mr-auto">Register</button>
+        <button @click="register" class="btn btn-primary mt-4 w-9/12 flex ml-auto mr-auto">
+          Register
+        </button>
       </div>
     </div>
   </div>
 </template>
+
+<script lang="ts">
+export default {
+  name: "LoginRegister",
+  data() {
+    return {};
+  },
+  methods: {
+    login() {
+      console.log("login");
+    },
+    register() {
+      console.log("register");
+    },
+  },
+};
+</script>

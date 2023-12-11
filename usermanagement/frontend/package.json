@@ -13,6 +13,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@flaticon/flaticon-uicons": "^3.0.0",
     "vue": "^3.3.10",
     "vue-router": "^4.2.5"
   },

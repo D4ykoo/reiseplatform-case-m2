@@ -1,4 +1,7 @@
 @import './base.css';
+@import "@flaticon/flaticon-uicons/css/solid/all";
+@import "@flaticon/flaticon-uicons/css/brands/all";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -12,8 +15,8 @@
 
 @media (min-width: 1024px) {
   body {
-    display: flex;
-    place-items: center;
+    /* display: flex; */
+    /* place-items: center; */
   }
 }
 

@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import type LoginRegisterVue from './components/LoginRegister.vue';
+import {RouterView } from 'vue-router'
+import type FooterContentVue from './components/FooterContent.vue';
+
 </script>
 
 <template>
+
   <RouterView />
 </template>

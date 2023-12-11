@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import LoginRegister from '../components/LoginRegister.vue'
+import UserManagement from '../components/UserManagement.vue'
 import FooterContent from '@/components/FooterContent.vue';
 </script>
 
 <template>
   <main>
-    <LoginRegister/>
+    <UserManagement />
+    <FooterContent />
   </main>
-  <FooterContent />
 </template>
