@@ -25,8 +25,8 @@
             <span class="label-text">Password</span>
           </div>
           <input
-            type="text"
-            placeholder="Type here"
+            type="password"
+            placeholder="Password"
             class="input input-bordered w-full"
           />
           <div class="label">
@@ -100,7 +100,7 @@
             <span class="label-text">Password</span>
           </div>
           <input
-            type="text"
+            type="passsword"
             placeholder="Password"
             class="input input-bordered w-full"
           />
