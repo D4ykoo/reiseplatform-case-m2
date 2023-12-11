@@ -16,3 +16,7 @@
     place-items: center;
   }
 }
+
+.fix-width{
+  width: 35rem;
+}

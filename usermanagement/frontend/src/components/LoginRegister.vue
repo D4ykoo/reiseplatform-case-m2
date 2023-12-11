@@ -1,6 +1,6 @@
 <template>
   <div class="ml-auto mr-auto flex justify-center content-center align-middle">
-    <div role="tablist" class="tabs tabs-boxed p-4">
+    <div role="tablist" class="tabs tabs-boxed p-4 fix-width">
       <input
         type="radio"
         name="login-register"
@@ -9,24 +9,24 @@
         aria-label="Login"
       />
       <div role="tabpanel" class="tab-content p-10">
-        <label class="form-control w-full max-w-xs">
+        <label class="form-control w-full ">
           <div class="label">
             <span class="label-text">Username</span>
           </div>
           <input
             type="text"
             placeholder="Username"
-            class="input input-bordered w-full max-w-xs"
+            class="input input-bordered w-full"
           />
         </label>
-        <label class="form-control w-full max-w-xs">
-          <div class="label ml-4">
+        <label class="form-control w-full">
+          <div class="label">
             <span class="label-text">Password</span>
           </div>
           <input
             type="text"
             placeholder="Type here"
-            class="input input-bordered w-full max-w-xs"
+            class="input input-bordered w-full"
           />
           <div class="label">
             <span class="label-text-alt"></span>
