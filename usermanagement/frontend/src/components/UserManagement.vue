@@ -1,4 +1,10 @@
 <script setup lang="ts">
+import { UserManagementService } from "@/services/UserManagementService";
+
+let userManagementService = new UserManagementService();
+
+getAllUser();
+
 type User = {
   id: number;
   username: string;
@@ -15,23 +21,42 @@ let testuser: User = {
   email: "test@tester.test",
 };
 
+let updatedUser: User = {
+  id: 0,
+  username: "testusername",
+  firstname: "testUserFirst",
+  lastname: "testUserLast",
+  email: "test@tester.test",
+};
+
 let users: User[] = [testuser];
 
-function deleteUser() {
-  console.log("delete");
+function deleteUser(id: number) {
+  userManagementService.deleteUser(id);
 }
-function editUser() {
-  console.log("edit");
+
+function editUser(id: number) {
+  userManagementService.updateUser(id, updatedUser);
+}
+
+function getAllUser() {
+  let allUsers = userManagementService.getAllUserRequests();
 }
 </script>
 
 <template>
   <div
-    class="overflow-x-auto overflow-y-auto top-0 flex place-items-start"
+    class="overflow-x-auto overflow-y-auto top-0 flex flex-col place-items-start"
   >
+    <div class="flex justify-end w-full">
+      <button onclick="create_user_modal.showModal()" class="btn btn-primary btn-sm mr-2 hover:scale-105 ease-in-out">
+        Create
+      </button>
+      <CreateUserModal />
+    </div>
     <table class="table table-zebra">
       <!-- head -->
-      <thead>
+      <thead class="">
         <tr>
           <th></th>
           <th>Username</th>
@@ -50,7 +75,7 @@ function editUser() {
           <td>{{ user.lastname }}</td>
           <td>{{ user.email }}</td>
           <td class="w-3 h-3">
-            <button @click="deleteUser" class="hover:scale-105">
+            <button @click="deleteUser(user.id)" class="hover:scale-105">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-5 w-5"
@@ -67,9 +92,9 @@ function editUser() {
               </svg>
             </button>
           </td>
-          <td>
-            <button @click="editUser" class="hover:scale-105">
-                <i class="fi fi-sr-pencil"></i>
+          <td class="w-3 h-3">
+            <button @click="editUser(user.id)" class="hover:scale-105">
+              <i class="fi fi-sr-pencil"></i>
             </button>
           </td>
         </tr>
@@ -77,3 +102,13 @@ function editUser() {
     </table>
   </div>
 </template>
+
+<script lang="ts">
+  import CreateUserModal from "./CreateUserModal.vue"
+  export default {
+    name: "UserManagement",
+    components: {
+      CreateUserModal
+    }
+    } 
+</script>
