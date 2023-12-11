@@ -6,6 +6,6 @@ import FooterContent from '@/components/FooterContent.vue';
 <template>
   <main>
     <LoginRegister/>
+    <FooterContent />
   </main>
-  <FooterContent />
 </template>
