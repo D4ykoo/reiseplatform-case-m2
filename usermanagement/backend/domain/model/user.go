@@ -22,7 +22,7 @@ type DBUser struct {
 }
 
 type ResponseUser struct {
-	ID        string `json:"id"`
+	ID        uint   `json:"id"`
 	Username  string `json:"username"`
 	Firstname string `json:"firstname"`
 	Lastname  string `json:"lastname"`

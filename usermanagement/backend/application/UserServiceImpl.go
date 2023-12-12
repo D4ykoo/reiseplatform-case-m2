@@ -2,6 +2,7 @@ package application
 
 import (
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/utils"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"log"
 	"os"
@@ -13,14 +14,19 @@ func RunWebServer() {
 
 	router := gin.Default()
 
-	router.GET("/users", adapter.ListUserRequest)
-	router.GET("/users/:id", adapter.GetUserRequest)
-	router.POST("/users", adapter.CreateUserRequest)
-	router.PUT("/users/:id", adapter.UpdateUserRequest)
-	router.DELETE("/users/:id", adapter.DeleteUserRequest)
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
 
-	router.POST("/login", adapter.LoginRequest)
-	router.POST("/reset", adapter.ResetPasswordRequest)
+	router.Use(cors.New(config))
+
+	router.GET("/api/users", adapter.ListUserRequest)
+	router.GET("/api/users/:id", adapter.GetUserRequest)
+	router.POST("/api/users", adapter.CreateUserRequest)
+	router.PUT("/api/users/:id", adapter.UpdateUserRequest)
+	router.DELETE("/api/users/:id", adapter.DeleteUserRequest)
+
+	router.POST("/api/login", adapter.LoginRequest)
+	router.POST("/api/reset", adapter.ResetPasswordRequest)
 
 	// start server
 	err := router.Run(os.Getenv("DOMAIN"))

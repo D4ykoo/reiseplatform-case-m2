@@ -88,7 +88,7 @@ func GetUserRequest(c *gin.Context) {
 		return
 	}
 
-	errGet, user := GetUser(uint(id))
+	errGet, dbUser := GetUser(uint(id))
 
 	if errGet != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": errGet.Error()})
@@ -96,16 +96,36 @@ func GetUserRequest(c *gin.Context) {
 		return
 	}
 
+	user := domain.ResponseUser{
+		ID:        dbUser.ID,
+		Username:  dbUser.Username,
+		Firstname: dbUser.Firstname,
+		Lastname:  dbUser.Lastname,
+		Email:     dbUser.Email,
+	}
+
 	c.JSON(http.StatusOK, user)
 }
 
 func ListUserRequest(c *gin.Context) {
-	users, err := ListUser()
+	dbUsers, err := ListUser()
+	var users []domain.ResponseUser
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		SendEvent(brokerUrls, topic, ports.UserGet, err.Error())
 		return
+	}
+
+	for _, dbUser := range *dbUsers {
+		user := domain.ResponseUser{
+			ID:        dbUser.ID,
+			Username:  dbUser.Username,
+			Firstname: dbUser.Firstname,
+			Lastname:  dbUser.Lastname,
+			Email:     dbUser.Email,
+		}
+		users = append(users, user)
 	}
 
 	c.JSON(http.StatusOK, users)
