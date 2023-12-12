@@ -5,6 +5,11 @@ export type RequestUser = {
   email: string;
 };
 
+export type UpdateUser = {
+    requestUser: RequestUser,
+    oldPassword: string
+}
+
 export type User = {
   id: number;
   username: string;

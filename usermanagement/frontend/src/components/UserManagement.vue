@@ -9,7 +9,7 @@
       >
         Create
       </button>
-      <CreateUserModal />
+      <CreateUserModal @eventCreateUser="reloadList()" />
     </div>
     <table class="table table-zebra">
       <!-- head -->
@@ -32,7 +32,7 @@
           <td>{{ user.lastname }}</td>
           <td>{{ user.email }}</td>
           <td class="w-3 h-3">
-            <button class="hover:scale-105">
+            <button @click="deleteUser(user.id)" class="hover:scale-105">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-5 w-5"
@@ -56,7 +56,7 @@
             >
               <i class="fi fi-sr-pencil"></i>
             </button>
-            <EditUserModal />
+            <EditUserModal @eventUpdateUser="reloadList()" :username="user.username" :firstname="user.firstname" :lastname="user.lastname" :email="user.email"/>
           </td>
         </tr>
       </tbody>
@@ -69,33 +69,59 @@ import CreateUserModal from "./CreateUserModal.vue";
 import EditUserModal from "./EditUserModal.vue";
 import { UserManagementService } from "@/services/UserManagementService";
 import type { User } from "@/models/UserModel";
-import {ref, type Ref} from 'vue';
+import { ref, type Ref } from "vue";
 
 let userManagementService = new UserManagementService();
+
+export class Usermanagement {}
+
 export default {
-  
   name: "UserManagement",
   components: {
     CreateUserModal,
     EditUserModal,
   },
-  setup(){
+  setup() {
     let users: Ref = ref([]);
-    return {
-      users
+
+    function deleteUser(id: number) {
+      userManagementService.deleteUser(id).subscribe((result: any) => {
+        console.log(result.status);
+        if (result.status === 200) {
+          console.log(users);
+          console.log(id);
+          console.log(users.value);
+          users.value.filter((elem: any) => {
+            console.log(elem.id !== id);
+            console.log(elem);
+            return elem.id !== id;
+          });
+        }
+      });
     }
+    return {
+      users,
+      deleteUser,
+    };
   },
   mounted() {
     userManagementService.getAllUserRequests().subscribe((res: any) => {
-      console.log(res.data)
+      console.log(res.data);
       res.data.forEach((user: User) => {
-        console.log(user)
         this.users.push(user);
       });
     });
-    console.log(this.users)
+  },
+  methods: {
+    reloadList() {
+      this.users.length = 0
+      userManagementService.getAllUserRequests().subscribe((res: any) => {
+        console.log(res.data);
+        res.data.forEach((user: User) => {
+          this.users.push(user);
+        });
+      });
+    },
   },
 };
 </script>
-
-

@@ -23,39 +23,15 @@ export class UserManagementService {
   }
 
   public updateUser(id: number, payload: any) {
-    return Axios.put(enviroment.apiUrl + `/users/${id}`, payload).subscribe({
-      next: (result: any) => {
-        console.log(result);
-        return result;
-      },
-      error: (e: any) => {
-        console.log(e);
-      },
-    });
+    return Axios.put(enviroment.apiUrl + `/users/${id}`, payload).pipe(catchError(this.handleError))
   }
 
   public deleteUser(id: number) {
-    return Axios.delete(enviroment.apiUrl + `/users/${id}`).subscribe({
-      next: (result: any) => {
-        console.log(result);
-        return result;
-      },
-      error: (e: any) => {
-        console.log(e);
-      },
-    });
+    return Axios.delete(enviroment.apiUrl + `/users/${id}`).pipe(catchError(this.handleError))
   }
 
   public createUser(payload: any) {
-    return Axios.post(enviroment.apiUrl + `/users`, payload).subscribe({
-      next: (result: any) => {
-        console.log(result);
-        return result;
-      },
-      error: (e: any) => {
-        console.log(e);
-      },
-    });
+    return Axios.post(enviroment.apiUrl + `/users`, payload).pipe(catchError(this.handleError))
   }
 
   private handleError(error: AxiosError){

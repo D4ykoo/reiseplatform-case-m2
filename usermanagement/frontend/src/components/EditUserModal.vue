@@ -13,6 +13,7 @@
                   <span class="label-text">Username</span>
                 </div>
                 <input
+                v-model="newUsername"
                   type="text"
                   placeholder="Username"
                   class="input input-bordered w-full max-w-xs"
@@ -23,6 +24,7 @@
                   <span class="label-text">E-Mail</span>
                 </div>
                 <input
+                v-model="newEmail"
                   type="text"
                   placeholder="E-Mail"
                   class="input input-bordered w-full max-w-xs"
@@ -35,6 +37,7 @@
                   <span class="label-text">Firstname</span>
                 </div>
                 <input
+                v-model="newFirstname"
                   type="text"
                   placeholder="Firstname"
                   class="input input-bordered w-full max-w-xs"
@@ -46,6 +49,7 @@
                   <span class="label-text">Lastname</span>
                 </div>
                 <input
+                v-model="newLastname"
                   type="text"
                   placeholder="Lastname"
                   class="input input-bordered w-full max-w-xs"
@@ -59,6 +63,7 @@
               <span class="label-text">Old Password</span>
             </div>
             <input
+              v-model="oldPassword"
               type="passsword"
               placeholder="Old Password"
               class="input input-bordered w-full"
@@ -70,13 +75,13 @@
               <span class="label-text">New Password</span>
             </div>
             <input
+            v-model="newPassword"
               type="passsword"
               placeholder="New Password"
               class="input input-bordered w-full"
             />
           </label>
 
-          
           <div class="flex flex-row">
             <button class="btn btn-error btn-outline mt-6 w-2/5 flex ml-auto">
               Cancel
@@ -92,7 +97,54 @@
 </template>
 
 <script lang="ts">
+import type { UpdateUser } from "@/models/UserModel";
+import { UserManagementService } from "@/services/UserManagementService";
+import { ref } from "vue";
+let userManagementService = new UserManagementService();
 export default {
   name: "EditUserModal",
+  props: {
+    username: String,
+    firstname: String,
+    lastname: String,
+    email: String,
+  },
+  setup(props:any) {
+    const newUsername = ref(props.username || "");
+    const newFirstname = ref(props.firstname || "");
+    const newLastname = ref(props.lastname || "");
+    const newEmail = ref(props.email || "");
+    const oldPassword = ref("");
+    const newPassword = ref("");
+
+    return {
+      newUsername,
+      newFirstname,
+      newLastname,
+      newEmail,
+      newPassword,
+      oldPassword,
+    };
+  },
+  methods: {
+    emitUpdate(id: number) {
+      let user: UpdateUser = {
+        requestUser: {
+          username: this.newUsername,
+          firstname: this.newFirstname,
+          lastname: this.newLastname,
+          email: this.newEmail,
+        },
+        oldPassword: this.oldPassword,
+      };
+
+      userManagementService.updateUser(id, user).subscribe((res: any) => {
+        if (res.status === 200) {
+          console.log("worked");
+          this.$emit("eventUpdateUser");
+        }
+      });
+    },
+  },
 };
 </script>

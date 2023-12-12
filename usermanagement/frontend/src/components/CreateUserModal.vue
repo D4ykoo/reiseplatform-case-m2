@@ -1,28 +1,21 @@
 <script lang="ts">
 import type { RequestUser } from "@/models/UserModel";
 import { UserManagementService } from "@/services/UserManagementService";
+import { rmSync } from "fs";
 import { create } from "node_modules/axios/index.cjs";
+import { Result } from "postcss";
 import { ref } from "vue";
+let userManagementService = new UserManagementService();
+
 export default {
   name: "CreateUserModal",
+
   setup() {
     const newUsername = ref("");
     const newFirstname = ref("");
     const newLastname = ref("");
     const newEmail = ref("");
     const newPassword = ref("");
-    const userManagementService = new UserManagementService();
-
-    function createUser() {
-      let user: RequestUser = {
-        username: newUsername.value,
-        firstname: newFirstname.value,
-        lastname: newLastname.value,
-        email: newEmail.value,
-      };
-
-      userManagementService.createUser(user);
-    }
 
     return {
       newUsername,
@@ -30,8 +23,24 @@ export default {
       newLastname,
       newEmail,
       newPassword,
-      createUser,
     };
+  },
+  methods: {
+    emitCreate() {
+      let user: RequestUser = {
+        username: this.newUsername,
+        firstname: this.newFirstname,
+        lastname: this.newLastname,
+        email: this.newEmail,
+      };
+
+      userManagementService.createUser(user).subscribe((res: any) => {
+        if (res.status === 200) {
+          console.log("worked");
+          this.$emit("eventCreateUser");
+        }
+      });
+    },
   },
 };
 </script>
@@ -107,7 +116,7 @@ export default {
             />
           </label>
           <button
-            v-on:click="createUser"
+            v-on:click="emitCreate"
             type="submit"
             class="btn btn-primary mt-4 w-9/12 flex ml-auto mr-auto"
           >
