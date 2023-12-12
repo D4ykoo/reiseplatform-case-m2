@@ -75,6 +75,5 @@
 <script lang="ts">
 export default {
     name: "CreateUserModal", 
-
 }
 </script>

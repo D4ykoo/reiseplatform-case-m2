@@ -1,55 +1,12 @@
-<script setup lang="ts">
-import { UserManagementService } from "@/services/UserManagementService";
-
-let userManagementService = new UserManagementService();
-
-getAllUser();
-
-type User = {
-  id: number;
-  username: string;
-  firstname: string;
-  lastname: string;
-  email: string;
-};
-
-let testuser: User = {
-  id: 0,
-  username: "testusername",
-  firstname: "testUserFirst",
-  lastname: "testUserLast",
-  email: "test@tester.test",
-};
-
-let updatedUser: User = {
-  id: 0,
-  username: "testusername",
-  firstname: "testUserFirst",
-  lastname: "testUserLast",
-  email: "test@tester.test",
-};
-
-let users: User[] = [testuser];
-
-function deleteUser(id: number) {
-  userManagementService.deleteUser(id);
-}
-
-function editUser(id: number) {
-  userManagementService.updateUser(id, updatedUser);
-}
-
-function getAllUser() {
-  let allUsers = userManagementService.getAllUserRequests();
-}
-</script>
-
 <template>
   <div
     class="overflow-x-auto overflow-y-auto top-0 flex flex-col place-items-start"
   >
     <div class="flex justify-end w-full">
-      <button onclick="create_user_modal.showModal()" class="btn btn-primary btn-sm mr-2 hover:scale-105 ease-in-out">
+      <button
+        onclick="create_user_modal.showModal()"
+        class="btn btn-primary btn-sm mr-2 hover:scale-105 ease-in-out"
+      >
         Create
       </button>
       <CreateUserModal />
@@ -75,7 +32,7 @@ function getAllUser() {
           <td>{{ user.lastname }}</td>
           <td>{{ user.email }}</td>
           <td class="w-3 h-3">
-            <button @click="deleteUser(user.id)" class="hover:scale-105">
+            <button class="hover:scale-105">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-5 w-5"
@@ -93,7 +50,10 @@ function getAllUser() {
             </button>
           </td>
           <td class="w-3 h-3">
-            <button onclick="edit_user_modal.showModal()" class="hover:scale-105">
+            <button
+              onclick="edit_user_modal.showModal()"
+              class="hover:scale-105"
+            >
               <i class="fi fi-sr-pencil"></i>
             </button>
             <EditUserModal />
@@ -105,13 +65,37 @@ function getAllUser() {
 </template>
 
 <script lang="ts">
-  import CreateUserModal from "./CreateUserModal.vue"
-  import EditUserModal from "./EditUserModal.vue";
-  export default {
-    name: "UserManagement",
-    components: {
-      CreateUserModal,
-      EditUserModal,
+import CreateUserModal from "./CreateUserModal.vue";
+import EditUserModal from "./EditUserModal.vue";
+import { UserManagementService } from "@/services/UserManagementService";
+import type { User } from "@/models/UserModel";
+import {ref, type Ref} from 'vue';
+
+let userManagementService = new UserManagementService();
+export default {
+  
+  name: "UserManagement",
+  components: {
+    CreateUserModal,
+    EditUserModal,
+  },
+  setup(){
+    let users: Ref = ref([]);
+    return {
+      users
     }
-    } 
+  },
+  mounted() {
+    userManagementService.getAllUserRequests().subscribe((res: any) => {
+      console.log(res.data)
+      res.data.forEach((user: User) => {
+        console.log(user)
+        this.users.push(user);
+      });
+    });
+    console.log(this.users)
+  },
+};
 </script>
+
+
