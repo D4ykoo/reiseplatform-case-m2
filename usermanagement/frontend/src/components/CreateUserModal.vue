@@ -1,9 +1,6 @@
 <script lang="ts">
 import type { RequestUser } from "@/models/UserModel";
 import { UserManagementService } from "@/services/UserManagementService";
-import { rmSync } from "fs";
-import { create } from "node_modules/axios/index.cjs";
-import { Result } from "postcss";
 import { ref } from "vue";
 let userManagementService = new UserManagementService();
 
