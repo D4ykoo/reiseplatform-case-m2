@@ -117,13 +117,18 @@ export default {
               class="input input-bordered w-full"
             />
           </label>
-          <button
-            v-on:click="emitCreate"
-            type="submit"
-            class="btn btn-primary mt-4 w-9/12 flex ml-auto mr-auto"
-          >
-            Register
-          </button>
+          <div class="flex flex-row">
+            <button class="btn btn-error btn-outline mt-6 w-2/5 flex ml-auto">
+              Cancel
+            </button>
+            <button
+              v-on:click="emitCreate"
+              type="submit"
+              class="btn btn-primary mt-6 w-2/5 flex ml-auto mr-auto"
+            >
+              Register
+            </button>
+          </div>
         </form>
       </div>
     </div>

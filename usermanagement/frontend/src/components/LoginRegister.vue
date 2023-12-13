@@ -33,10 +33,18 @@
           />
           <div class="label">
             <span class="label-text-alt"></span>
-            <span @click="routeReset" class="label-text-alt hover:text-violet-600 hover:cursor-pointer">Forgot password?</span>
+            <span
+              @click="routeReset"
+              class="label-text-alt hover:text-violet-600 hover:cursor-pointer"
+              >Forgot password?</span
+            >
           </div>
         </label>
-        <button @click="login" class="btn btn-primary w-full mt-4">
+        <button
+          type="submit"
+          @click="login"
+          class="btn btn-primary w-full mt-4"
+        >
           Login
         </button>
       </div>
@@ -113,6 +121,7 @@
           />
         </label>
         <button
+          type="submit"
           @click="register"
           class="btn btn-primary mt-4 w-9/12 flex ml-auto mr-auto"
         >
@@ -175,7 +184,7 @@ export default {
       };
 
       loginRegisterService.LoginRequest(payload).subscribe((res: any) => {
-        if(res.status === 200){
+        if (res.status === 200) {
           this.$router.push("/users");
         }
       });
@@ -190,13 +199,12 @@ export default {
       };
 
       loginRegisterService.RegisterRequest(payload).subscribe((res: any) => {
-        if(res.status === 200){
+        if (res.status === 200) {
           this.$router.push("/users");
         }
       });
-
     },
-    routeReset(){
+    routeReset() {
       this.$router.push("/reset");
     },
   },

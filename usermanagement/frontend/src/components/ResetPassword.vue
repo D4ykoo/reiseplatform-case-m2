@@ -1,48 +1,54 @@
 <template>
   <div class="ml-auto mr-auto w-96">
-    <label class="form-control w-full">
-      <div class="label">
-        <span class="label-text">Username</span>
-      </div>
-      <input
-        v-model="username"
-        type="text"
-        placeholder="Username"
-        class="input input-bordered w-full"
-      />
-    </label>
+    <form>
+      <label class="form-control w-full">
+        <div class="label">
+          <span class="label-text">Username</span>
+        </div>
+        <input
+          v-model="username"
+          type="text"
+          placeholder="Username"
+          class="input input-bordered w-full"
+        />
+      </label>
 
-    <label class="form-control w-full">
-      <div class="label">
-        <span class="label-text">Old Password</span>
-      </div>
-      <input
-        v-model="oldPassword"
-        type="password"
-        placeholder="Old Password"
-        class="input input-bordered w-full"
-      />
-    </label>
-    <label class="form-control w-full">
-      <div class="label">
-        <span class="label-text">Old Password</span>
-      </div>
-      <input
-        v-model="newPassword"
-        type="password"
-        placeholder="New Password"
-        class="input input-bordered w-full"
-      />
-    </label>
+      <label class="form-control w-full">
+        <div class="label">
+          <span class="label-text">Old Password</span>
+        </div>
+        <input
+          v-model="oldPassword"
+          type="password"
+          placeholder="Old Password"
+          class="input input-bordered w-full"
+        />
+      </label>
+      <label class="form-control w-full">
+        <div class="label">
+          <span class="label-text">Old Password</span>
+        </div>
+        <input
+          v-model="newPassword"
+          type="password"
+          placeholder="New Password"
+          class="input input-bordered w-full"
+        />
+      </label>
 
-    <div class="flex flex-row items-center justify-evenly align-middle">
-      <button @click="back" class="btn btn-error btn-outline mt-6 w-2/5 flex">
-        Cancel
-      </button>
-      <button @click="reset" class="btn btn-primary w-2/5 mt-6 hover:scale-105">
-        Reset
-      </button>
-    </div>
+      <div class="flex flex-row items-center justify-evenly align-middle">
+        <button @click="back" class="btn btn-error btn-outline mt-6 w-2/5 flex">
+          Cancel
+        </button>
+        <button
+        type="submit"
+          @click="reset"
+          class="btn btn-primary w-2/5 mt-6 hover:scale-105"
+        >
+          Reset
+        </button>
+      </div>
+    </form>
   </div>
 </template>
 
@@ -79,6 +85,7 @@ export default {
       loginRegisterService
         .ResetPasswordRequest(resetUser)
         .subscribe((res: any) => {
+          console.log(res)
         });
     },
     back() {

@@ -86,6 +86,7 @@
               Cancel
             </button>
             <button
+              type="submit"
               v-on:click="emitUpdate"
               class="btn btn-primary mt-6 flex ml-auto w-2/5 mr-auto"
             >
@@ -99,11 +100,10 @@
 </template>
 
 <script lang="ts">
-import type { UpdateUser, User } from "@/models/UserModel";
+import type { UpdateUser } from "@/models/UserModel";
 import { UserManagementService } from "@/services/UserManagementService";
 import { ref } from "vue";
 import { useUserStore } from "@/assets/UserStore";
-import AlertToasts from "./AlertToasts.vue";
 
 let userManagementService = new UserManagementService();
 
@@ -158,7 +158,7 @@ export default {
         .updateUser(this.userID, user)
         .subscribe((res: any) => {
           if (res.status === 200) {
-            this.$emit("eventUpdateUser", true, `User ${user.username} edited`);            
+            this.$emit("eventUpdateUser", true, `User ${user.username} edited`);
           }
         });
     },
