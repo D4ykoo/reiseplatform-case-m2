@@ -126,11 +126,9 @@
 <script lang="ts">
 import type { LoginUser, RegisterUser } from "@/models/UserModel";
 import { LoginRegisterService } from "@/services/LoginRegisterService";
-import { UserManagementService } from "@/services/UserManagementService";
 import { ref, type Ref } from "vue";
 
 let loginRegisterService = new LoginRegisterService();
-let userManagementService = new UserManagementService();
 
 export default {
   name: "LoginRegister",
@@ -191,7 +189,7 @@ export default {
         password: this.registerForm.password.value,
       };
 
-      userManagementService.createUser(payload).subscribe((res: any) => {
+      loginRegisterService.RegisterRequest(payload).subscribe((res: any) => {
         if(res.status === 200){
           this.$router.push("/users");
         }
