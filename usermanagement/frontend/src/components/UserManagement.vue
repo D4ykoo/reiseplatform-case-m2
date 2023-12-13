@@ -84,29 +84,12 @@ export default {
   setup() {
     let users: Ref = ref([]);
 
-    function deleteUser(id: number) {
-      userManagementService.deleteUser(id).subscribe((result: any) => {
-        console.log(result.status);
-        if (result.status === 200) {
-          console.log(users);
-          console.log(id);
-          console.log(users.value);
-          users.value.filter((elem: any) => {
-            console.log(elem.id !== id);
-            console.log(elem);
-            return elem.id !== id;
-          });
-        }
-      });
-    }
     return {
       users,
-      deleteUser,
     };
   },
   mounted() {
     userManagementService.getAllUserRequests().subscribe((res: any) => {
-      console.log(res.data);
       res.data.forEach((user: User) => {
         this.users.push(user);
       });
@@ -116,12 +99,20 @@ export default {
     reloadList() {
       this.users.length = 0
       userManagementService.getAllUserRequests().subscribe((res: any) => {
-        console.log(res.data);
         res.data.forEach((user: User) => {
           this.users.push(user);
         });
       });
     },
+    deleteUser(id: number) {
+      userManagementService.deleteUser(id).subscribe((result: any) => {
+        if (result.status === 200) {
+          this.users = this.users.filter((elem: any) => {
+            return elem.id !== id;
+          });
+        }
+      });
+    }
   },
 };
 </script>

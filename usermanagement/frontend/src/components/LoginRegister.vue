@@ -33,7 +33,7 @@
           />
           <div class="label">
             <span class="label-text-alt"></span>
-            <span class="label-text-alt">Forgot password?</span>
+            <span @click="routeReset" class="label-text-alt hover:text-violet-600 hover:cursor-pointer">Forgot password?</span>
           </div>
         </label>
         <button @click="login" class="btn btn-primary w-full mt-4">
@@ -175,10 +175,12 @@ export default {
         username: this.loginForm.username.value,
         password: this.loginForm.password.value,
       };
+
       loginRegisterService.LoginRequest(payload).subscribe((res: any) => {
-        console.log(res);
+        if(res.status === 200){
+          this.$router.push("/users");
+        }
       });
-      console.log(this.loginForm);
     },
     register() {
       var payload: RegisterUser = {
@@ -188,10 +190,17 @@ export default {
         email: this.registerForm.email.value,
         password: this.registerForm.password.value,
       };
+
       userManagementService.createUser(payload).subscribe((res: any) => {
         console.log(res);
+        if(res.status === 200){
+          this.$router.push("/users");
+        }
       });
-      console.log(this.registerForm);
+
+    },
+    routeReset(){
+      this.$router.push("/reset");
     },
   },
 };

@@ -10,18 +10,18 @@ export type RegisterUser = {
   firstname: string;
   lastname: string;
   email: string;
-  password: string
-}
+  password: string;
+};
 
 export type LoginUser = {
-  username: string,
-  password: string
-}
+  username: string;
+  password: string;
+};
 
 export type UpdateUser = {
-    requestUser: RequestUser,
-    oldPassword: string
-}
+  requestUser: RequestUser;
+  oldPassword: string;
+};
 
 export type User = {
   id: number;
@@ -29,4 +29,9 @@ export type User = {
   firstname: string;
   lastname: string;
   email: string;
+};
+
+export type ResetUser = {
+  oldLoginUser: LoginUser;
+  newPassword: string;
 };

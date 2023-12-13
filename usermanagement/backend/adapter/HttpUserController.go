@@ -47,6 +47,10 @@ func LoginRequest(c *gin.Context) {
 		return
 	}
 
+	//isProd := false
+	//isProd, _ = strconv.ParseBool(os.Getenv("PRODUCTION"))
+
+	// c.SetCookie("t", jwt, 3600, "/", "localhost", isProd, true)
 	c.JSON(http.StatusOK, gin.H{"status": "success", "jwt": jwt})
 }
 
@@ -78,7 +82,7 @@ func ResetPasswordRequest(c *gin.Context) {
 		Body:   "your-reset-link",
 	})
 
-	isOk := utils.ComparePasswords(dbUser.Password, user.OldLoginUser.Username, salt)
+	isOk := utils.ComparePasswords(dbUser.Password, user.OldLoginUser.Password, salt)
 
 	if !isOk {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})

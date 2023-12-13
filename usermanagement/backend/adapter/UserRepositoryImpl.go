@@ -3,6 +3,7 @@ package adapter
 import (
 	"fmt"
 	model "github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/utils"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -81,6 +82,8 @@ func UpdateUser(updateID uint, user model.User) error {
 		return err
 	}
 
+	user.Password = utils.HashPassword(user.Password, []byte(os.Getenv("SALT")))
+
 	dbUser := model.DBUser{
 		Model: gorm.Model{ID: updateID},
 		User:  user,
@@ -107,6 +110,10 @@ func DeleteUser(id int) error {
 
 	if result.Error != nil {
 		return result.Error
+	}
+
+	if result.RowsAffected != 1 {
+		return gorm.ErrRecordNotFound
 	}
 
 	return nil

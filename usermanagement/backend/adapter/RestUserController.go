@@ -14,6 +14,19 @@ var brokerUrls = []string{os.Getenv("BROKERS")}
 var topic = os.Getenv("TOPIC")
 
 func CreateUserRequest(c *gin.Context) {
+
+	//cookie, cookieErr := c.Cookie("authTravel")
+	//
+	//if cookieErr != nil {
+	//	c.JSON(http.StatusUnauthorized, gin.H{"error": cookieErr.Error()})
+	//}
+	//
+	//_, valErr, _ := ValidateJWT(cookie, os.Getenv("JWT_SECRET"))
+	//
+	//if valErr != nil {
+	//	c.JSON(http.StatusUnauthorized, gin.H{"error": cookieErr.Error()})
+	//}
+
 	var user domain.User
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

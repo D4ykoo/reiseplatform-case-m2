@@ -26,7 +26,7 @@ func RunWebServer() {
 	router.DELETE("/api/users/:id", adapter.DeleteUserRequest)
 
 	router.POST("/api/login", adapter.LoginRequest)
-	router.POST("/api/reset", adapter.ResetPasswordRequest)
+	router.PUT("/api/reset", adapter.ResetPasswordRequest)
 
 	// start server
 	err := router.Run(os.Getenv("DOMAIN"))
