@@ -1,8 +1,8 @@
 <template>
   <div
-    class="top-0 flex flex-col place-items-start"
+    class="top-0 flex flex-col place-items-start h-[calc(100vh-25vh)]"
   >
-    <div class="flex justify-end w-full">
+    <div class="flex justify-end w-full ">
       <button
         onclick="create_user_modal.showModal()"
         class="btn btn-primary btn-sm mr-2 hover:scale-105 ease-in-out"
@@ -11,7 +11,7 @@
       </button>
       <CreateUserModal @eventCreateUser="reloadList()" />
     </div>
-    <div class="overflow-hidden overflow-y-auto max-h-screen w-full">
+    <div class="overflow-hidden overflow-y-auto max-h-full w-full">
     <table class="table table-zebra">
       <!-- head -->
       <thead class="">
