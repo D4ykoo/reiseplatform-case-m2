@@ -3,6 +3,7 @@ package adapter
 import (
 	domain "github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/ports"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
@@ -19,6 +20,7 @@ func CreateUserRequest(c *gin.Context) {
 		SendEvent(brokerUrls, topic, ports.UserCreate, err.Error())
 		return
 	}
+	user.Password = utils.HashPassword(user.Password, []byte(os.Getenv("SALT")))
 	err := CreateUser(user)
 
 	if err != nil {

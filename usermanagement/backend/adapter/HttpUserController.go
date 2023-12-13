@@ -10,6 +10,7 @@ import (
 )
 
 func LoginRequest(c *gin.Context) {
+	println("sasdfadsfsd")
 	var user model.LoginUser
 	// check if credentials are valid
 	if err := c.ShouldBindJSON(&user); err != nil {
@@ -32,13 +33,13 @@ func LoginRequest(c *gin.Context) {
 	isOk := utils.ComparePasswords(dbUser.Password, user.Password, salt)
 
 	if !isOk {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		SendEvent(brokerUrls, topic, ports.Login, string(rune(http.StatusUnauthorized))+err.Error())
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
 	// if valid create jwt
-	jwt, jwtErr := CreateJWT(user.Username, "", false)
+	jwt, jwtErr := CreateJWT(user.Username, os.Getenv("JWT_SECRET"), false)
 
 	if jwtErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
