@@ -10,6 +10,43 @@ import (
 	"strconv"
 )
 
+func RegisterRequest(c *gin.Context) {
+	var user model.User
+
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		SendEvent(brokerUrls, topic, ports.UserCreate, err.Error())
+		return
+	}
+	user.Password = utils.HashPassword(user.Password, []byte(os.Getenv("SALT")))
+
+	err := CreateUser(user)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		SendEvent(brokerUrls, topic, ports.Register, err.Error())
+		return
+	}
+
+	SendEvent(brokerUrls, topic, ports.Register, user.Username)
+
+	isProd := false
+	isProd, _ = strconv.ParseBool(os.Getenv("PRODUCTION"))
+
+	jwt, jwtErr := CreateJWT(user.Username, os.Getenv("JWT_SECRET"), false)
+
+	if jwtErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		SendEvent(brokerUrls, topic, ports.Login, string(rune(http.StatusInternalServerError))+err.Error())
+		return
+	}
+
+	c.SetCookie("authTravel", jwt, 3600*24, "/", "localhost", isProd, true)
+	c.SetSameSite(http.SameSiteDefaultMode)
+
+	c.JSON(http.StatusOK, gin.H{"status": "success"})
+}
+
 func LoginRequest(c *gin.Context) {
 	println("sasdfadsfsd")
 	var user model.LoginUser
@@ -53,6 +90,7 @@ func LoginRequest(c *gin.Context) {
 
 	c.SetCookie("authTravel", jwt, 3600*24, "/", "localhost", isProd, true)
 	c.SetSameSite(http.SameSiteDefaultMode)
+
 	c.JSON(http.StatusOK, gin.H{"status": "success", "jwt": jwt})
 }
 

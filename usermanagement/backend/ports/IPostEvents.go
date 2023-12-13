@@ -13,6 +13,7 @@ const (
 	GenerateJWT
 	Login
 	EmailNotification
+	Register
 )
 
 func (postEvent PostEvent) String() string {

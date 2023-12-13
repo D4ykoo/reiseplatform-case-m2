@@ -14,21 +14,32 @@ import (
 var brokerUrls = []string{os.Getenv("BROKERS")}
 var topic = os.Getenv("TOPIC")
 
+func checkCookie(c *gin.Context) error {
+	var err error
+	cookie, cookieErr := c.Cookie("authTravel")
+
+	if cookieErr != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": cookieErr.Error()})
+	}
+
+	_, valErr, _ := ValidateJWT(cookie, os.Getenv("JWT_SECRET"))
+
+	if valErr != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": cookieErr.Error()})
+	}
+	return err
+}
+
 func CreateUserRequest(c *gin.Context) {
 
-	//cookie, cookieErr := c.Cookie("authTravel")
-	//
-	//if cookieErr != nil {
-	//	c.JSON(http.StatusUnauthorized, gin.H{"error": cookieErr.Error()})
-	//}
-	//
-	//_, valErr, _ := ValidateJWT(cookie, os.Getenv("JWT_SECRET"))
-	//
-	//if valErr != nil {
-	//	c.JSON(http.StatusUnauthorized, gin.H{"error": cookieErr.Error()})
-	//}
+	if cErr := checkCookie(c); cErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": cErr.Error()})
+		SendEvent(brokerUrls, topic, ports.UserCreate, cErr.Error())
+		return
+	}
 
 	var user domain.User
+
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		SendEvent(brokerUrls, topic, ports.UserCreate, err.Error())
@@ -49,6 +60,12 @@ func CreateUserRequest(c *gin.Context) {
 }
 
 func UpdateUserRequest(c *gin.Context) {
+	if cErr := checkCookie(c); cErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": cErr.Error()})
+		SendEvent(brokerUrls, topic, ports.UserUpdate, cErr.Error())
+		return
+	}
+
 	var user domain.UpdateUser
 
 	id, errID := strconv.Atoi(c.Param("id"))
@@ -98,6 +115,12 @@ func UpdateUserRequest(c *gin.Context) {
 }
 
 func DeleteUserRequest(c *gin.Context) {
+	if cErr := checkCookie(c); cErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": cErr.Error()})
+		SendEvent(brokerUrls, topic, ports.UserDelete, cErr.Error())
+		return
+	}
+
 	id, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
@@ -119,6 +142,12 @@ func DeleteUserRequest(c *gin.Context) {
 }
 
 func GetUserRequest(c *gin.Context) {
+	if cErr := checkCookie(c); cErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": cErr.Error()})
+		SendEvent(brokerUrls, topic, ports.UserGet, cErr.Error())
+		return
+	}
+
 	id, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
@@ -147,6 +176,13 @@ func GetUserRequest(c *gin.Context) {
 }
 
 func ListUserRequest(c *gin.Context) {
+
+	if cErr := checkCookie(c); cErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": cErr.Error()})
+		SendEvent(brokerUrls, topic, ports.UserGet, cErr.Error())
+		return
+	}
+
 	dbUsers, err := ListUser()
 	var users []domain.ResponseUser
 
