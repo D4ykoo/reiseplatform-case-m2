@@ -1,6 +1,6 @@
 <template>
   <div
-    class="overflow-x-auto overflow-y-auto top-0 flex flex-col place-items-start"
+    class="top-0 flex flex-col place-items-start"
   >
     <div class="flex justify-end w-full">
       <button
@@ -11,6 +11,7 @@
       </button>
       <CreateUserModal @eventCreateUser="reloadList()" />
     </div>
+    <div class="overflow-hidden overflow-y-auto max-h-screen w-full">
     <table class="table table-zebra">
       <!-- head -->
       <thead class="">
@@ -62,6 +63,7 @@
         </tr>
       </tbody>
     </table>
+  </div>
   </div>
   <!-- <AlertToast :visible="toastVisible" :info-text="toastText"/> -->
 </template>

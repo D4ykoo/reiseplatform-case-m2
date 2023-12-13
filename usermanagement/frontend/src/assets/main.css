@@ -23,3 +23,9 @@
 .fix-width{
   width: 35rem;
 }
+th {
+  position: sticky;
+  z-index: 2;
+  top: 0;
+  background-color: var(--color-background);
+}
