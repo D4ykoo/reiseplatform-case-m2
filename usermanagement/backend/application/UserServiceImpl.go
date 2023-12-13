@@ -15,8 +15,8 @@ func RunWebServer() {
 	router := gin.Default()
 
 	config := cors.DefaultConfig()
-	config.AllowAllOrigins = true
-
+	config.AllowOrigins = []string{"http://localhost:5173"}
+	config.AllowCredentials = true
 	router.Use(cors.New(config))
 
 	router.GET("/api/users", adapter.ListUserRequest)

@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 func LoginRequest(c *gin.Context) {
@@ -47,10 +48,11 @@ func LoginRequest(c *gin.Context) {
 		return
 	}
 
-	//isProd := false
-	//isProd, _ = strconv.ParseBool(os.Getenv("PRODUCTION"))
+	isProd := false
+	isProd, _ = strconv.ParseBool(os.Getenv("PRODUCTION"))
 
-	// c.SetCookie("t", jwt, 3600, "/", "localhost", isProd, true)
+	c.SetCookie("authTravel", jwt, 3600*24, "/", "localhost", isProd, true)
+	c.SetSameSite(http.SameSiteDefaultMode)
 	c.JSON(http.StatusOK, gin.H{"status": "success", "jwt": jwt})
 }
 
