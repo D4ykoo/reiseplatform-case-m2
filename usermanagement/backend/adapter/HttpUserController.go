@@ -96,7 +96,6 @@ func LoginRequest(c *gin.Context) {
 
 func ResetPasswordRequest(c *gin.Context) {
 	brokerUrls := []string{os.Getenv("BROKERS")}
-	salt := []byte(os.Getenv("SALT"))
 	topic := os.Getenv("TOPIC")
 
 	// search user with pw
@@ -106,7 +105,7 @@ func ResetPasswordRequest(c *gin.Context) {
 		return
 	}
 
-	dbUser, err := getUserByUsername(user.OldLoginUser.Username)
+	dbUser, err := getUserByUsername(user.Username)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		SendEvent(brokerUrls, topic, ports.Login, string(rune(http.StatusNotFound))+err.Error())
@@ -118,17 +117,18 @@ func ResetPasswordRequest(c *gin.Context) {
 		Header: "Password Reset Travel-Management",
 		Title:  "Your password reset",
 		From:   "mail@travel",
-		To:     dbUser.Email,
+		To:     user.Email,
 		Body:   "your-reset-link",
 	})
 
-	isOk := utils.ComparePasswords(dbUser.Password, user.OldLoginUser.Password, salt)
-
-	if !isOk {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-		SendEvent(brokerUrls, topic, ports.Login, string(rune(http.StatusUnauthorized))+err.Error())
-		return
-	}
+	// TODO: Needed when generating actual reset urls
+	//isOk := utils.ComparePasswords(dbUser.Password, user.Password, salt)
+	//
+	//if !isOk {
+	//	c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+	//	SendEvent(brokerUrls, topic, ports.Login, string(rune(http.StatusUnauthorized))+err.Error())
+	//	return
+	//}
 
 	var updatedUser model.User
 
@@ -147,5 +147,21 @@ func ResetPasswordRequest(c *gin.Context) {
 	}
 
 	SendEvent(brokerUrls, topic, ports.Login, "user "+updatedUser.Username+"password reset")
+
+	// if valid create jwt
+	jwt, jwtErr := CreateJWT(user.Username, os.Getenv("JWT_SECRET"), false)
+
+	if jwtErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		SendEvent(brokerUrls, topic, ports.Login, string(rune(http.StatusInternalServerError))+err.Error())
+		return
+	}
+
+	isProd := false
+	isProd, _ = strconv.ParseBool(os.Getenv("PRODUCTION"))
+
+	c.SetCookie("authTravel", jwt, 3600*24, "/", "localhost", isProd, true)
+	c.SetSameSite(http.SameSiteDefaultMode)
+
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }

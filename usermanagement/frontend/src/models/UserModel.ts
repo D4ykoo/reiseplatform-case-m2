@@ -36,6 +36,7 @@ export type User = {
 };
 
 export type ResetUser = {
-  oldLoginUser: LoginUser;
+  username: string;
+  email: string;
   newPassword: string;
 };

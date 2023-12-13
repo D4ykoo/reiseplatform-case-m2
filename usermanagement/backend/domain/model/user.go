@@ -44,6 +44,7 @@ type LoginUser struct {
 }
 
 type ResetUser struct {
-	OldLoginUser LoginUser
-	NewPassword  string `json:"newPassword"`
+	Username    string `json:"username"`
+	Email       string `json:"email"`
+	NewPassword string `json:"newPassword"`
 }
