@@ -56,7 +56,7 @@
             >
               <i class="fi fi-sr-pencil"></i>
             </button>
-            <EditUserModal @eventUpdateUser="reloadList()" :username="user.username" :firstname="user.firstname" :lastname="user.lastname" :email="user.email"/>
+            <EditUserModal @eventUpdateUser="reloadList()" :parent-user-i-d="user.id" :parent-username="user.username" :parent-firstname="user.firstname" :parent-lastname="user.lastname" :parent-email="user.email"/>
           </td>
         </tr>
       </tbody>

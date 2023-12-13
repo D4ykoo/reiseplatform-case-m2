@@ -1,6 +1,6 @@
 import Axios from "axios-observable";
 import { enviroment } from "@/assets/config";
-import type { User } from "@/models/UserModel";
+import type { UpdateUser, User } from "@/models/UserModel";
 import { throwError, type Observable, catchError } from "rxjs";
 import type { AxiosError, AxiosResponse } from "axios";
 
@@ -29,7 +29,7 @@ export class UserManagementService {
     );
   }
 
-  public updateUser(id: number, payload: any) {
+  public updateUser(id: number, payload: UpdateUser) {
     return Axios.put(enviroment.apiUrl + `/users/${id}`, payload).pipe(
       catchError(this.handleError)
     );

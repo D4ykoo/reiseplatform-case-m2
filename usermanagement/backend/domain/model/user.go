@@ -15,6 +15,15 @@ type User struct {
 	Password  string `json:"password"`
 }
 
+type UpdateUser struct {
+	Username    string `json:"username"`
+	Firstname   string `json:"firstname"`
+	Lastname    string `json:"lastname"`
+	Email       string `json:"email"`
+	NewPassword string `json:"newPassword"`
+	OldPassword string `json:"oldPassword"`
+}
+
 type DBUser struct {
 	gorm.Model
 	User

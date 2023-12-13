@@ -13,7 +13,7 @@
                   <span class="label-text">Username</span>
                 </div>
                 <input
-                v-model="newUsername"
+                  v-model="newUsername"
                   type="text"
                   placeholder="Username"
                   class="input input-bordered w-full max-w-xs"
@@ -24,7 +24,7 @@
                   <span class="label-text">E-Mail</span>
                 </div>
                 <input
-                v-model="newEmail"
+                  v-model="newEmail"
                   type="text"
                   placeholder="E-Mail"
                   class="input input-bordered w-full max-w-xs"
@@ -37,7 +37,7 @@
                   <span class="label-text">Firstname</span>
                 </div>
                 <input
-                v-model="newFirstname"
+                  v-model="newFirstname"
                   type="text"
                   placeholder="Firstname"
                   class="input input-bordered w-full max-w-xs"
@@ -49,7 +49,7 @@
                   <span class="label-text">Lastname</span>
                 </div>
                 <input
-                v-model="newLastname"
+                  v-model="newLastname"
                   type="text"
                   placeholder="Lastname"
                   class="input input-bordered w-full max-w-xs"
@@ -75,7 +75,7 @@
               <span class="label-text">New Password</span>
             </div>
             <input
-            v-model="newPassword"
+              v-model="newPassword"
               type="passsword"
               placeholder="New Password"
               class="input input-bordered w-full"
@@ -86,7 +86,10 @@
             <button class="btn btn-error btn-outline mt-6 w-2/5 flex ml-auto">
               Cancel
             </button>
-            <button class="btn btn-primary mt-6 flex ml-auto w-2/5 mr-auto">
+            <button
+              v-on:click="emitUpdate"
+              class="btn btn-primary mt-6 flex ml-auto w-2/5 mr-auto"
+            >
               Update
             </button>
           </div>
@@ -103,19 +106,23 @@ import { ref } from "vue";
 let userManagementService = new UserManagementService();
 export default {
   name: "EditUserModal",
+
   props: {
-    username: String,
-    firstname: String,
-    lastname: String,
-    email: String,
+    parentUsername: String,
+    parentFirstname: String,
+    parentLastname: String,
+    parentEmail: String,
+    parentUserID: Number,
   },
-  setup(props:any) {
-    const newUsername = ref(props.username || "");
-    const newFirstname = ref(props.firstname || "");
-    const newLastname = ref(props.lastname || "");
-    const newEmail = ref(props.email || "");
+
+  setup(props: any) {
+    const newUsername = ref(props.parentUsername);
+    const newFirstname = ref(props.parentFirstname);
+    const newLastname = ref(props.parentLastname);
+    const newEmail = ref(props.parentEmail);
     const oldPassword = ref("");
     const newPassword = ref("");
+    const userID = props.parentUserID;
 
     return {
       newUsername,
@@ -124,26 +131,29 @@ export default {
       newEmail,
       newPassword,
       oldPassword,
+      userID,
     };
   },
   methods: {
-    emitUpdate(id: number) {
+    emitUpdate() {
       let user: UpdateUser = {
-        requestUser: {
-          username: this.newUsername,
-          firstname: this.newFirstname,
-          lastname: this.newLastname,
-          email: this.newEmail,
-        },
+        username: this.newUsername,
+        firstname: this.newFirstname,
+        lastname: this.newLastname,
+        email: this.newEmail,
+        newPassword: this.newPassword,
         oldPassword: this.oldPassword,
       };
-
-      userManagementService.updateUser(id, user).subscribe((res: any) => {
-        if (res.status === 200) {
-          console.log("worked");
-          this.$emit("eventUpdateUser");
-        }
-      });
+      console.log(user);
+      userManagementService
+        .updateUser(this.userID, user)
+        .subscribe((res: any) => {
+          console.log(res);
+          if (res.status === 200) {
+            console.log("worked");
+            this.$emit("eventUpdateUser");
+          }
+        });
     },
   },
 };

@@ -5,6 +5,7 @@ import (
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/ports"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/utils"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -34,6 +35,7 @@ func CreateUserRequest(c *gin.Context) {
 		return
 	}
 	user.Password = utils.HashPassword(user.Password, []byte(os.Getenv("SALT")))
+	log.Print(user.Password)
 	err := CreateUser(user)
 
 	if err != nil {
@@ -47,7 +49,8 @@ func CreateUserRequest(c *gin.Context) {
 }
 
 func UpdateUserRequest(c *gin.Context) {
-	var user domain.User
+	var user domain.UpdateUser
+
 	id, errID := strconv.Atoi(c.Param("id"))
 
 	if errID != nil {
@@ -61,7 +64,28 @@ func UpdateUserRequest(c *gin.Context) {
 		return
 	}
 
-	err := UpdateUser(uint(id), user)
+	errDBU, dbUser := GetUser(uint(id))
+	if errDBU != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": errDBU.Error()})
+		SendEvent(brokerUrls, topic, ports.UserUpdate, errDBU.Error())
+		return
+	}
+	isOk := utils.ComparePasswords(dbUser.Password, user.OldPassword, []byte(os.Getenv("SALT")))
+
+	if !isOk {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": errDBU.Error()})
+		SendEvent(brokerUrls, topic, ports.UserUpdate, "invalid password")
+		return
+	}
+	newUser := domain.User{
+		Username:  user.Username,
+		Firstname: user.Firstname,
+		Lastname:  user.Lastname,
+		Email:     user.Email,
+		Password:  user.NewPassword,
+	}
+
+	err := UpdateUser(uint(id), newUser)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})

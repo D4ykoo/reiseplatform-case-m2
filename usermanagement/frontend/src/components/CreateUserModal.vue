@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { RequestUser } from "@/models/UserModel";
+import type { RegisterUser, RequestUser } from "@/models/UserModel";
 import { UserManagementService } from "@/services/UserManagementService";
 import { ref } from "vue";
 let userManagementService = new UserManagementService();
@@ -24,11 +24,12 @@ export default {
   },
   methods: {
     emitCreate() {
-      let user: RequestUser = {
+      let user: RegisterUser = {
         username: this.newUsername,
         firstname: this.newFirstname,
         lastname: this.newLastname,
         email: this.newEmail,
+        password: this.newPassword
       };
 
       userManagementService.createUser(user).subscribe((res: any) => {

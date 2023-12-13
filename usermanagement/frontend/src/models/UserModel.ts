@@ -19,7 +19,11 @@ export type LoginUser = {
 };
 
 export type UpdateUser = {
-  requestUser: RequestUser;
+  username: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+  newPassword: string
   oldPassword: string;
 };
 
