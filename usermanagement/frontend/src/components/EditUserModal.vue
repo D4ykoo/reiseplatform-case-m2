@@ -81,7 +81,6 @@
               class="input input-bordered w-full"
             />
           </label>
-
           <div class="flex flex-row">
             <button class="btn btn-error btn-outline mt-6 w-2/5 flex ml-auto">
               Cancel
@@ -96,33 +95,45 @@
         </form>
       </div>
     </div>
+    <div>
+  </div>
   </dialog>
+
 </template>
 
 <script lang="ts">
-import type { UpdateUser } from "@/models/UserModel";
+import type { UpdateUser, User } from "@/models/UserModel";
 import { UserManagementService } from "@/services/UserManagementService";
 import { ref } from "vue";
+import {useUserStore} from "@/assets/UserStore";
+import { storeToRefs } from 'pinia'
+
 let userManagementService = new UserManagementService();
+
+
 export default {
   name: "EditUserModal",
 
-  props: {
-    parentUsername: String,
-    parentFirstname: String,
-    parentLastname: String,
-    parentEmail: String,
-    parentUserID: Number,
-  },
+  setup() {
+    const store = useUserStore();
+    // let storedUser : User= store.user
 
-  setup(props: any) {
-    const newUsername = ref(props.parentUsername);
-    const newFirstname = ref(props.parentFirstname);
-    const newLastname = ref(props.parentLastname);
-    const newEmail = ref(props.parentEmail);
+    const newUsername = ref(store.receiveUser.username);
+    const newFirstname = ref(store.receiveUser.firstname);
+    const newLastname = ref(store.$state.user.lastname);
+    const newEmail = ref(store.$state.user.email);
     const oldPassword = ref("");
     const newPassword = ref("");
-    const userID = props.parentUserID;
+    const userID = ref(-1);
+
+    store.$subscribe(() => {
+      newUsername.value =  store.receiveUser.username
+      newFirstname.value =  store.receiveUser.firstname
+      newLastname.value =  store.receiveUser.lastname
+      newEmail.value =  store.receiveUser.email
+      userID.value =  store.receiveUser.id
+      console.log("update:", newUsername.value)      
+    }, {detached: true})
 
     return {
       newUsername,
@@ -132,6 +143,7 @@ export default {
       newPassword,
       oldPassword,
       userID,
+      store,
     };
   },
   methods: {
@@ -144,11 +156,9 @@ export default {
         newPassword: this.newPassword,
         oldPassword: this.oldPassword,
       };
-      console.log(user);
       userManagementService
         .updateUser(this.userID, user)
         .subscribe((res: any) => {
-          console.log(res);
           if (res.status === 200) {
             console.log("worked");
             this.$emit("eventUpdateUser");

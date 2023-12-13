@@ -51,12 +51,14 @@
           </td>
           <td class="w-3 h-3">
             <button
+            @click="updateStore(user)"
               onclick="edit_user_modal.showModal()"
               class="hover:scale-105"
             >
               <i class="fi fi-sr-pencil"></i>
             </button>
-            <EditUserModal @eventUpdateUser="reloadList()" :parent-user-i-d="user.id" :parent-username="user.username" :parent-firstname="user.firstname" :parent-lastname="user.lastname" :parent-email="user.email"/>
+            <EditUserModal @eventUpdateUser="reloadList()" :userr="user"/>
+            <div>{{user}}</div>
           </td>
         </tr>
       </tbody>
@@ -70,7 +72,8 @@ import EditUserModal from "./EditUserModal.vue";
 import { UserManagementService } from "@/services/UserManagementService";
 import type { User } from "@/models/UserModel";
 import { ref, type Ref } from "vue";
-
+import { useUserStore } from "@/assets/UserStore";
+import { textChangeRangeIsUnchanged } from "typescript";
 let userManagementService = new UserManagementService();
 
 export class Usermanagement {}
@@ -83,9 +86,11 @@ export default {
   },
   setup() {
     let users: Ref = ref([]);
+    const store = useUserStore();
 
     return {
       users,
+      store
     };
   },
   mounted() {
@@ -112,6 +117,14 @@ export default {
           });
         }
       });
+    },
+    openEditUserModal(){
+      EditUserModal.showModal()
+    },
+    updateStore(user: User){
+      console.log("update user: ", user)
+      this.store.changeUser(user)
+      console.log("store updated")
     }
   },
 };

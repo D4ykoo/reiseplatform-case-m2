@@ -34,7 +34,6 @@ export default {
 
       userManagementService.createUser(user).subscribe((res: any) => {
         if (res.status === 200) {
-          console.log("worked");
           this.$emit("eventCreateUser");
         }
       });
