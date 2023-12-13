@@ -23,6 +23,7 @@ go.work
 .idea
 .vs-code/
 .vscode/
+settings.json
 .DS_Store
 node_modules/
 /dist
