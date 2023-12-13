@@ -17,6 +17,8 @@ func RunWebServer() {
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"http://localhost:5173"}
 	config.AllowCredentials = true
+	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
+	config.AllowHeaders = []string{"Authorization", "Origin", "Content-Type", "Accept"}
 	router.Use(cors.New(config))
 
 	router.GET("/api/users", adapter.ListUserRequest)
