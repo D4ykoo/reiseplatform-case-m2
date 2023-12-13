@@ -95,21 +95,17 @@
         </form>
       </div>
     </div>
-    <div>
-  </div>
   </dialog>
-
 </template>
 
 <script lang="ts">
 import type { UpdateUser, User } from "@/models/UserModel";
 import { UserManagementService } from "@/services/UserManagementService";
 import { ref } from "vue";
-import {useUserStore} from "@/assets/UserStore";
-import { storeToRefs } from 'pinia'
+import { useUserStore } from "@/assets/UserStore";
+import AlertToasts from "./AlertToasts.vue";
 
 let userManagementService = new UserManagementService();
-
 
 export default {
   name: "EditUserModal",
@@ -126,14 +122,16 @@ export default {
     const newPassword = ref("");
     const userID = ref(-1);
 
-    store.$subscribe(() => {
-      newUsername.value =  store.receiveUser.username
-      newFirstname.value =  store.receiveUser.firstname
-      newLastname.value =  store.receiveUser.lastname
-      newEmail.value =  store.receiveUser.email
-      userID.value =  store.receiveUser.id
-      console.log("update:", newUsername.value)      
-    }, {detached: true})
+    store.$subscribe(
+      () => {
+        newUsername.value = store.receiveUser.username;
+        newFirstname.value = store.receiveUser.firstname;
+        newLastname.value = store.receiveUser.lastname;
+        newEmail.value = store.receiveUser.email;
+        userID.value = store.receiveUser.id;
+      },
+      { detached: true }
+    );
 
     return {
       newUsername,
@@ -160,8 +158,7 @@ export default {
         .updateUser(this.userID, user)
         .subscribe((res: any) => {
           if (res.status === 200) {
-            console.log("worked");
-            this.$emit("eventUpdateUser");
+            this.$emit("eventUpdateUser", true, `User ${user.username} edited`);            
           }
         });
     },

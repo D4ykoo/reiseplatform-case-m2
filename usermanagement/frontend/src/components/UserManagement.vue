@@ -57,17 +57,20 @@
             >
               <i class="fi fi-sr-pencil"></i>
             </button>
-            <EditUserModal @eventUpdateUser="reloadList()" :userr="user" />
+            <EditUserModal @eventUpdateUser="reloadList(), toastVisible, toastText" :userr="user" />
           </td>
         </tr>
       </tbody>
     </table>
   </div>
+  <!-- <AlertToast :visible="toastVisible" :info-text="toastText"/> -->
 </template>
 
 <script lang="ts">
 import CreateUserModal from "./CreateUserModal.vue";
 import EditUserModal from "./EditUserModal.vue";
+import AlertToast from "./AlertToasts.vue";
+
 import { UserManagementService } from "@/services/UserManagementService";
 import type { User } from "@/models/UserModel";
 import { ref, type Ref } from "vue";
@@ -82,13 +85,20 @@ export default {
   components: {
     CreateUserModal,
     EditUserModal,
+    // AlertToast,
   },
+
   setup() {
     let users: Ref = ref([]);
+    const toastVisible = ref(false);
+    const toastText = ref("");
+
     const store = useUserStore();
 
     return {
       users,
+      toastVisible,
+      toastText,
       store,
     };
   },
@@ -121,9 +131,7 @@ export default {
       EditUserModal.showModal();
     },
     updateStore(user: User) {
-      console.log("update user: ", user);
       this.store.changeUser(user);
-      console.log("store updated");
     },
   },
 };

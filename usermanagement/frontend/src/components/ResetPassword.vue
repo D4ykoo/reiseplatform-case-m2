@@ -76,11 +76,9 @@ export default {
         newPassword: this.newPassword,
       };
 
-      console.log(resetUser);
       loginRegisterService
         .ResetPasswordRequest(resetUser)
         .subscribe((res: any) => {
-          console.log(res);
         });
     },
     back() {

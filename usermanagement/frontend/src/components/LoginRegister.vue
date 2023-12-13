@@ -192,7 +192,6 @@ export default {
       };
 
       userManagementService.createUser(payload).subscribe((res: any) => {
-        console.log(res);
         if(res.status === 200){
           this.$router.push("/users");
         }

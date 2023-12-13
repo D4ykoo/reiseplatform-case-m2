@@ -2,17 +2,19 @@
 import type { RegisterUser, RequestUser } from "@/models/UserModel";
 import { UserManagementService } from "@/services/UserManagementService";
 import { ref } from "vue";
+import AlertToasts from "./AlertToasts.vue";
 let userManagementService = new UserManagementService();
 
 export default {
   name: "CreateUserModal",
-
   setup() {
     const newUsername = ref("");
     const newFirstname = ref("");
     const newLastname = ref("");
     const newEmail = ref("");
     const newPassword = ref("");
+    const contentMessage = ref("");
+    const isAlert = ref(false);
 
     return {
       newUsername,
@@ -20,6 +22,8 @@ export default {
       newLastname,
       newEmail,
       newPassword,
+      isAlert,
+      contentMessage,
     };
   },
   methods: {
@@ -29,11 +33,12 @@ export default {
         firstname: this.newFirstname,
         lastname: this.newLastname,
         email: this.newEmail,
-        password: this.newPassword
+        password: this.newPassword,
       };
-
       userManagementService.createUser(user).subscribe((res: any) => {
         if (res.status === 200) {
+          this.isAlert = true;
+          this.contentMessage = "User Created";
           this.$emit("eventCreateUser");
         }
       });

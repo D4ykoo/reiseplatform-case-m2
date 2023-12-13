@@ -3,16 +3,23 @@ import { enviroment } from "@/assets/config";
 import type { UpdateUser, User } from "@/models/UserModel";
 import { throwError, type Observable, catchError } from "rxjs";
 import type { AxiosError, AxiosResponse } from "axios";
+import { UtilService } from "./UtilService";
 
 export class UserManagementService {
+
+  utils = new UtilService(); 
+
   headerConf = {
     headers: {
-      Authorization: `Bearer`
-    }
+      Authorization: `Bearer `,
+    },
+    withCredentials: true 
   }
 
   public getSingleUserRequest(id: number) {
-    return Axios.get(enviroment.apiUrl + `/users/${id}`).subscribe({
+    this.headerConf.headers.Authorization = `Bearer ${this.utils.getJwtFromToken()}`
+
+    return Axios.get(enviroment.apiUrl + `/users/${id}`, this.headerConf).subscribe({
       next: (result: any) => {
         console.log(result);
         return result;
@@ -24,7 +31,9 @@ export class UserManagementService {
   }
 
   public getAllUserRequests(): Observable<AxiosResponse<any>> {
-    return Axios.get(enviroment.apiUrl + `/users`).pipe(
+    this.headerConf.headers.Authorization = `Bearer ${this.utils.getJwtFromToken()}`
+    console.log(this.headerConf);
+    return Axios.get(enviroment.apiUrl + `/users`, this.headerConf).pipe(
       catchError(this.handleError)
     );
   }

@@ -9,13 +9,10 @@ export class LoginRegisterService {
   utils = new UtilService();
 
   public LoginRequest(payload: LoginUser): Observable<AxiosResponse<any>> {
-    console.log(enviroment.apiUrl + `/login`);
-    console.log(this.utils.getJwtFromToken());
-    return Axios.post(enviroment.apiUrl + "/login", payload).pipe(catchError(this.handleError))
+    return Axios.post(enviroment.apiUrl + "/login", payload, {withCredentials: true}).pipe(catchError(this.handleError))
   }
 
   public RegisterRequest(payload: RegisterUser): Observable<AxiosResponse<any>> {
-    console.log(enviroment.apiUrl + `/login`);
     return Axios.post(enviroment.apiUrl + `/register`, payload).pipe(catchError(this.handleError))
   }
   
