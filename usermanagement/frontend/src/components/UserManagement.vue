@@ -51,14 +51,13 @@
           </td>
           <td class="w-3 h-3">
             <button
-            @click="updateStore(user)"
+              @click="updateStore(user)"
               onclick="edit_user_modal.showModal()"
               class="hover:scale-105"
             >
               <i class="fi fi-sr-pencil"></i>
             </button>
-            <EditUserModal @eventUpdateUser="reloadList()" :userr="user"/>
-            <div>{{user}}</div>
+            <EditUserModal @eventUpdateUser="reloadList()" :userr="user" />
           </td>
         </tr>
       </tbody>
@@ -73,7 +72,7 @@ import { UserManagementService } from "@/services/UserManagementService";
 import type { User } from "@/models/UserModel";
 import { ref, type Ref } from "vue";
 import { useUserStore } from "@/assets/UserStore";
-import { textChangeRangeIsUnchanged } from "typescript";
+
 let userManagementService = new UserManagementService();
 
 export class Usermanagement {}
@@ -90,7 +89,7 @@ export default {
 
     return {
       users,
-      store
+      store,
     };
   },
   mounted() {
@@ -102,7 +101,7 @@ export default {
   },
   methods: {
     reloadList() {
-      this.users.length = 0
+      this.users.length = 0;
       userManagementService.getAllUserRequests().subscribe((res: any) => {
         res.data.forEach((user: User) => {
           this.users.push(user);
@@ -118,14 +117,14 @@ export default {
         }
       });
     },
-    openEditUserModal(){
-      EditUserModal.showModal()
+    openEditUserModal() {
+      EditUserModal.showModal();
     },
-    updateStore(user: User){
-      console.log("update user: ", user)
-      this.store.changeUser(user)
-      console.log("store updated")
-    }
+    updateStore(user: User) {
+      console.log("update user: ", user);
+      this.store.changeUser(user);
+      console.log("store updated");
+    },
   },
 };
 </script>
