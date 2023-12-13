@@ -1,6 +1,6 @@
 import Axios from "axios-observable";
-import { enviroment } from "@/assets/config";
-import type { UpdateUser, User } from "@/models/UserModel";
+import { enviroment, headerConf } from "@/assets/config";
+import type { UpdateUser } from "@/models/UserModel";
 import { throwError, type Observable, catchError } from "rxjs";
 import type { AxiosError, AxiosResponse } from "axios";
 import { UtilService } from "./UtilService";
@@ -9,17 +9,10 @@ export class UserManagementService {
 
   utils = new UtilService(); 
 
-  headerConf = {
-    headers: {
-      Authorization: `Bearer `,
-    },
-    withCredentials: true 
-  }
+
 
   public getSingleUserRequest(id: number) {
-    this.headerConf.headers.Authorization = `Bearer ${this.utils.getJwtFromToken()}`
-
-    return Axios.get(enviroment.apiUrl + `/users/${id}`, this.headerConf).subscribe({
+    return Axios.get(enviroment.apiUrl + `/users/${id}`, headerConf).subscribe({
       next: (result: any) => {
         console.log(result);
         return result;
@@ -31,27 +24,25 @@ export class UserManagementService {
   }
 
   public getAllUserRequests(): Observable<AxiosResponse<any>> {
-    this.headerConf.headers.Authorization = `Bearer ${this.utils.getJwtFromToken()}`
-    console.log(this.headerConf);
-    return Axios.get(enviroment.apiUrl + `/users`, this.headerConf).pipe(
+    return Axios.get(enviroment.apiUrl + `/users`, headerConf).pipe(
       catchError(this.handleError)
     );
   }
 
   public updateUser(id: number, payload: UpdateUser) {
-    return Axios.put(enviroment.apiUrl + `/users/${id}`, payload).pipe(
+    return Axios.put(enviroment.apiUrl + `/users/${id}`, payload, headerConf).pipe(
       catchError(this.handleError)
     );
   }
 
   public deleteUser(id: number) {
-    return Axios.delete(enviroment.apiUrl + `/users/${id}`).pipe(
+    return Axios.delete(enviroment.apiUrl + `/users/${id}`, headerConf).pipe(
       catchError(this.handleError)
     );
   }
 
   public createUser(payload: any) {
-    return Axios.post(enviroment.apiUrl + `/users`, payload).pipe(
+    return Axios.post(enviroment.apiUrl + `/users`, payload, headerConf).pipe(
       catchError(this.handleError)
     );
   }
