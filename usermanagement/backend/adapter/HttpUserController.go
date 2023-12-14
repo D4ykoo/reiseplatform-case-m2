@@ -165,3 +165,17 @@ func ResetPasswordRequest(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
+
+func LogoutRequest(c *gin.Context) {
+	isProd := false
+	isProd, _ = strconv.ParseBool(os.Getenv("PRODUCTION"))
+
+	brokerUrls := []string{os.Getenv("BROKERS")}
+	topic := os.Getenv("TOPIC")
+
+	c.SetCookie("authTravel", "", -1, "/", "localhost", isProd, true)
+
+	SendEvent(brokerUrls, topic, ports.Logout, "cookie deleted")
+
+	c.JSON(http.StatusOK, gin.H{"status": "success"})
+}

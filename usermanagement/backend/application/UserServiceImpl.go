@@ -31,6 +31,7 @@ func RunWebServer() {
 	router.POST("/api/register", adapter.RegisterRequest)
 
 	router.PUT("/api/reset", adapter.ResetPasswordRequest)
+	router.GET("/api/logout", adapter.LogoutRequest)
 
 	// start server
 	err := router.Run(os.Getenv("DOMAIN"))

@@ -14,6 +14,7 @@ const (
 	Login
 	EmailNotification
 	Register
+	Logout
 )
 
 func (postEvent PostEvent) String() string {

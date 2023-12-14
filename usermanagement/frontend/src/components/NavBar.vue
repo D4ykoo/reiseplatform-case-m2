@@ -35,13 +35,31 @@
       </ul>
     </div>
     <div class="navbar-end">
-      <a class="btn">Overview</a>
+      <div class="mr-4">
+        <a class="btn">Overview</a>
+      </div>
+      <div>
+        <a class="btn" @click="logout">Logout</a>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
+import { LoginRegisterService } from '@/services/LoginRegisterService';
+
+let loginRegisterService = new LoginRegisterService();
+
 export default {
   name: "NavBar",
+  methods: {
+    logout(){
+      loginRegisterService.LogoutRequest().subscribe((res: any) => {
+        if (res.status === 200) {
+          this.$router.push("/");
+        }
+      });
+    }
+  }
 };
 </script>

@@ -17,7 +17,11 @@ export class LoginRegisterService {
   }
   
   public ResetPasswordRequest(payload: ResetUser): Observable<AxiosResponse<any>> {
-    return Axios.put(enviroment.apiUrl + `/reset`, payload).pipe(catchError(this.handleError))
+    return Axios.put(enviroment.apiUrl + `/reset`, payload, headerConf).pipe(catchError(this.handleError))
+  }
+
+  public LogoutRequest(): Observable<AxiosResponse<any>> {
+    return Axios.get(enviroment.apiUrl + `/logout`,headerConf).pipe(catchError(this.handleError))
   }
 
   private handleError(error: AxiosError){
