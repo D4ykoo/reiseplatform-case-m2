@@ -1,7 +1,8 @@
 package kafka
 
 import (
-	domain "github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/kafka/dto"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
 )
 
 // SendEvent Send kafka message of a user management event with some content
@@ -9,8 +10,10 @@ import (
 //
 // No return error since it does not matter, just a local panic
 func SendEvent(event domain.UserEvent, content string) {
-	messageString := event.String() + ": " + content
-	Publish(messageString)
+	Publish(dto.UserEventMessage{
+		UserEvent:       event,
+		OptionalContent: content,
+	})
 
 	return
 }

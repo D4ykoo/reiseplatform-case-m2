@@ -3,7 +3,7 @@ package adapter
 import (
 	"encoding/json"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/kafka"
-	domain "github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/ports/outbound"
 	"log"
 )

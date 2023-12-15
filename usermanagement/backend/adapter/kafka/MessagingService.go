@@ -1,7 +1,9 @@
 package kafka
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/kafka/dto"
 	"github.com/IBM/sarama"
 	"log"
 	"os"
@@ -31,7 +33,7 @@ func initProducer(brokerUrls []string) (sarama.SyncProducer, error) {
 	return conn, nil
 }
 
-func Publish(message string) {
+func Publish(message dto.UserEventMessage) {
 	brokerUrls := []string{os.Getenv("BROKERS")}
 	topic := os.Getenv("TOPIC")
 	producer, err := initProducer(brokerUrls)
@@ -48,9 +50,11 @@ func Publish(message string) {
 		}
 	}(producer)
 
+	marshalMsg, _ := json.Marshal(message)
+
 	msg := &sarama.ProducerMessage{
 		Topic:     topic,
-		Value:     sarama.StringEncoder(message),
+		Value:     sarama.ByteEncoder(marshalMsg),
 		Partition: -1,
 		Timestamp: time.Time{},
 	}
