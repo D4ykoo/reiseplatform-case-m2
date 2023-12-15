@@ -1,7 +1,6 @@
 package model
 
-type Tag int64
-
-const (
-	Strand = 0
-)
+type Tag struct {
+	Typ  int
+	Name string
+}

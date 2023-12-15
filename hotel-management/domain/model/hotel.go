@@ -7,4 +7,6 @@ type Hotel struct {
 	Name        string
 	Address     Address
 	Description string
+	Vendor      Vendor
+	Pictures    []Picture
 }

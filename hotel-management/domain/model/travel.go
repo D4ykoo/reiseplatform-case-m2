@@ -14,7 +14,7 @@ type Travel struct {
 	To          time.Time
 	Price       float32
 	Description string
-	Created     time.Time
-	Edited      time.Time
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 	Tags        []Tag
 }

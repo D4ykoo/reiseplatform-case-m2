@@ -10,5 +10,5 @@ type HotelRepository interface {
 	Update(model.Hotel)
 	Delete(model.Hotel) bool
 	FindByID(uuid.UUID) model.Hotel
-	Count() int64
+	Count() int
 }
