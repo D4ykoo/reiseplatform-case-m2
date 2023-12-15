@@ -1,4 +1,4 @@
-package ports
+package inbound
 
 type IUserAuthentication interface {
 	createJWT(username string, secret string, test bool) (string, error)

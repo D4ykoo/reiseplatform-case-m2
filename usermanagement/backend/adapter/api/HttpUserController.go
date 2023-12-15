@@ -6,7 +6,7 @@ import (
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/dbGorm"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/kafka"
 	model "github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
-	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/ports"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/ports/outbound"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -111,7 +111,7 @@ func ResetPasswordRequest(c *gin.Context) {
 	}
 
 	// email
-	adapter.SendEmail(ports.EmailContent{
+	adapter.SendEmail(outbound.EmailContent{
 		Header: "Password Reset Travel-Management",
 		Title:  "Your password reset",
 		From:   "mail@travel",

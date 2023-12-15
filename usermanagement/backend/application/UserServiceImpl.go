@@ -10,6 +10,35 @@ import (
 	"strconv"
 )
 
+//
+//func CreateUser(user domain.User) {
+//
+//}
+//
+//func DeleteUser() {
+//
+//}
+//
+//func FindUser() {
+//
+//}
+//
+//func ChangeUser() {
+//
+//}
+//
+//func ListAllUser() {}
+//
+//func RegisterUser() {}
+//
+//func LoginUser() {
+//
+//}
+//
+//func ResetPassword() {
+//
+//}
+
 func RunWebServer() {
 	utils.LoadFile()
 	isDebug, errBool := strconv.ParseBool(os.Getenv("DEBUG"))

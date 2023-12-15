@@ -5,7 +5,7 @@ package domain
 type UserEvent int
 
 const (
-	EventUserCreate UserEvent = iota
+	EventUserCreate UserEvent = iota + 1
 	EventUserDelete
 	EventUserUpdate
 	EventUserGet
@@ -29,7 +29,7 @@ func (userEvent UserEvent) String() string {
 		"EventEmailNotification",
 		"EventRegister",
 		"EventLogout",
-	}[userEvent+1]
+	}[userEvent-1]
 }
 
 func (userEvent UserEvent) EnumIndex() int {

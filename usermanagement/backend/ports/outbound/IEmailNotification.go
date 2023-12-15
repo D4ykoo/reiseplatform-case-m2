@@ -1,4 +1,4 @@
-package ports
+package outbound
 
 type EmailContent struct {
 	Header string `json:"header"`

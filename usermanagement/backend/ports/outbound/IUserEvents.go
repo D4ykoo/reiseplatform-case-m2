@@ -1,4 +1,4 @@
-package ports
+package outbound
 
 import domain "github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
 
