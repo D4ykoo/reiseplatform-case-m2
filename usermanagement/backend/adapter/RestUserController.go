@@ -1,6 +1,7 @@
 package adapter
 
 import (
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/dbGorm"
 	domain "github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/ports"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/utils"
@@ -47,7 +48,7 @@ func CreateUserRequest(c *gin.Context) {
 	}
 	user.Password = utils.HashPassword(user.Password, []byte(os.Getenv("SALT")))
 	log.Print(user.Password)
-	err := CreateUser(user)
+	err := dbGorm.Save(user)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -81,7 +82,7 @@ func UpdateUserRequest(c *gin.Context) {
 		return
 	}
 
-	errDBU, dbUser := GetUser(uint(id))
+	errDBU, dbUser := dbGorm.FindById(uint(id))
 	if errDBU != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": errDBU.Error()})
 		SendEvent(brokerUrls, topic, ports.UserUpdate, errDBU.Error())
@@ -102,7 +103,7 @@ func UpdateUserRequest(c *gin.Context) {
 		Password:  user.NewPassword,
 	}
 
-	err := UpdateUser(uint(id), newUser)
+	err := dbGorm.Update(uint(id), newUser)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -129,7 +130,7 @@ func DeleteUserRequest(c *gin.Context) {
 		return
 	}
 
-	err = DeleteUser(id)
+	err = dbGorm.Delete(id)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -156,7 +157,7 @@ func GetUserRequest(c *gin.Context) {
 		return
 	}
 
-	errGet, dbUser := GetUser(uint(id))
+	errGet, dbUser := dbGorm.FindById(uint(id))
 
 	if errGet != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": errGet.Error()})
@@ -183,7 +184,7 @@ func ListUserRequest(c *gin.Context) {
 		return
 	}
 
-	dbUsers, err := ListUser()
+	dbUsers, err := dbGorm.ListAll()
 	var users []domain.ResponseUser
 
 	if err != nil {

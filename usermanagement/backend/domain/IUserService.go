@@ -9,9 +9,12 @@ type (
 		UpdateUserRequest(c *gin.Context)
 		DeleteUserRequest(c *gin.Context)
 		GetUserRequest(c *gin.Context)
+		ListUserRequest(c *gin.Context)
 
 		// other HTTP requests
+		RegisterRequest(c *gin.Context)
 		LoginRequest(c *gin.Context)
+		LogOutRequest(c *gin.Context)
 		ResetPasswordRequest(c *gin.Context)
 	}
 )

@@ -1,6 +1,8 @@
 package adapter
 
 import (
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/dbGorm"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/dbGorm/entities"
 	model "github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/ports"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/utils"
@@ -20,7 +22,7 @@ func RegisterRequest(c *gin.Context) {
 	}
 	user.Password = utils.HashPassword(user.Password, []byte(os.Getenv("SALT")))
 
-	err := CreateUser(user)
+	err := dbGorm.Save(user)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -56,7 +58,7 @@ func LoginRequest(c *gin.Context) {
 		return
 	}
 
-	dbUser, err := getUserByUsername(user.Username)
+	dbUser, err := entities.getUserByUsername(user.Username)
 
 	brokerUrls := []string{os.Getenv("BROKERS")}
 	topic := os.Getenv("TOPIC")
@@ -105,7 +107,7 @@ func ResetPasswordRequest(c *gin.Context) {
 		return
 	}
 
-	dbUser, err := getUserByUsername(user.Username)
+	dbUser, err := entities.getUserByUsername(user.Username)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		SendEvent(brokerUrls, topic, ports.Login, string(rune(http.StatusNotFound))+err.Error())
@@ -138,7 +140,7 @@ func ResetPasswordRequest(c *gin.Context) {
 	updatedUser.Firstname = dbUser.Firstname
 	updatedUser.Lastname = dbUser.Lastname
 
-	errUpdate := UpdateUser(dbUser.ID, updatedUser)
+	errUpdate := dbGorm.Update(dbUser.ID, updatedUser)
 
 	if errUpdate != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

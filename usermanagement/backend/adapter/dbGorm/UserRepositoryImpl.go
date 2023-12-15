@@ -1,7 +1,8 @@
-package adapter
+package dbGorm
 
 import (
 	"fmt"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/dbGorm/entities"
 	model "github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/utils"
 	"gorm.io/driver/postgres"
@@ -31,7 +32,7 @@ func getDB() (*gorm.DB, error) {
 	}
 
 	// migrate the db model
-	errMigrate := db.AutoMigrate(&model.DBUser{})
+	errMigrate := db.AutoMigrate(&entities.UserEntity{})
 	if errMigrate != nil {
 		return nil, errMigrate
 	}
@@ -50,13 +51,17 @@ func getDB() (*gorm.DB, error) {
 	return db, nil
 }
 
-func CreateUser(user model.User) error {
+func Save(user model.User) error {
 	db, err := getDB()
 
-	dbUser := model.DBUser{
-		Model: gorm.Model{},
-		User:  user,
-		Salt:  os.Getenv("SALT"),
+	dbUser := entities.UserEntity{
+		Model:     gorm.Model{},
+		Username:  user.Username,
+		Firstname: user.Firstname,
+		Lastname:  user.Lastname,
+		Email:     user.Email,
+		Password:  user.Password,
+		Salt:      os.Getenv("SALT"),
 	}
 
 	if err != nil {
@@ -68,15 +73,15 @@ func CreateUser(user model.User) error {
 
 }
 
-// UpdateUser returns id, nil or 0 and error
-func UpdateUser(updateID uint, user model.User) error {
+// Update returns id, nil or 0 and error
+func Update(updateID uint, user model.User) error {
 	db, err := getDB()
 
 	if err != nil {
 		log.Panic("Error connecting to the database:", err)
 	}
 
-	errUser, _ := GetUser(updateID)
+	errUser, _ := FindById(updateID)
 
 	if errUser != nil {
 		return err
@@ -84,10 +89,14 @@ func UpdateUser(updateID uint, user model.User) error {
 
 	user.Password = utils.HashPassword(user.Password, []byte(os.Getenv("SALT")))
 
-	dbUser := model.DBUser{
-		Model: gorm.Model{ID: updateID},
-		User:  user,
-		Salt:  os.Getenv("SALT"),
+	dbUser := entities.UserEntity{
+		Model:     gorm.Model{ID: updateID},
+		Username:  user.Username,
+		Firstname: user.Firstname,
+		Lastname:  user.Lastname,
+		Email:     user.Email,
+		Password:  user.Password,
+		Salt:      os.Getenv("SALT"),
 	}
 
 	// updates user when id is set, otherwise save -> check for id above
@@ -99,9 +108,9 @@ func UpdateUser(updateID uint, user model.User) error {
 	return nil
 }
 
-func DeleteUser(id int) error {
+func Delete(id int) error {
 	db, err := getDB()
-	user := model.DBUser{Model: gorm.Model{ID: uint(id)}}
+	user := entities.UserEntity{Model: gorm.Model{ID: uint(id)}}
 
 	if err != nil {
 		log.Panic("Error connecting to the database:", err)
@@ -119,9 +128,9 @@ func DeleteUser(id int) error {
 	return nil
 }
 
-func getUserByUsername(username string) (*model.DBUser, error) {
+func FindByUsername(username string) (*entities.UserEntity, error) {
 	db, err := getDB()
-	var user model.DBUser
+	var user entities.UserEntity
 
 	if err != nil {
 		log.Panic("Error connecting to the database:", err)
@@ -141,9 +150,9 @@ func getUserByUsername(username string) (*model.DBUser, error) {
 	return &user, nil
 }
 
-func GetUser(id uint) (error, *model.DBUser) {
+func FindById(id uint) (error, *entities.UserEntity) {
 	db, err := getDB()
-	var user model.DBUser
+	var user entities.UserEntity
 	if err != nil {
 		log.Panic("Error connecting to the database:", err)
 	}
@@ -160,9 +169,9 @@ func GetUser(id uint) (error, *model.DBUser) {
 	return nil, &user
 }
 
-func ListUser() (*[]model.DBUser, error) {
+func ListAll() (*[]entities.UserEntity, error) {
 	db, err := getDB()
-	var user []model.DBUser
+	var user []entities.UserEntity
 
 	if err != nil {
 		log.Panic("Error connecting to the database:", err)
