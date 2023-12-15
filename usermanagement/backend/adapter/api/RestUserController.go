@@ -1,19 +1,17 @@
-package adapter
+package api
 
 import (
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/api/dto"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/dbGorm"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/kafka"
 	domain "github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
-	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/ports"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/utils"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
 )
-
-var brokerUrls = []string{os.Getenv("BROKERS")}
-var topic = os.Getenv("TOPIC")
 
 func checkCookie(c *gin.Context) error {
 	var err error
@@ -23,7 +21,7 @@ func checkCookie(c *gin.Context) error {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": cookieErr.Error()})
 	}
 
-	_, valErr, _ := ValidateJWT(cookie, os.Getenv("JWT_SECRET"))
+	_, valErr, _ := adapter.ValidateJWT(cookie, os.Getenv("JWT_SECRET"))
 
 	if valErr != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": cookieErr.Error()})
@@ -35,66 +33,78 @@ func CreateUserRequest(c *gin.Context) {
 
 	if cErr := checkCookie(c); cErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": cErr.Error()})
-		SendEvent(brokerUrls, topic, ports.UserCreate, cErr.Error())
+		kafka.SendEvent(domain.EventUserCreate, cErr.Error())
 		return
 	}
 
-	var user domain.User
+	var user dto.CreateUserRequest
 
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		SendEvent(brokerUrls, topic, ports.UserCreate, err.Error())
+		kafka.SendEvent(domain.EventUserCreate, err.Error())
 		return
 	}
+
 	user.Password = utils.HashPassword(user.Password, []byte(os.Getenv("SALT")))
-	log.Print(user.Password)
-	err := dbGorm.Save(user)
+
+	saveUser := domain.User{
+		//Id:        "",
+		Username:  user.Username,
+		Firstname: user.Firstname,
+		Lastname:  user.Lastname,
+		Email:     user.Email,
+		Password:  user.Password,
+	}
+
+	err := dbGorm.Save(saveUser)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		SendEvent(brokerUrls, topic, ports.UserCreate, err.Error())
+		kafka.SendEvent(domain.EventUserCreate, err.Error())
 		return
 	}
 
-	SendEvent(brokerUrls, topic, ports.UserCreate, user.Username)
+	kafka.SendEvent(domain.EventUserCreate, err.Error())
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
 func UpdateUserRequest(c *gin.Context) {
 	if cErr := checkCookie(c); cErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": cErr.Error()})
-		SendEvent(brokerUrls, topic, ports.UserUpdate, cErr.Error())
+		kafka.SendEvent(domain.EventUserUpdate, cErr.Error())
 		return
 	}
 
-	var user domain.UpdateUser
+	var user dto.UpdateUserRequest
 
 	id, errID := strconv.Atoi(c.Param("id"))
 
 	if errID != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": errID.Error()})
-		SendEvent(brokerUrls, topic, ports.UserUpdate, errID.Error())
+		kafka.SendEvent(domain.EventUserUpdate, errID.Error())
 		return
 	}
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		SendEvent(brokerUrls, topic, ports.UserUpdate, err.Error())
+		kafka.SendEvent(domain.EventUserUpdate, err.Error())
 		return
 	}
 
 	errDBU, dbUser := dbGorm.FindById(uint(id))
 	if errDBU != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": errDBU.Error()})
-		SendEvent(brokerUrls, topic, ports.UserUpdate, errDBU.Error())
+		kafka.SendEvent(domain.EventUserUpdate, errDBU.Error())
 		return
 	}
 	isOk := utils.ComparePasswords(dbUser.Password, user.OldPassword, []byte(os.Getenv("SALT")))
 
 	if !isOk {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": errDBU.Error()})
-		SendEvent(brokerUrls, topic, ports.UserUpdate, "invalid password")
+		kafka.SendEvent(domain.EventUserUpdate, "invalid password")
 		return
 	}
+
+	// TODO: is that allowed in hexagonal architecture?
 	newUser := domain.User{
 		Username:  user.Username,
 		Firstname: user.Firstname,
@@ -107,18 +117,18 @@ func UpdateUserRequest(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		SendEvent(brokerUrls, topic, ports.UserUpdate, err.Error())
+		kafka.SendEvent(domain.EventUserUpdate, err.Error())
 		return
 	}
 
-	SendEvent(brokerUrls, topic, ports.UserUpdate, user.Username)
+	kafka.SendEvent(domain.EventUserUpdate, user.Username)
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
 func DeleteUserRequest(c *gin.Context) {
 	if cErr := checkCookie(c); cErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": cErr.Error()})
-		SendEvent(brokerUrls, topic, ports.UserDelete, cErr.Error())
+		kafka.SendEvent(domain.EventUserDelete, cErr.Error())
 		return
 	}
 
@@ -126,7 +136,7 @@ func DeleteUserRequest(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		SendEvent(brokerUrls, topic, ports.UserDelete, err.Error())
+		kafka.SendEvent(domain.EventUserDelete, err.Error())
 		return
 	}
 
@@ -134,18 +144,18 @@ func DeleteUserRequest(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		SendEvent(brokerUrls, topic, ports.UserDelete, err.Error())
+		kafka.SendEvent(domain.EventUserDelete, err.Error())
 		return
 	}
 
-	SendEvent(brokerUrls, topic, ports.UserDelete, strconv.Itoa(id))
+	kafka.SendEvent(domain.EventUserDelete, err.Error())
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
 func GetUserRequest(c *gin.Context) {
 	if cErr := checkCookie(c); cErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": cErr.Error()})
-		SendEvent(brokerUrls, topic, ports.UserGet, cErr.Error())
+		kafka.SendEvent(domain.EventUserGet, cErr.Error())
 		return
 	}
 
@@ -153,7 +163,7 @@ func GetUserRequest(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		SendEvent(brokerUrls, topic, ports.UserGet, err.Error())
+		kafka.SendEvent(domain.EventUserGet, err.Error())
 		return
 	}
 
@@ -161,11 +171,11 @@ func GetUserRequest(c *gin.Context) {
 
 	if errGet != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": errGet.Error()})
-		SendEvent(brokerUrls, topic, ports.UserGet, errGet.Error())
+		kafka.SendEvent(domain.EventUserGet, errGet.Error())
 		return
 	}
 
-	user := domain.ResponseUser{
+	user := dto.UserResponse{
 		ID:        dbUser.ID,
 		Username:  dbUser.Username,
 		Firstname: dbUser.Firstname,
@@ -180,21 +190,21 @@ func ListUserRequest(c *gin.Context) {
 
 	if cErr := checkCookie(c); cErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": cErr.Error()})
-		SendEvent(brokerUrls, topic, ports.UserGet, cErr.Error())
+		kafka.SendEvent(domain.EventUserGet, cErr.Error())
 		return
 	}
 
 	dbUsers, err := dbGorm.ListAll()
-	var users []domain.ResponseUser
+	var users []dto.UserResponse
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		SendEvent(brokerUrls, topic, ports.UserGet, err.Error())
+		kafka.SendEvent(domain.EventUserGet, err.Error())
 		return
 	}
 
 	for _, dbUser := range *dbUsers {
-		user := domain.ResponseUser{
+		user := dto.UserResponse{
 			ID:        dbUser.ID,
 			Username:  dbUser.Username,
 			Firstname: dbUser.Firstname,

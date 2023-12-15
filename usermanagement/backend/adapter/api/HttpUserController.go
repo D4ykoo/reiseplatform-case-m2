@@ -1,8 +1,10 @@
-package adapter
+package api
 
 import (
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/api/dto"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/dbGorm"
-	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/dbGorm/entities"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/kafka"
 	model "github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/ports"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/utils"
@@ -17,7 +19,7 @@ func RegisterRequest(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		SendEvent(brokerUrls, topic, ports.UserCreate, err.Error())
+		kafka.SendEvent(model.EventRegister, err.Error())
 		return
 	}
 	user.Password = utils.HashPassword(user.Password, []byte(os.Getenv("SALT")))
@@ -26,20 +28,20 @@ func RegisterRequest(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		SendEvent(brokerUrls, topic, ports.Register, err.Error())
+		kafka.SendEvent(model.EventRegister, err.Error())
 		return
 	}
 
-	SendEvent(brokerUrls, topic, ports.Register, user.Username)
+	kafka.SendEvent(model.EventRegister, user.Username)
 
 	isProd := false
 	isProd, _ = strconv.ParseBool(os.Getenv("PRODUCTION"))
 
-	jwt, jwtErr := CreateJWT(user.Username, os.Getenv("JWT_SECRET"), false)
+	jwt, jwtErr := adapter.CreateJWT(user.Username, os.Getenv("JWT_SECRET"), false)
 
 	if jwtErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		SendEvent(brokerUrls, topic, ports.Login, string(rune(http.StatusInternalServerError))+err.Error())
+		kafka.SendEvent(model.EventRegister, string(rune(http.StatusInternalServerError))+err.Error())
 		return
 	}
 
@@ -50,21 +52,18 @@ func RegisterRequest(c *gin.Context) {
 }
 
 func LoginRequest(c *gin.Context) {
-	println("sasdfadsfsd")
-	var user model.LoginUser
+	var user dto.LoginRequest
 	// check if credentials are valid
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	dbUser, err := entities.getUserByUsername(user.Username)
+	dbUser, err := dbGorm.FindByUsername(user.Username)
 
-	brokerUrls := []string{os.Getenv("BROKERS")}
-	topic := os.Getenv("TOPIC")
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		SendEvent(brokerUrls, topic, ports.Login, string(rune(http.StatusNotFound))+err.Error())
+		kafka.SendEvent(model.EventLogin, string(rune(http.StatusNotFound))+err.Error())
 		return
 	}
 
@@ -73,17 +72,17 @@ func LoginRequest(c *gin.Context) {
 	isOk := utils.ComparePasswords(dbUser.Password, user.Password, salt)
 
 	if !isOk {
-		SendEvent(brokerUrls, topic, ports.Login, string(rune(http.StatusUnauthorized))+err.Error())
+		kafka.SendEvent(model.EventLogin, string(rune(http.StatusUnauthorized))+err.Error())
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
 	// if valid create jwt
-	jwt, jwtErr := CreateJWT(user.Username, os.Getenv("JWT_SECRET"), false)
+	jwt, jwtErr := adapter.CreateJWT(user.Username, os.Getenv("JWT_SECRET"), false)
 
 	if jwtErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		SendEvent(brokerUrls, topic, ports.Login, string(rune(http.StatusInternalServerError))+err.Error())
+		kafka.SendEvent(model.EventLogin, string(rune(http.StatusInternalServerError))+err.Error())
 		return
 	}
 
@@ -97,25 +96,22 @@ func LoginRequest(c *gin.Context) {
 }
 
 func ResetPasswordRequest(c *gin.Context) {
-	brokerUrls := []string{os.Getenv("BROKERS")}
-	topic := os.Getenv("TOPIC")
-
 	// search user with pw
-	var user model.ResetUser
+	var user dto.ResetPasswordRequest
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	dbUser, err := entities.getUserByUsername(user.Username)
+	dbUser, err := dbGorm.FindByUsername(user.Username)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		SendEvent(brokerUrls, topic, ports.Login, string(rune(http.StatusNotFound))+err.Error())
+		kafka.SendEvent(model.EventPasswordReset, string(rune(http.StatusNotFound))+err.Error())
 		return
 	}
 
 	// email
-	SendEmail(ports.EmailContent{
+	adapter.SendEmail(ports.EmailContent{
 		Header: "Password Reset Travel-Management",
 		Title:  "Your password reset",
 		From:   "mail@travel",
@@ -144,18 +140,18 @@ func ResetPasswordRequest(c *gin.Context) {
 
 	if errUpdate != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		SendEvent(brokerUrls, topic, ports.Login, string(rune(http.StatusInternalServerError))+err.Error())
+		kafka.SendEvent(model.EventPasswordReset, string(rune(http.StatusInternalServerError))+err.Error())
 		return
 	}
 
-	SendEvent(brokerUrls, topic, ports.Login, "user "+updatedUser.Username+"password reset")
+	kafka.SendEvent(model.EventPasswordReset, "user "+updatedUser.Username+"password reset")
 
 	// if valid create jwt
-	jwt, jwtErr := CreateJWT(user.Username, os.Getenv("JWT_SECRET"), false)
+	jwt, jwtErr := adapter.CreateJWT(user.Username, os.Getenv("JWT_SECRET"), false)
 
 	if jwtErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		SendEvent(brokerUrls, topic, ports.Login, string(rune(http.StatusInternalServerError))+err.Error())
+		kafka.SendEvent(model.EventPasswordReset, string(rune(http.StatusInternalServerError))+err.Error())
 		return
 	}
 
@@ -172,12 +168,9 @@ func LogoutRequest(c *gin.Context) {
 	isProd := false
 	isProd, _ = strconv.ParseBool(os.Getenv("PRODUCTION"))
 
-	brokerUrls := []string{os.Getenv("BROKERS")}
-	topic := os.Getenv("TOPIC")
-
 	c.SetCookie("authTravel", "", -1, "/", "localhost", isProd, true)
 
-	SendEvent(brokerUrls, topic, ports.Logout, "cookie deleted")
+	kafka.SendEvent(model.EventLogout, "cookie deleted")
 
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }

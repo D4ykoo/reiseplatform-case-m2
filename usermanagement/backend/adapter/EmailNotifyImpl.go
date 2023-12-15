@@ -2,6 +2,7 @@ package adapter
 
 import (
 	"encoding/json"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/kafka"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/ports"
 	"log"
 )
@@ -18,5 +19,5 @@ func SendEmail(content ports.EmailContent) {
 		return
 	}
 
-	SendEvent(brokers, topic, ports.EmailNotification, string(parsedContent))
+	kafka.SendEvent(brokers, topic, ports.EmailNotification, string(parsedContent))
 }
