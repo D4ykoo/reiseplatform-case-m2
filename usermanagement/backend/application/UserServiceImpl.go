@@ -1,80 +1,63 @@
 package application
 
 import (
-	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/api"
+	"errors"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/dbGorm"
+	model "github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/utils"
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
-	"log"
 	"os"
-	"strconv"
 )
 
-//
-//func CreateUser(user domain.User) {
-//
-//}
-//
-//func DeleteUser() {
-//
-//}
-//
-//func FindUser() {
-//
-//}
-//
-//func ChangeUser() {
-//
-//}
-//
-//func ListAllUser() {}
-//
-//func RegisterUser() {}
-//
-//func LoginUser() {
-//
-//}
-//
-//func ResetPassword() {
-//
-//}
+func CreateUser(user model.User) error {
+	user.Password = utils.HashPassword(user.Password, []byte(os.Getenv("SALT")))
 
-func RunWebServer() {
-	utils.LoadFile()
-	isDebug, errBool := strconv.ParseBool(os.Getenv("DEBUG"))
+	err := dbGorm.Save(user)
 
-	if errBool != nil {
-		log.Fatal(errBool, "Try to change the DEBUG field in the .env file")
-	}
-
-	if !isDebug {
-		gin.SetMode(gin.ReleaseMode)
-	}
-
-	router := gin.Default()
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{os.Getenv("DOMAIN")}
-	config.AllowCredentials = true
-	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
-	config.AllowHeaders = []string{"Authorization", "Origin", "Content-Type", "Accept"}
-	router.Use(cors.New(config))
-
-	router.GET("/api/users", api.ListUserRequest)
-	router.GET("/api/users/:id", api.GetUserRequest)
-	router.POST("/api/users", api.CreateUserRequest)
-	router.PUT("/api/users/:id", api.UpdateUserRequest)
-	router.DELETE("/api/users/:id", api.DeleteUserRequest)
-
-	router.POST("/api/login", api.LoginRequest)
-	router.POST("/api/register", api.RegisterRequest)
-
-	router.PUT("/api/reset", api.ResetPasswordRequest)
-	router.GET("/api/logout", api.LogoutRequest)
-
-	// start server
-	err := router.Run(os.Getenv("API_URL"))
 	if err != nil {
-		log.Fatal(err)
-		return
+		return err
 	}
+	return nil
+}
+
+func DeleteUser() {
+
+}
+
+func FindUser() {
+
+}
+
+func ChangeUser(id uint, user model.User, oldPassword string) error {
+	// check if user with id exists
+	dbUser, errDBU := dbGorm.FindById(id)
+
+	if errDBU != nil {
+		return errDBU
+	}
+
+	// check if password is the ok
+	isOk := utils.ComparePasswords(dbUser.Password, oldPassword, []byte(os.Getenv("SALT")))
+	if !isOk {
+		return errors.New("falsePassword")
+	}
+
+	// update user
+	err := dbGorm.Update(id, user)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func ListAllUser() {}
+
+func RegisterUser() {}
+
+func LoginUser() {
+
+}
+
+func ResetPassword() {
+
 }

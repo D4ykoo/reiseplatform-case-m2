@@ -1,12 +1,13 @@
 package api
 
 import (
+	"errors"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/api/dto"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/dbGorm"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/kafka"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/application"
 	model "github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
-	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
@@ -52,8 +53,6 @@ func CreateUserRequest(c *gin.Context) {
 		return
 	}
 
-	user.Password = utils.HashPassword(user.Password, []byte(os.Getenv("SALT")))
-
 	saveUser := model.User{
 		//Id:        "",
 		Username:  user.Username,
@@ -63,11 +62,11 @@ func CreateUserRequest(c *gin.Context) {
 		Password:  user.Password,
 	}
 
-	err := dbGorm.Save(saveUser)
+	err := application.CreateUser(saveUser)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		kafka.SendEvent(model.EventUserCreate, err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -91,28 +90,14 @@ func UpdateUserRequest(c *gin.Context) {
 		kafka.SendEvent(model.EventUserUpdate, errID.Error())
 		return
 	}
+
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		kafka.SendEvent(model.EventUserUpdate, err.Error())
 		return
 	}
 
-	errDBU, dbUser := dbGorm.FindById(uint(id))
-	if errDBU != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": errDBU.Error()})
-		kafka.SendEvent(model.EventUserUpdate, errDBU.Error())
-		return
-	}
-	isOk := utils.ComparePasswords(dbUser.Password, user.OldPassword, []byte(os.Getenv("SALT")))
-
-	if !isOk {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": errDBU.Error()})
-		kafka.SendEvent(model.EventUserUpdate, "invalid password")
-		return
-	}
-
-	// TODO: is that allowed in hexagonal architecture?
-	newUser := model.User{
+	updateUser := model.User{
 		Username:  user.Username,
 		Firstname: user.Firstname,
 		Lastname:  user.Lastname,
@@ -120,7 +105,22 @@ func UpdateUserRequest(c *gin.Context) {
 		Password:  user.NewPassword,
 	}
 
-	err := dbGorm.Update(uint(id), newUser)
+	//errDBU, dbUser := dbGorm.FindById(uint(id))
+	err := application.ChangeUser(uint(id), updateUser, user.OldPassword)
+
+	if err != nil {
+		if !errors.Is(err, errors.New("falsePassword")) {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			kafka.SendEvent(model.EventUserUpdate, err.Error())
+			return
+		} else {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": err})
+			kafka.SendEvent(model.EventUserUpdate, "invalid password")
+			return
+		}
+	}
+
+	// TODO: is that allowed in hexagonal architecture?
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})

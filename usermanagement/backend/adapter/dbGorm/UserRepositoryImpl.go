@@ -12,7 +12,8 @@ import (
 	"time"
 )
 
-// getDB returns a database connection from a configured database pool
+// getDB returns a database connection from a configured database pool.
+// TODO: May need to be in the interface
 func getDB() (*gorm.DB, error) {
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s",
@@ -150,7 +151,7 @@ func FindByUsername(username string) (*entities.UserEntity, error) {
 	return &user, nil
 }
 
-func FindById(id uint) (error, *entities.UserEntity) {
+func FindById(id uint) (*entities.UserEntity, error) {
 	db, err := getDB()
 	var user entities.UserEntity
 	if err != nil {
@@ -159,14 +160,14 @@ func FindById(id uint) (error, *entities.UserEntity) {
 	result := db.First(&user, "id = ?", id)
 
 	if result.Error != nil {
-		return result.Error, nil
+		return nil, result.Error
 	}
 
 	if result.RowsAffected < 1 {
-		return result.Error, nil
+		return nil, result.Error
 	}
 
-	return nil, &user
+	return &user, nil
 }
 
 func ListAll() (*[]entities.UserEntity, error) {

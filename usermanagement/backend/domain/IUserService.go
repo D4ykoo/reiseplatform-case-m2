@@ -1,12 +1,15 @@
 package domain
 
-import "github.com/gin-gonic/gin"
+import (
+	model "github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
+	"github.com/gin-gonic/gin"
+)
 
 type (
 	IUserService interface {
-		// CRUD REST operations
-		CreateUserRequest(c *gin.Context)
-		UpdateUserRequest(c *gin.Context)
+		CreateUser(user model.User) error
+		ChangeUser(id uint, user model.User, oldPassword string) error
+
 		DeleteUserRequest(c *gin.Context)
 		GetUserRequest(c *gin.Context)
 		ListUserRequest(c *gin.Context)
