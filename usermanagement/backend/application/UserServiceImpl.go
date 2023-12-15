@@ -6,14 +6,23 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"os"
+	"strconv"
 )
 import "github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter"
 
 func RunWebServer() {
 	utils.LoadFile()
+	isDebug, errBool := strconv.ParseBool(os.Getenv("DEBUG"))
+
+	if errBool != nil {
+		log.Fatal(errBool, "Try to change the DEBUG field in the .env file")
+	}
+
+	if !isDebug {
+		gin.SetMode(gin.ReleaseMode)
+	}
 
 	router := gin.Default()
-
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"http://localhost:5173"}
 	config.AllowCredentials = true
