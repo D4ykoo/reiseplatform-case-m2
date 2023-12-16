@@ -6,7 +6,13 @@
 ## How to run - bare metal
 
 ### Configuration
-All the configuration is done in the .env of the file. See comments for some additional information.
+All the configuration for the backend is done in the .env of the file. See comments for some additional information.
+
+The `apiURL` in the frontend:
+```bash
+frontend/src/assets/config.ts
+```
+must match with the config for the `API_URL` line, located in the .env file.
 
 ### Backend
 #### Development
@@ -75,3 +81,10 @@ The following represents a quick and small overview about the microservice struc
   * Username included 
   * -> extract JWT via browser dev tools and paste into [https://jwt.io/](https://jwt.io/)
   * Different users have different usernames
+
+## Future Work
+* Add UUIDs for db scheme
+* Make username and email unique in DB
+* Make use of .env file in the frontend
+* Reset password link generation
+* SMTP for email 
