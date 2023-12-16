@@ -29,9 +29,13 @@ func ChangeUser(id uint, user model.User, oldPassword string) error {
 	}
 
 	// check if password is the ok
-	isOk := utils.ComparePasswords(dbUser.Password, oldPassword, []byte(os.Getenv("SALT")))
-	if !isOk {
-		return errors.New("falsePassword")
+	//isOk := utils.ComparePasswords(dbUser.Password, oldPassword, []byte(os.Getenv("SALT")))
+	//if !isOk {
+	//	return errors.New("falsePassword")
+	//}
+
+	if user.Password == "" {
+		user.Password = dbUser.Password
 	}
 
 	// update user

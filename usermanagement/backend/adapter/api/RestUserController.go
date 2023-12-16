@@ -69,7 +69,7 @@ func CreateUserRequest(c *gin.Context) {
 		return
 	}
 
-	kafka.SendEvent(model.EventUserCreate, err.Error())
+	kafka.SendEvent(model.EventUserCreate, "")
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
@@ -97,6 +97,7 @@ func UpdateUserRequest(c *gin.Context) {
 	}
 
 	updateUser := model.User{
+		Id:        uint(id),
 		Username:  user.Username,
 		Firstname: user.Firstname,
 		Lastname:  user.Lastname,
@@ -152,7 +153,7 @@ func DeleteUserRequest(c *gin.Context) {
 		return
 	}
 
-	kafka.SendEvent(model.EventUserDelete, err.Error())
+	kafka.SendEvent(model.EventUserDelete, "")
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
@@ -187,6 +188,7 @@ func GetUserRequest(c *gin.Context) {
 		Email:     dbUser.Email,
 	}
 
+	kafka.SendEvent(model.EventUserGet, "")
 	c.JSON(http.StatusOK, user)
 }
 
@@ -199,7 +201,7 @@ func ListUserRequest(c *gin.Context) {
 	}
 
 	dbUsers, err := application.ListAllUser()
-	
+
 	var users []dto.UserResponse
 
 	if err != nil {
@@ -219,5 +221,6 @@ func ListUserRequest(c *gin.Context) {
 		users = append(users, user)
 	}
 
+	kafka.SendEvent(model.EventUserGet, "list all")
 	c.JSON(http.StatusOK, users)
 }

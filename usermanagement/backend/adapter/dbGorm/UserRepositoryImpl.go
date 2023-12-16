@@ -82,13 +82,15 @@ func Update(updateID uint, user model.User) error {
 		log.Panic("Error connecting to the database:", err)
 	}
 
-	errUser, _ := FindById(updateID)
+	userById, errUser := FindById(updateID)
 
 	if errUser != nil {
 		return err
 	}
 
-	user.Password = utils.HashPassword(user.Password, []byte(os.Getenv("SALT")))
+	if userById.Password != user.Password {
+		user.Password = utils.HashPassword(user.Password, []byte(os.Getenv("SALT")))
+	}
 
 	dbUser := entities.UserEntity{
 		Model:     gorm.Model{ID: updateID},
