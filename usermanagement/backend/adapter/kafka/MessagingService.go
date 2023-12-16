@@ -1,11 +1,14 @@
-package adapter
+package kafka
 
 import (
-	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/ports"
+	"encoding/json"
+	"fmt"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/kafka/dto"
+	"github.com/IBM/sarama"
 	"log"
+	"os"
 	"time"
 )
-import "github.com/IBM/sarama"
 
 // initProducer Instantiates a SyncProducer
 //
@@ -30,11 +33,9 @@ func initProducer(brokerUrls []string) (sarama.SyncProducer, error) {
 	return conn, nil
 }
 
-// SendEvent Send kafka message of a user management event with some content
-// Sarama package is used. Fast and efficient IBM kafka library.
-//
-// No return error since it does not matter, just a local panic
-func SendEvent(brokerUrls []string, topic string, event ports.PostEvent, content string) {
+func Publish(message dto.UserEventMessage) {
+	brokerUrls := []string{os.Getenv("BROKERS")}
+	topic := os.Getenv("TOPIC")
 	producer, err := initProducer(brokerUrls)
 
 	if err != nil {
@@ -49,15 +50,11 @@ func SendEvent(brokerUrls []string, topic string, event ports.PostEvent, content
 		}
 	}(producer)
 
-	messageString := event.String() + ": " + content
+	marshalMsg, _ := json.Marshal(message)
 
 	msg := &sarama.ProducerMessage{
-		Topic: topic,
-		// Key: nil,
-		Value: sarama.StringEncoder(messageString),
-		// Headers:   nil,
-		// Metadata:  nil,
-		// Offset:    0,
+		Topic:     topic,
+		Value:     sarama.ByteEncoder(marshalMsg),
 		Partition: -1,
 		Timestamp: time.Time{},
 	}
@@ -65,9 +62,7 @@ func SendEvent(brokerUrls []string, topic string, event ports.PostEvent, content
 	_, _, errSend := producer.SendMessage(msg)
 
 	if err != nil {
-		log.Print("Can not push message: " + errSend.Error())
+		fmt.Printf("Can not push message: %s\n", errSend.Error())
 		return
 	}
-
-	return
 }

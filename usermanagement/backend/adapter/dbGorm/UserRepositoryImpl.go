@@ -1,7 +1,8 @@
-package adapter
+package dbGorm
 
 import (
 	"fmt"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/dbGorm/entities"
 	model "github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/utils"
 	"gorm.io/driver/postgres"
@@ -11,7 +12,8 @@ import (
 	"time"
 )
 
-// getDB returns a database connection from a configured database pool
+// getDB returns a database connection from a configured database pool.
+// TODO: May need to be in the interface
 func getDB() (*gorm.DB, error) {
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s",
@@ -31,7 +33,7 @@ func getDB() (*gorm.DB, error) {
 	}
 
 	// migrate the db model
-	errMigrate := db.AutoMigrate(&model.DBUser{})
+	errMigrate := db.AutoMigrate(&entities.UserEntity{})
 	if errMigrate != nil {
 		return nil, errMigrate
 	}
@@ -50,13 +52,17 @@ func getDB() (*gorm.DB, error) {
 	return db, nil
 }
 
-func CreateUser(user model.User) error {
+func Save(user model.User) error {
 	db, err := getDB()
 
-	dbUser := model.DBUser{
-		Model: gorm.Model{},
-		User:  user,
-		Salt:  os.Getenv("SALT"),
+	dbUser := entities.UserEntity{
+		Model:     gorm.Model{},
+		Username:  user.Username,
+		Firstname: user.Firstname,
+		Lastname:  user.Lastname,
+		Email:     user.Email,
+		Password:  user.Password,
+		Salt:      os.Getenv("SALT"),
 	}
 
 	if err != nil {
@@ -68,26 +74,32 @@ func CreateUser(user model.User) error {
 
 }
 
-// UpdateUser returns id, nil or 0 and error
-func UpdateUser(updateID uint, user model.User) error {
+// Update returns id, nil or 0 and error
+func Update(updateID uint, user model.User) error {
 	db, err := getDB()
 
 	if err != nil {
 		log.Panic("Error connecting to the database:", err)
 	}
 
-	errUser, _ := GetUser(updateID)
+	userById, errUser := FindById(updateID)
 
 	if errUser != nil {
 		return err
 	}
 
-	user.Password = utils.HashPassword(user.Password, []byte(os.Getenv("SALT")))
+	if userById.Password != user.Password {
+		user.Password = utils.HashPassword(user.Password, []byte(os.Getenv("SALT")))
+	}
 
-	dbUser := model.DBUser{
-		Model: gorm.Model{ID: updateID},
-		User:  user,
-		Salt:  os.Getenv("SALT"),
+	dbUser := entities.UserEntity{
+		Model:     gorm.Model{ID: updateID},
+		Username:  user.Username,
+		Firstname: user.Firstname,
+		Lastname:  user.Lastname,
+		Email:     user.Email,
+		Password:  user.Password,
+		Salt:      os.Getenv("SALT"),
 	}
 
 	// updates user when id is set, otherwise save -> check for id above
@@ -99,9 +111,9 @@ func UpdateUser(updateID uint, user model.User) error {
 	return nil
 }
 
-func DeleteUser(id int) error {
+func Delete(id int) error {
 	db, err := getDB()
-	user := model.DBUser{Model: gorm.Model{ID: uint(id)}}
+	user := entities.UserEntity{Model: gorm.Model{ID: uint(id)}}
 
 	if err != nil {
 		log.Panic("Error connecting to the database:", err)
@@ -119,9 +131,10 @@ func DeleteUser(id int) error {
 	return nil
 }
 
-func getUserByUsername(username string) (*model.DBUser, error) {
+func FindByUsername(username string) (*model.User, error) {
 	db, err := getDB()
-	var user model.DBUser
+	var user entities.UserEntity
+	var retUser model.User
 
 	if err != nil {
 		log.Panic("Error connecting to the database:", err)
@@ -138,31 +151,39 @@ func getUserByUsername(username string) (*model.DBUser, error) {
 		return nil, result.Error
 	}
 
-	return &user, nil
+	retUser = user.ToUser()
+
+	return &retUser, nil
 }
 
-func GetUser(id uint) (error, *model.DBUser) {
+func FindById(id uint) (*model.User, error) {
 	db, err := getDB()
-	var user model.DBUser
+
+	var user entities.UserEntity
+	var retUser model.User
+
 	if err != nil {
 		log.Panic("Error connecting to the database:", err)
 	}
 	result := db.First(&user, "id = ?", id)
 
 	if result.Error != nil {
-		return result.Error, nil
+		return nil, result.Error
 	}
 
 	if result.RowsAffected < 1 {
-		return result.Error, nil
+		return nil, result.Error
 	}
 
-	return nil, &user
+	retUser = user.ToUser()
+
+	return &retUser, nil
 }
 
-func ListUser() (*[]model.DBUser, error) {
+func ListAll() (*[]model.User, error) {
 	db, err := getDB()
-	var user []model.DBUser
+	var user []entities.UserEntity
+	var retUser []model.User
 
 	if err != nil {
 		log.Panic("Error connecting to the database:", err)
@@ -175,5 +196,9 @@ func ListUser() (*[]model.DBUser, error) {
 		return nil, result.Error
 	}
 
-	return &user, nil
+	for _, elem := range user {
+		retUser = append(retUser, elem.ToUser())
+	}
+
+	return &retUser, nil
 }

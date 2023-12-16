@@ -1,51 +1,140 @@
 package application
 
 import (
+	"errors"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/dbGorm"
+	model "github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/utils"
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
-	"log"
 	"os"
-	"strconv"
+	"reflect"
 )
-import "github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter"
 
-func RunWebServer() {
-	utils.LoadFile()
-	isDebug, errBool := strconv.ParseBool(os.Getenv("DEBUG"))
+func CreateUser(user model.User) error {
+	user.Password = utils.HashPassword(user.Password, []byte(os.Getenv("SALT")))
 
-	if errBool != nil {
-		log.Fatal(errBool, "Try to change the DEBUG field in the .env file")
-	}
+	err := dbGorm.Save(user)
 
-	if !isDebug {
-		gin.SetMode(gin.ReleaseMode)
-	}
-
-	router := gin.Default()
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:5173"}
-	config.AllowCredentials = true
-	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
-	config.AllowHeaders = []string{"Authorization", "Origin", "Content-Type", "Accept"}
-	router.Use(cors.New(config))
-
-	router.GET("/api/users", adapter.ListUserRequest)
-	router.GET("/api/users/:id", adapter.GetUserRequest)
-	router.POST("/api/users", adapter.CreateUserRequest)
-	router.PUT("/api/users/:id", adapter.UpdateUserRequest)
-	router.DELETE("/api/users/:id", adapter.DeleteUserRequest)
-
-	router.POST("/api/login", adapter.LoginRequest)
-	router.POST("/api/register", adapter.RegisterRequest)
-
-	router.PUT("/api/reset", adapter.ResetPasswordRequest)
-	router.GET("/api/logout", adapter.LogoutRequest)
-
-	// start server
-	err := router.Run(os.Getenv("DOMAIN"))
 	if err != nil {
-		log.Fatal(err)
-		return
+		return err
 	}
+	return nil
+}
+
+func ChangeUser(id uint, user model.User, oldPassword string) error {
+	// check if user with id exists
+	dbUser, errDBU := dbGorm.FindById(id)
+
+	if errDBU != nil {
+		return errDBU
+	}
+
+	// check if password is the ok
+	//isOk := utils.ComparePasswords(dbUser.Password, oldPassword, []byte(os.Getenv("SALT")))
+	//if !isOk {
+	//	return errors.New("falsePassword")
+	//}
+
+	if user.Password == "" {
+		user.Password = dbUser.Password
+	}
+
+	// update user
+	err := dbGorm.Update(id, user)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func DeleteUser(id int) error {
+	err := dbGorm.Delete(id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func FindUser(identifier interface{}) (*model.User, error) {
+	switch identifier.(type) {
+	case int:
+		id := reflect.ValueOf(identifier).Int()
+		user, err := dbGorm.FindById(uint(id))
+
+		if err != nil {
+			return nil, err
+		}
+
+		return user, nil
+
+	case string:
+		username := reflect.ValueOf(identifier).String()
+		user, err := dbGorm.FindByUsername(username)
+
+		if err != nil {
+			return nil, err
+		}
+
+		return user, nil
+
+	default:
+		return nil, errors.New("identifier is not a int or string")
+	}
+}
+
+func ListAllUser() (*[]model.User, error) {
+	return dbGorm.ListAll()
+}
+
+func RegisterUser(user model.User) error {
+	user.Password = utils.HashPassword(user.Password, []byte(os.Getenv("SALT")))
+
+	err := dbGorm.Save(user)
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func LoginUser(username string, password string) error {
+	dbUser, err := dbGorm.FindByUsername(username)
+
+	if err != nil {
+		return err
+	}
+	salt := []byte(os.Getenv("SALT"))
+
+	isOk := utils.ComparePasswords(dbUser.Password, password, salt)
+	if !isOk {
+		return errors.New("falsePassword")
+	}
+
+	return nil
+}
+
+func ResetPassword(username string, newPassword string) error {
+	dbUser, err := dbGorm.FindByUsername(username)
+
+	if err != nil {
+		return err
+	}
+
+	var updatedUser model.User
+
+	updatedUser.Password = newPassword
+	updatedUser.Username = dbUser.Username
+	updatedUser.Email = dbUser.Email
+	updatedUser.Firstname = dbUser.Firstname
+	updatedUser.Lastname = dbUser.Lastname
+
+	errUpdate := dbGorm.Update(dbUser.Id, updatedUser)
+
+	if errUpdate != nil {
+		return errUpdate
+	}
+
+	return nil
 }

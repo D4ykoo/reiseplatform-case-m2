@@ -2,7 +2,7 @@
 <template>
   <dialog id="edit_user_modal" class="modal">
     <div class="modal-box">
-      <h3 class="font-bold text-lg">Create User</h3>
+      <h3 class="font-bold text-lg">Edit User</h3>
       <div class="modal-action">
         <form method="dialog">
           <!-- if there is a button in form, it will close the modal -->
