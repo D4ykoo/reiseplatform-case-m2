@@ -24,18 +24,14 @@ func initPGConnection(idle int, max int) pgRepository {
 		)
 	*/
 
-	dsn := "host=127.0.0.1 user=postgres password=postgres dbname=hotel port=5432 sslmode=disable TimeZone=Europe/Berlin"
+	dsn := "host=127.0.0.1 user=postgres password=postgres dbname=postgres port=5432 sslmode=disable TimeZone=Europe/Berlin"
 
 	connection, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
 		log.Panic("Failed to connect to database", err.Error())
 	}
-	// Create TABLES
-	//err = connection.AutoMigrate(new(T))
-	//if err != nil {
-	//	log.Panic("Failed to create Tables", err.Error())
-	//}
+
 	// Connection Pool
 	sqlDB, err := connection.DB()
 
@@ -61,35 +57,3 @@ func (repo pgRepository) createTable(entites ...interface{}) bool {
 	}
 	return true
 }
-
-/*
-
-func (db pgRepository[T]) create(t T) {
-	db.connection.Create(&t)
-}
-
-func (db pgRepository[T]) update(t T) {
-	db.connection.Save(&t)
-}
-
-func (db pgRepository[T]) get(uuid string) T {
-	var t T
-	db.connection.First(&t)
-	fmt.Println(t, uuid)
-	return t
-}
-
-func (db pgRepository[T]) getBy(statemant string, parameter ...string) []entities.HotelEntity {
-	var hotels []entities.HotelEntity
-	db.connection.Where(statemant, parameter).Find(&hotels)
-	return hotels
-}
-
-func (db pgRepository[T]) delete(t T) bool {
-	res := db.connection.Delete(t)
-	if res.Error != nil {
-		return false
-	}100
-	return true
-}
-*/

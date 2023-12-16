@@ -8,7 +8,7 @@ import (
 
 type Travel struct {
 	ID          uuid.UUID
-	Hotel       Hotel
+	Hotel       []*Hotel
 	Vendor      Vendor
 	From        time.Time
 	To          time.Time
@@ -16,5 +16,5 @@ type Travel struct {
 	Description string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
-	Tags        []Tag
+	Tags        []*Tag
 }

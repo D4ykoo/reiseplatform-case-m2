@@ -6,9 +6,10 @@ import (
 )
 
 type HotelRepository interface {
-	Save(model.Hotel)
-	Update(model.Hotel)
-	Delete(model.Hotel) bool
-	FindByID(uuid.UUID) model.Hotel
-	Count() int
+	Save(model.Hotel) error
+	Update(model.Hotel) error
+	Delete(model.Hotel) error
+	ListAll() ([]*model.Hotel, error)
+	FindByID(uuid.UUID) (model.Hotel, error)
+	Count() (int, error)
 }

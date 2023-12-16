@@ -8,5 +8,5 @@ type Hotel struct {
 	Address     Address
 	Description string
 	Vendor      Vendor
-	Pictures    []Picture
+	Pictures    []*Picture
 }
