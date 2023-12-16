@@ -1,13 +1,13 @@
 package api
 
 import (
+	"errors"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/api/dto"
-	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/dbGorm"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/kafka"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/application"
 	model "github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/ports/outbound"
-	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
@@ -15,16 +15,15 @@ import (
 )
 
 func RegisterRequest(c *gin.Context) {
-	var user model.User
+	var user dto.CreateUserRequest
 
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		kafka.SendEvent(model.EventRegister, err.Error())
 		return
 	}
-	user.Password = utils.HashPassword(user.Password, []byte(os.Getenv("SALT")))
 
-	err := dbGorm.Save(user)
+	err := application.RegisterUser(user.ToUser())
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -59,30 +58,26 @@ func LoginRequest(c *gin.Context) {
 		return
 	}
 
-	dbUser, err := dbGorm.FindByUsername(user.Username)
+	loginErr := application.LoginUser(user.Username, user.Password)
 
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		kafka.SendEvent(model.EventLogin, string(rune(http.StatusNotFound))+err.Error())
-		return
-	}
-
-	salt := []byte(os.Getenv("SALT"))
-
-	isOk := utils.ComparePasswords(dbUser.Password, user.Password, salt)
-
-	if !isOk {
-		kafka.SendEvent(model.EventLogin, string(rune(http.StatusUnauthorized))+err.Error())
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-		return
+	if loginErr != nil {
+		if errors.Is(loginErr, errors.New("falsePassword")) {
+			kafka.SendEvent(model.EventLogin, string(rune(http.StatusUnauthorized))+loginErr.Error())
+			c.JSON(http.StatusUnauthorized, gin.H{"error": loginErr.Error()})
+			return
+		} else {
+			kafka.SendEvent(model.EventLogin, string(rune(http.StatusNotFound))+loginErr.Error())
+			c.JSON(http.StatusNotFound, gin.H{"error": loginErr.Error()})
+			return
+		}
 	}
 
 	// if valid create jwt
 	jwt, jwtErr := adapter.CreateJWT(user.Username, os.Getenv("JWT_SECRET"), false)
 
 	if jwtErr != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		kafka.SendEvent(model.EventLogin, string(rune(http.StatusInternalServerError))+err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": jwtErr.Error()})
+		kafka.SendEvent(model.EventLogin, string(rune(http.StatusInternalServerError))+jwtErr.Error())
 		return
 	}
 
@@ -98,19 +93,13 @@ func LoginRequest(c *gin.Context) {
 func ResetPasswordRequest(c *gin.Context) {
 	// search user with pw
 	var user dto.ResetPasswordRequest
+
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	dbUser, err := dbGorm.FindByUsername(user.Username)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		kafka.SendEvent(model.EventPasswordReset, string(rune(http.StatusNotFound))+err.Error())
-		return
-	}
-
-	// email
+	// Generate reset urls, currently only mocked
 	adapter.SendEmail(outbound.EmailContent{
 		Header: "Password Reset Travel-Management",
 		Title:  "Your password reset",
@@ -119,7 +108,7 @@ func ResetPasswordRequest(c *gin.Context) {
 		Body:   "your-reset-link",
 	})
 
-	// TODO: Needed when generating actual reset urls
+	// Needed when generating actual reset urls
 	//isOk := utils.ComparePasswords(dbUser.Password, user.Password, salt)
 	//
 	//if !isOk {
@@ -128,30 +117,23 @@ func ResetPasswordRequest(c *gin.Context) {
 	//	return
 	//}
 
-	var updatedUser model.User
-
-	updatedUser.Password = user.NewPassword
-	updatedUser.Username = dbUser.Username
-	updatedUser.Email = dbUser.Email
-	updatedUser.Firstname = dbUser.Firstname
-	updatedUser.Lastname = dbUser.Lastname
-
-	errUpdate := dbGorm.Update(dbUser.ID, updatedUser)
+	// when password ok after clicking on link
+	errUpdate := application.ResetPassword(user.Username, user.NewPassword)
 
 	if errUpdate != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		kafka.SendEvent(model.EventPasswordReset, string(rune(http.StatusInternalServerError))+err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": errUpdate.Error()})
+		kafka.SendEvent(model.EventPasswordReset, string(rune(http.StatusInternalServerError))+errUpdate.Error())
 		return
 	}
 
-	kafka.SendEvent(model.EventPasswordReset, "user "+updatedUser.Username+"password reset")
+	kafka.SendEvent(model.EventPasswordReset, "user "+user.Username+"password reset")
 
 	// if valid create jwt
 	jwt, jwtErr := adapter.CreateJWT(user.Username, os.Getenv("JWT_SECRET"), false)
 
 	if jwtErr != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		kafka.SendEvent(model.EventPasswordReset, string(rune(http.StatusInternalServerError))+err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": jwtErr.Error()})
+		kafka.SendEvent(model.EventPasswordReset, string(rune(http.StatusInternalServerError))+jwtErr.Error())
 		return
 	}
 

@@ -4,7 +4,7 @@ package domain
 //
 // May required to add OIDC provider
 type User struct {
-	Id        string
+	Id        uint
 	Username  string
 	Firstname string
 	Lastname  string

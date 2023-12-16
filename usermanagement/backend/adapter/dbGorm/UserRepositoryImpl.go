@@ -129,9 +129,10 @@ func Delete(id int) error {
 	return nil
 }
 
-func FindByUsername(username string) (*entities.UserEntity, error) {
+func FindByUsername(username string) (*model.User, error) {
 	db, err := getDB()
 	var user entities.UserEntity
+	var retUser model.User
 
 	if err != nil {
 		log.Panic("Error connecting to the database:", err)
@@ -148,12 +149,17 @@ func FindByUsername(username string) (*entities.UserEntity, error) {
 		return nil, result.Error
 	}
 
-	return &user, nil
+	retUser = user.ToUser()
+
+	return &retUser, nil
 }
 
-func FindById(id uint) (*entities.UserEntity, error) {
+func FindById(id uint) (*model.User, error) {
 	db, err := getDB()
+
 	var user entities.UserEntity
+	var retUser model.User
+
 	if err != nil {
 		log.Panic("Error connecting to the database:", err)
 	}
@@ -167,12 +173,15 @@ func FindById(id uint) (*entities.UserEntity, error) {
 		return nil, result.Error
 	}
 
-	return &user, nil
+	retUser = user.ToUser()
+
+	return &retUser, nil
 }
 
-func ListAll() (*[]entities.UserEntity, error) {
+func ListAll() (*[]model.User, error) {
 	db, err := getDB()
 	var user []entities.UserEntity
+	var retUser []model.User
 
 	if err != nil {
 		log.Panic("Error connecting to the database:", err)
@@ -185,5 +194,9 @@ func ListAll() (*[]entities.UserEntity, error) {
 		return nil, result.Error
 	}
 
-	return &user, nil
+	for _, elem := range user {
+		retUser = append(retUser, elem.ToUser())
+	}
+
+	return &retUser, nil
 }

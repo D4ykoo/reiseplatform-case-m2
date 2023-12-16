@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/api/dto"
-	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/dbGorm"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/kafka"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/application"
 	model "github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
@@ -120,8 +119,6 @@ func UpdateUserRequest(c *gin.Context) {
 		}
 	}
 
-	// TODO: is that allowed in hexagonal architecture?
-
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		kafka.SendEvent(model.EventUserUpdate, err.Error())
@@ -147,7 +144,7 @@ func DeleteUserRequest(c *gin.Context) {
 		return
 	}
 
-	err = dbGorm.Delete(id)
+	err = application.DeleteUser(id)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -174,7 +171,7 @@ func GetUserRequest(c *gin.Context) {
 		return
 	}
 
-	errGet, dbUser := dbGorm.FindById(uint(id))
+	dbUser, errGet := application.FindUser(id)
 
 	if errGet != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": errGet.Error()})
@@ -183,7 +180,7 @@ func GetUserRequest(c *gin.Context) {
 	}
 
 	user := dto.UserResponse{
-		ID:        dbUser.ID,
+		ID:        dbUser.Id,
 		Username:  dbUser.Username,
 		Firstname: dbUser.Firstname,
 		Lastname:  dbUser.Lastname,
@@ -201,7 +198,8 @@ func ListUserRequest(c *gin.Context) {
 		return
 	}
 
-	dbUsers, err := dbGorm.ListAll()
+	dbUsers, err := application.ListAllUser()
+	
 	var users []dto.UserResponse
 
 	if err != nil {
@@ -212,7 +210,7 @@ func ListUserRequest(c *gin.Context) {
 
 	for _, dbUser := range *dbUsers {
 		user := dto.UserResponse{
-			ID:        dbUser.ID,
+			ID:        dbUser.Id,
 			Username:  dbUser.Username,
 			Firstname: dbUser.Firstname,
 			Lastname:  dbUser.Lastname,
