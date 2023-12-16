@@ -1,9 +1,9 @@
-package adapter
+package dbgorm
 
 import (
 	"github.com/google/uuid"
-	"github.com/mig3177/hotelmanagement/adapter/entities"
-	"github.com/mig3177/hotelmanagement/domain/model"
+	"github.com/mig3177/travelmanagement/adapter/dbGoRm/entities"
+	"github.com/mig3177/travelmanagement/domain/model"
 	"gorm.io/gorm/clause"
 )
 

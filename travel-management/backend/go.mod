@@ -1,4 +1,4 @@
-module github.com/mig3177/hotelmanagement
+module github.com/mig3177/travelmanagement
 
 go 1.21.4
 

@@ -1,4 +1,4 @@
-package adapter
+package dbgorm
 
 import (
 	"log"

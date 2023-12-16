@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/mig3177/hotelmanagement/domain/model"
+	"github.com/mig3177/travelmanagement/domain/model"
 )
 
 type TravelService interface {

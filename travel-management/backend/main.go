@@ -5,10 +5,10 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/mig3177/hotelmanagement/adapter"
-	"github.com/mig3177/hotelmanagement/domain"
-	"github.com/mig3177/hotelmanagement/domain/model"
-	"github.com/mig3177/hotelmanagement/ports"
+	dbgorm "github.com/mig3177/travelmanagement/adapter/dbGoRm"
+	"github.com/mig3177/travelmanagement/domain"
+	"github.com/mig3177/travelmanagement/domain/model"
+	"github.com/mig3177/travelmanagement/ports"
 )
 
 func abc(domain.HotelService) {
@@ -58,7 +58,7 @@ func main() {
 	fmt.Println("-------------------------------------------------")
 	travel := model.Travel{ID: uuid.New(), Hotel: []*model.Hotel{&newHotel}, Vendor: model.Vendor{ID: uuid.New(), Username: "Herbert"}, From: time.Now(), To: time.Now(), Price: 320.50, Description: "DES", Tags: []*model.Tag{{Typ: 55, Name: "Strand"}, {Typ: 40, Name: "Wandern"}}}
 	fmt.Println(travel.Hotel)
-	repo2 := adapter.NewTravelRepository(10, 100)
+	repo2 := dbgorm.NewTravelRepository(10, 100)
 	repo2.Create(&travel)
 	fmt.Println("####")
 	nn, _ := repo2.FindByID(travel.ID)
