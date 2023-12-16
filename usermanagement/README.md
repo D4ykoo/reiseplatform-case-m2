@@ -71,3 +71,7 @@ The following represents a quick and small overview about the microservice struc
 
 ## Additional Information
 * Project management done with self-hosted [Leantime](https://github.com/Leantime/leantime)
+* Verification of the JWT: 
+  * Username included 
+  * -> extract JWT via browser dev tools and paste into [https://jwt.io/](https://jwt.io/)
+  * Different users have different usernames
