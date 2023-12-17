@@ -1,4 +1,4 @@
-package ports
+package outbound
 
 import (
 	"github.com/google/uuid"
@@ -6,10 +6,10 @@ import (
 )
 
 type HotelRepository interface {
-	Save(model.Hotel) error
-	Update(model.Hotel) error
-	Delete(model.Hotel) error
+	Save(*model.Hotel) error
+	Update(*model.Hotel) error
+	Delete(*model.Hotel) error
 	ListAll() ([]*model.Hotel, error)
-	FindByID(uuid.UUID) (model.Hotel, error)
+	FindByID(uuid.UUID) (*model.Hotel, error)
 	Count() (int, error)
 }

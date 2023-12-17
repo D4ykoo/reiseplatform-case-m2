@@ -6,9 +6,9 @@ import (
 )
 
 type HotelService interface {
-	CreateHotel(Name string, Address model.Address, description string) model.Hotel
-	FindHotelByID(uuid.UUID) model.Hotel
-	FindHotelByName(Name string) []model.Hotel
-	UpdateHotel(HotelRef *model.Hotel) model.Hotel
-	DeleteHotel(ID uuid.UUID) bool
+	CreateHotel(name string, address model.Address, userid uuid.UUID, description string, pics []*model.Picture) (*model.Hotel, error)
+	FindHotelByID(uuid.UUID) (*model.Hotel, error)
+	FindHotelByName(Name string) ([]*model.Hotel, error)
+	UpdateHotel(id uuid.UUID, name string, address model.Address, userid uuid.UUID, description string, pics []*model.Picture) (*model.Picture, error)
+	DeleteHotel(ID uuid.UUID) error
 }
