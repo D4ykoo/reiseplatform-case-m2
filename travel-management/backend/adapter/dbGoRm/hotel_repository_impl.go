@@ -13,7 +13,7 @@ type HotelRepositoryImpl struct {
 
 // Open connection to the database
 // Creates tables if not exist
-func NewHotelRepository(min, max int) HotelRepositoryImpl {
+func NewHotelRepository(min int, max int) HotelRepositoryImpl {
 	con := initPGConnection(min, max)
 	con.createTable(&entities.HotelEntity{}, &entities.PictureEntity{})
 
@@ -51,7 +51,7 @@ func (repo HotelRepositoryImpl) Create(hotel *model.Hotel) error {
 	return repo.db.Connection.Create(entity).Error
 }
 
-func (repo HotelRepositoryImpl) Save(hotel *model.Hotel) error {
+func (repo HotelRepositoryImpl) Update(hotel *model.Hotel) error {
 	entity := ToHotelEntity(hotel)
 	return repo.db.Connection.Save(entity).Error
 }
@@ -74,10 +74,10 @@ func (repo HotelRepositoryImpl) ListAll() ([]*model.Hotel, error) {
 	return hotels, err
 }
 
-func (repo HotelRepositoryImpl) FindByID(id uuid.UUID) (model.Hotel, error) {
+func (repo HotelRepositoryImpl) FindByID(id uuid.UUID) (*model.Hotel, error) {
 	var entity entities.HotelEntity
 	err := repo.db.Connection.Model(&entities.HotelEntity{}).Preload("Pictures").First(&entity, id).Error
-	return *ToHotelModel(&entity), err
+	return ToHotelModel(&entity), err
 }
 
 func (repo HotelRepositoryImpl) Count() (int, error) {

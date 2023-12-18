@@ -18,22 +18,22 @@ func (service HotelServiceImpl) CreateHotel(name string, address model.Address, 
 	// TODO check user is valid
 	// TODO check hotel already exist
 	hotel := &model.Hotel{ID: uuid.New(), Address: address, Name: name, Description: description, Vendor: model.Vendor{ID: userid, Username: "Walter"}, Pictures: pics}
-	err := service.hotels.Save(hotel)
+	err := service.hotels.Create(hotel)
 	return hotel, err
 }
 
 func (service HotelServiceImpl) FindHotelByID(id uuid.UUID) (*model.Hotel, error) {
-	return service.FindHotelByID(id)
+	return service.hotels.FindByID(id)
 }
 
 func (service HotelServiceImpl) FindHotelByName(Name string) ([]*model.Hotel, error) {
 	return nil, nil
 }
 
-func (service HotelServiceImpl) UpdateHotel(id uuid.UUID, name string, address model.Address, userid uuid.UUID, description string, pics []*model.Picture) error {
+func (service HotelServiceImpl) UpdateHotel(id uuid.UUID, name string, address model.Address, userid uuid.UUID, description string, pics []*model.Picture) (*model.Hotel, error) {
 	hotel, err := service.hotels.FindByID(id)
 	if err != nil {
-		return err
+		return &model.Hotel{}, err
 	}
 	hotel.Address = address
 	hotel.Name = name
@@ -41,7 +41,8 @@ func (service HotelServiceImpl) UpdateHotel(id uuid.UUID, name string, address m
 	hotel.Description = description
 	hotel.Pictures = pics
 	err = service.hotels.Update(hotel)
-	return err
+
+	return hotel, err
 }
 
 func (service HotelServiceImpl) DeleteHotel(id uuid.UUID) error {

@@ -2,13 +2,18 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/mig3177/travelmanagement/adapter/api"
+	dbgorm "github.com/mig3177/travelmanagement/adapter/dbGoRm"
+	"github.com/mig3177/travelmanagement/application"
 )
 
 func main() {
 	// Env
 
+	repo := dbgorm.NewHotelRepository(10, 100)
+	service := application.NewHotelService(repo)
 	// Service
-
+	controller := api.NewRestHotelController(service)
 	// Router
 	router := gin.Default()
 
@@ -17,11 +22,9 @@ func main() {
 		c.String(200, "Hello, World!")
 	})
 
-	router.GET("/api/hotels", func(c *gin.Context) {
-		c.String(200, "Hello, World!")
-	})
+	router.GET("/api/hotels/:id", controller.GetHotelRequest)
 
-	router.GET("/api/hotels:id", func(c *gin.Context) {
+	router.GET("/api/hotels/", func(c *gin.Context) {
 		c.String(200, "Hello, World!")
 	})
 

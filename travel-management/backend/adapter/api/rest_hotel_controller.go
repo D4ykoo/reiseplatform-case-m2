@@ -14,6 +14,10 @@ type RestHotelController struct {
 	service domain.HotelService
 }
 
+func NewRestHotelController(service domain.HotelService) RestHotelController {
+	return RestHotelController{service: service}
+}
+
 func (controller RestHotelController) CreateHotelRequest(c *gin.Context) {
 
 	var hotel dto.CreateHotelRequest
@@ -56,6 +60,17 @@ func (controller RestHotelController) GetHotelRequest(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, hotelResponse)
+}
+
+func (controller RestHotelController) DeleteHotelRequest(c *gin.Context) {
+
+}
+
+func (controller RestHotelController) UpdateHotelRequest(c *gin.Context) {
+
+}
+
+func (controller RestHotelController) GetHotelsRequest(c *gin.Context) {
 
 }
 

@@ -9,6 +9,6 @@ type HotelService interface {
 	CreateHotel(name string, address model.Address, userid uuid.UUID, description string, pics []*model.Picture) (*model.Hotel, error)
 	FindHotelByID(uuid.UUID) (*model.Hotel, error)
 	FindHotelByName(Name string) ([]*model.Hotel, error)
-	UpdateHotel(id uuid.UUID, name string, address model.Address, userid uuid.UUID, description string, pics []*model.Picture) (*model.Picture, error)
+	UpdateHotel(id uuid.UUID, name string, address model.Address, userid uuid.UUID, description string, pics []*model.Picture) (*model.Hotel, error)
 	DeleteHotel(ID uuid.UUID) error
 }
