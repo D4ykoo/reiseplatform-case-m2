@@ -1,2 +1,2 @@
-# reiseplatform-case-m2
+# travelmanagement-case-m2
 Project for the lecture Cloud Native Development
