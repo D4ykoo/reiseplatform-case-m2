@@ -1,0 +1,51 @@
+name: usermanagement-frontend-actions
+run-name: ${{ github.actor }} started usermanagement pipeline
+on:
+  push:
+    branches:
+      - develop
+      - main
+      - 'releases/**'
+
+defaults:
+  run: 
+    shell: bash
+    working-directory: "./usermanagement/frontend"
+
+jobs:
+  security:
+    name: Security Information
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v4
+      - name: Use NodeJS
+        uses: actions/setup-node@v3
+        with: 
+          node-version: '20.x'
+      - run: npm ci
+      - run: npm audit
+
+  release-build:
+    name: Build Usermanagement Frontend for Release
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v4
+      - name: Use NodeJS
+        uses: actions/setup-node@v3
+        with: 
+          node-version: '20.x'
+      - name: Run Build 
+        run: npm ci
+        run: npm run build --if-present
+        run: npm test
+
+  # deploy:
+  #   name: Deploy Usermanagement Frontend
+  #   needs: [release-build]
+  #   runs-on: ubuntu-latest
+  #   steps: 
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v3
+  #       with: 
+  #         node-version: '20.x'
+  #     - run: npm run build
