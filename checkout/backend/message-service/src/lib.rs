@@ -3,11 +3,11 @@
 //! Uses async kafka, so it is non blocking.
 //! Uses only one broker defined in the .env file.
 
-use std::env;
+use std::{env};
 use std::time::Duration;
 use dotenvy::dotenv;
 use rdkafka::config::ClientConfig;
-use rdkafka::producer::{FutureProducer, FutureRecord};
+use rdkafka::producer::{FutureProducer, FutureRecord, self};
 use serde::{Serialize};
 
 #[derive(Serialize, Debug)]
@@ -17,26 +17,28 @@ pub struct EventMessage {
 }
 
 pub struct MessageProducer {
-    producer: FutureProducer
+    pub producer: Option<FutureProducer>
 }
 
 impl MessageProducer {
-    pub fn init_message_producer(&self) {
+    pub fn init_message_producer(&mut self) {
         dotenv().ok();
-        let broker = vec![env::var("KAFKA_URL").unwrap()];
 
-        let producer = &ClientConfig::new()
-            .set("bootstrap.servers", broker)
+        let future_producer: FutureProducer = ClientConfig::new()
+            .set("bootstrap.servers", &env::var("KAFKA_URL").unwrap())
             .set("message.timeout.ms", "5000")
             .create()
             .expect("producer creation error");
 
-        &self.producer = &producer;
+        self.producer = Some(future_producer)
     }
 
-    async fn send_message(&self, payload: EventMessage){
-        let topic = env::var("TOPIC").unwrap().as_str();
-        &self.producer.send(FutureRecord::to(topic)
-                                .payload(&format!("Checkout {:?}", payload)), Duration::from_secs(0)).await;
+    pub async fn send_message(&self, payload: &str){
+        if let Some(producer) = &self.producer {
+            let _ = producer.send(
+                FutureRecord::to(env::var("TOPIC").unwrap().as_str())                
+                .payload(&format!("Checkout {:?}", payload))
+                .key("checkout"), Duration::from_secs(0)).await;
+        }
     }
 }

@@ -1,7 +1,8 @@
 //! Simple JWT validator that uses HS512 signing algorithm.
 //! 
 //! Claims: username, iat
-//! Examples not due to simplicity not provided. 
+//! Examples not due to simplicity not provided.
+
 use std::env;
 use dotenvy::dotenv;
 use jsonwebtoken::{Validation, Algorithm, decode, DecodingKey};
