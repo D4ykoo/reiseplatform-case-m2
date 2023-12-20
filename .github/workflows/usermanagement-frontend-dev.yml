@@ -9,9 +9,6 @@ on:
       - develop
     paths:
       - ./usermanagement/frontend
-    paths-ignore:
-      - './usermangement/frontend/**.md'
-
 
 defaults:
   run: 
