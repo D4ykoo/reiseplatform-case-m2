@@ -9,6 +9,7 @@ on:
       - develop
     paths:
       - ./usermanagement/frontend
+  workflow_call:
 
 defaults:
   run: 
