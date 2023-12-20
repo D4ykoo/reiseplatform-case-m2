@@ -1,4 +1,5 @@
 [workspace]
 members = [
-    "jwt-auth"
+    "jwt-auth",
+    "message-service"
 ]
