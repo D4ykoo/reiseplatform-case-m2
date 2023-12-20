@@ -14,16 +14,16 @@ pub struct Cart {
     pub offers: Option<Vec<Option<i32>>>
 }
 
-#[derive(Insertable)]
+#[derive(Insertable, Clone, PartialEq, Eq)]
 #[diesel(table_name = cart)]
 pub struct NewCart<'a> {
     pub paid: Option<bool>,
     pub payment_method: Option<&'a str>,
-    pub offers: Option<Vec<Option<i32>>>,
+    pub offers: Option<&'a Vec<Option<i32>>>,
 }
 
 impl<'a> NewCart<'a> {
-    pub fn create(paid: Option<bool>, payment_method: Option<&'a str>, offers: Option<Vec<Option<i32>>>) -> Self{
+    pub fn create(paid: Option<bool>, payment_method: Option<&'a str>, offers: Option<&'a Vec<Option<i32>>>) -> Self{
         NewCart {
             paid,
             payment_method,
