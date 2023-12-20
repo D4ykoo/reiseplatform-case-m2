@@ -10,32 +10,35 @@ import (
 func main() {
 	// Env
 
-	repo := dbgorm.NewHotelRepository(10, 100)
-	service := application.NewHotelService(repo)
+	// Outgoing
+	// Repository
+	hotelRepo := dbgorm.NewHotelRepository(10, 100)
+	//travelRepo := dbgorm.NewTravelRepository(10, 100)
+
+	// Application
 	// Service
-	controller := api.NewRestHotelController(service)
+	hotelService := application.NewHotelService(hotelRepo)
+	//travelService := application.New(travelRepo)
+
+	// Incomming
+	// Controller
+	hotelController := api.NewRestHotelController(hotelService)
 	// Router
 	router := gin.Default()
 
 	// CRUD
+	// Create
 	router.POST("/api/hotels", func(c *gin.Context) {
 		c.String(200, "Hello, World!")
 	})
+	// Read
+	router.GET("/api/hotels/:id", hotelController.GetHotelRequest)
 
-	router.GET("/api/hotels/:id", controller.GetHotelRequest)
+	router.GET("/api/hotels/", hotelController.GetHotelsByNameRequest)
 
-	router.GET("/api/hotels/", func(c *gin.Context) {
-		c.String(200, "Hello, World!")
-	})
-
-	router.POST("/api/hotels/filter", func(c *gin.Context) {
-		c.String(200, "Hello, World!")
-	})
-
-	router.PUT("/api/hotels:id", func(c *gin.Context) {
-		c.String(200, "Hello, World!")
-	})
-
+	// Update
+	router.PUT("/api/hotels:id", hotelController.UpdateHotelRequest)
+	// Delete
 	router.DELETE("/api/hotels:id", func(c *gin.Context) {
 		c.String(200, "Hello, World!")
 	})
@@ -78,8 +81,7 @@ func main() {
 			fmt.Println(err)
 
 		newHotel := model.Hotel{ID: uuid.New(), Name: "Im weißen Rößl", Address: model.Address{Street: "Markt 47", State: "St. Wolfgang im Salzkammergut", Land: "Österreich"}, Pictures: []*model.Picture{{ID: uuid.New(), Payload: "kandfmanfadfafaf", Description: "ABC"}}}
-	*/
-	/*
+
 		fmt.Println("-------------------------------------------------")
 		travel := model.Travel{ID: uuid.New(), Hotel: []*model.Hotel{&newHotel}, Vendor: model.Vendor{ID: uuid.New(), Username: "Herbert"}, From: time.Now(), To: time.Now(), Price: 320.50, Description: "DES", Tags: []*model.Tag{{Typ: 55, Name: "Strand"}, {Typ: 40, Name: "Wandern"}}}
 		fmt.Println(travel.Hotel)
@@ -87,6 +89,9 @@ func main() {
 		repo2.Create(&travel)
 		fmt.Println("####")
 		nn, _ := repo2.FindByID(travel.ID)
-		fmt.Println(nn.Tags)
-		repo2.Delete(&travel)*/
+		fmt.Println(nn.From)
+		dd, ee := repo2.FindBetween(travel.From, travel.To)
+		fmt.Println(dd[0].Hotel[0].Address, ee)
+		repo2.Delete(&travel)
+	*/
 }

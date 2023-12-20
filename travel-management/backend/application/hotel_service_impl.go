@@ -30,18 +30,17 @@ func (service HotelServiceImpl) FindHotelByName(Name string) ([]*model.Hotel, er
 	return nil, nil
 }
 
-func (service HotelServiceImpl) UpdateHotel(id uuid.UUID, name string, address model.Address, userid uuid.UUID, description string, pics []*model.Picture) (*model.Hotel, error) {
-	hotel, err := service.hotels.FindByID(id)
+func (service HotelServiceImpl) UpdateHotel(hotelUpdate *model.Hotel) (*model.Hotel, error) {
+	hotel, err := service.hotels.FindByID(hotelUpdate.ID)
 	if err != nil {
 		return &model.Hotel{}, err
 	}
-	hotel.Address = address
-	hotel.Name = name
-	hotel.Vendor = model.Vendor{ID: userid, Username: "Maria"}
-	hotel.Description = description
-	hotel.Pictures = pics
-	err = service.hotels.Update(hotel)
+	err = service.hotels.Update(hotelUpdate)
 
+	if err == nil {
+		hotel, err = service.hotels.FindByID(hotelUpdate.ID)
+
+	}
 	return hotel, err
 }
 

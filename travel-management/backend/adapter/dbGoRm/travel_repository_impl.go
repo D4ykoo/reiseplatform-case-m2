@@ -1,6 +1,8 @@
 package dbgorm
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/mig3177/travelmanagement/adapter/dbGoRm/entities"
 	"github.com/mig3177/travelmanagement/domain/model"
@@ -102,4 +104,47 @@ func (repo TravelRepositoryImpl) Count() (int, error) {
 	} else {
 		return len(hotels), err
 	}
+}
+
+func (repo TravelRepositoryImpl) FindByName(name string) ([]*model.Travel, error) {
+	if len(name) == 0 {
+		return nil, nil
+	}
+	var travel_entity []entities.TravelEntity
+
+	result := repo.db.Connection.Where("name LIKE ?", "%"+name+"%").Find(&travel_entity)
+	if result.RowsAffected == 0 || result.Error != nil {
+		return []*model.Travel{}, result.Error
+	}
+
+	travels := make([]*model.Travel, len(travel_entity))
+
+	for i, travel := range travel_entity {
+		travels[i] = ToTravelModel(&travel)
+	}
+
+	return travels, result.Error
+}
+
+func (repo TravelRepositoryImpl) FindBetween(from time.Time, to time.Time) ([]*model.Travel, error) {
+
+	if from.Unix() > to.Unix() {
+		return []*model.Travel{}, nil
+	}
+
+	var travel_entity []entities.TravelEntity
+
+	result := repo.db.Connection.Model(&entities.TravelEntity{}).Preload("Tags").Preload("Hotels").
+		Preload("Hotels.Pictures").Where("travel_entities.from >= ? AND travel_entities.to <= ?", from, to).Find(&travel_entity)
+
+	if result.RowsAffected == 0 || result.Error != nil {
+		return nil, result.Error
+	}
+
+	travels := make([]*model.Travel, len(travel_entity))
+
+	for i, travel := range travel_entity {
+		travels[i] = ToTravelModel(&travel)
+	}
+	return travels, nil
 }

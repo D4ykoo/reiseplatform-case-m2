@@ -5,6 +5,7 @@ type CreateHotelRequest struct {
 	Street      string           `json:"street"`
 	State       string           `json:"state"`
 	Land        string           `json:"land"`
+	Vendor      string           `json:"vendor"`
 	Description string           `json:"description"`
 	Pictures    []PictureRequest `json:"pictures"`
 }
