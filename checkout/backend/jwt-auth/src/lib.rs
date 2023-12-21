@@ -1,12 +1,12 @@
 //! Simple JWT validator that uses HS512 signing algorithm.
-//! 
+//!
 //! Claims: username, iat
 //! Examples not due to simplicity not provided.
 
-use std::env;
 use dotenvy::dotenv;
-use jsonwebtoken::{Validation, Algorithm, decode, DecodingKey};
+use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
 use models::*;
+use std::env;
 
 pub mod models;
 
@@ -17,7 +17,11 @@ pub fn validate_jwt(token: &str) -> Result<bool, jsonwebtoken::errors::Error> {
     let mut val = Validation::new(Algorithm::HS512);
     val.set_required_spec_claims(&["username", "iat"]);
 
-    let decoded = decode::<Claims>(&token, &DecodingKey::from_secret(jwt_secret.as_bytes()), &val);
+    let decoded = decode::<Claims>(
+        &token,
+        &DecodingKey::from_secret(jwt_secret.as_bytes()),
+        &val,
+    );
 
     match decoded {
         Ok(_) => return Ok(true),
@@ -37,7 +41,7 @@ mod tests {
     }
 
     #[test]
-    fn token_invalid(){
+    fn token_invalid() {
         let token = "pyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjY4NjYyMDgwMCwidXNlcm5hbWUiOiJ0ZXN0In0.CbmybuROnf_3ClsxXiYiTbK26Dc0e2zSwMeCZZz4guszI-q8LL6HO42HJTeAjQ0gDFRmL4PikQoP8QzdPC03yw";
         let result = validate_jwt(token);
         assert_eq!(result.is_ok(), false);

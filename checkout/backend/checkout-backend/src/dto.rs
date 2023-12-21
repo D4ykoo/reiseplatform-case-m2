@@ -1,5 +1,5 @@
 //! Data transfer objects for responses and requests
-//! 
+//!
 //! Even though there is not a lot of difference to the entity model
 //! for a better extensablity this dtos will be used.
 
@@ -14,7 +14,7 @@ pub struct CartResponse {
 }
 
 impl CartResponse {
-    pub fn from_db_cart(cart: checkout_db::models::Cart) -> Self{
+    pub fn from_db_cart(cart: checkout_db::models::Cart) -> Self {
         CartResponse {
             paid: cart.paid,
             payment_method: cart.payment_method,
@@ -23,8 +23,7 @@ impl CartResponse {
     }
 }
 
-
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct CartRequest {
     pub paid: Option<bool>,
     pub payment_method: Option<String>,
@@ -32,7 +31,7 @@ pub struct CartRequest {
 }
 
 impl CartRequest {
-    pub fn into_new_cart(&self) -> checkout_db::models::NewCart{
+    pub fn into_new_cart(&self) -> checkout_db::models::NewCart {
         NewCart {
             paid: self.paid,
             payment_method: self.payment_method.as_deref(),
