@@ -1,7 +1,5 @@
 pub mod dto;
 
-use std::fmt::format;
-
 use actix_cors::Cors;
 use actix_web::{
     delete, get,

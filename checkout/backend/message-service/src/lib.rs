@@ -5,7 +5,7 @@
 
 use dotenvy::dotenv;
 use rdkafka::config::ClientConfig;
-use rdkafka::producer::{self, FutureProducer, FutureRecord};
+use rdkafka::producer::{FutureProducer, FutureRecord};
 use serde::Serialize;
 use std::env;
 use std::time::Duration;
