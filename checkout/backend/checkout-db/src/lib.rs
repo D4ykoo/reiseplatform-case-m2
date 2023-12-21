@@ -6,7 +6,7 @@ use r2d2::Pool;
 
 use crate::models::{NewCart, Cart};
 
-mod models;
+pub mod models;
 mod schema;
 
 pub type PostgresPool = Pool<ConnectionManager<PgConnection>>;

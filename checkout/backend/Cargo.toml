@@ -4,4 +4,5 @@ members = [
     "jwt-auth",
     "message-service",
     "checkout-db",
+    "checkout-backend"
 ]
