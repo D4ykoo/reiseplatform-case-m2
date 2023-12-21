@@ -1,20 +1,26 @@
 package model
 
 import (
+	"encoding/json"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type Travel struct {
-	ID          uuid.UUID
-	Hotel       []*Hotel
-	Vendor      Vendor
-	From        time.Time
-	To          time.Time
-	Price       float32
-	Description string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	Tags        []*Tag
+	Id          uint      `json:"id"`
+	Vendor      Vendor    `json:"vendor"`
+	From        time.Time `json:"from"`
+	To          time.Time `json:"to"`
+	Price       float32   `json:"price"`
+	Description string    `json:"description"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
+	Tags        []*Tag    `json:"tags"`
+}
+
+func (t *Travel) String() string {
+	res, err := json.Marshal(t)
+	if err != nil {
+		return ""
+	}
+	return string(res)
 }

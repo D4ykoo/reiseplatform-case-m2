@@ -1,15 +1,14 @@
 package outbound
 
 import (
-	"github.com/google/uuid"
 	"github.com/mig3177/travelmanagement/domain/model"
 )
 
 type HotelRepository interface {
-	Create(*model.Hotel) error
-	Update(*model.Hotel) error
-	Delete(*model.Hotel) error
+	Create(*model.Hotel) (*model.Hotel, error)
+	Update(*model.Hotel) (*model.Hotel, error)
+	Delete(uint) error
 	ListAll() ([]*model.Hotel, error)
-	FindByID(uuid.UUID) (*model.Hotel, error)
-	Count() (int, error)
+	FindByID(uint) (*model.Hotel, error)
+	Count() (int64, error)
 }

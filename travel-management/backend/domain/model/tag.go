@@ -1,12 +1,16 @@
 package model
 
-import "fmt"
+import "encoding/json"
 
 type Tag struct {
-	Typ  int
-	Name string
+	Typ  int    `json:"typId"`
+	Name string `json:"name"`
 }
 
-func (b *Tag) String() string {
-	return fmt.Sprintf("%s", b.Name)
+func (t *Tag) String() string {
+	res, err := json.Marshal(t)
+	if err != nil {
+		return ""
+	}
+	return string(res)
 }

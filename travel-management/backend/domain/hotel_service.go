@@ -10,5 +10,5 @@ type HotelService interface {
 	FindHotelByID(uuid.UUID) (*model.Hotel, error)
 	FindHotelByName(Name string) ([]*model.Hotel, error)
 	UpdateHotel(*model.Hotel) (*model.Hotel, error)
-	DeleteHotel(ID uuid.UUID) error
+	DeleteHotel(ID uint) error
 }

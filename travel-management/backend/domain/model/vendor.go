@@ -1,8 +1,16 @@
 package model
 
-import "github.com/google/uuid"
+import "encoding/json"
 
 type Vendor struct {
-	ID       uuid.UUID
-	Username string
+	Id       uint   `json:"id"`
+	Username string `json:"name"`
+}
+
+func (v *Vendor) String() string {
+	res, err := json.Marshal(v)
+	if err != nil {
+		return ""
+	}
+	return string(res)
 }

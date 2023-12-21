@@ -1,9 +1,17 @@
 package model
 
-import "github.com/google/uuid"
+import "encoding/json"
 
 type Picture struct {
-	ID          uuid.UUID
-	Payload     string
-	Description string
+	Id          uint   `json:"id"`
+	Payload     string `json:"payload"`
+	Description string `json:"description"`
+}
+
+func (p *Picture) String() string {
+	res, err := json.Marshal(p)
+	if err != nil {
+		return ""
+	}
+	return string(res)
 }
