@@ -191,7 +191,8 @@ func main() {
 	*/
 
 	var abc domain.HotelService
-	abc = application.NewHotelService(repo)
+	repo2 := dbgorm.NewTravelRepository(10, 100)
+	abc = application.New(repo, repo2)
 
 	from := time.Date(
 
@@ -202,7 +203,6 @@ func main() {
 		2009, 11, 25, 0, 0, 0, 0, time.UTC)
 	travel := model.Travel{Vendor: model.Vendor{Id: 12358, Username: "Herbert"}, From: from, To: to, Price: 8884.51, Description: "DES22"}
 
-	repo2 := dbgorm.NewTravelRepository(10, 100)
 	newTravel, _ := repo2.Create(&travel, newhotel.Id)
 
 	pic.Id = newhotel.Pictures[0].Id

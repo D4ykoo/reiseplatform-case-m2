@@ -17,10 +17,10 @@ func New(hrepo outbound.HotelRepository, trepo outbound.TravelRepository) Travel
 	return TravelServiceImpl{hotels: hrepo, travels: trepo}
 }
 
-func (service TravelServiceImpl) NewHotel(name string, address model.Address, vendorId uint, description string, pics []*model.Picture) (*model.Hotel, error) {
+func (service TravelServiceImpl) NewHotel(name string, address model.Address, vendor model.Vendor, description string, pics []*model.Picture) (*model.Hotel, error) {
 	// TODO check user is valid
 	// TODO check hotel already exist
-	hotel := &model.Hotel{Address: address, Name: name, Description: description, Vendor: model.Vendor{Id: vendorId, Username: "Walter"}, Pictures: pics}
+	hotel := &model.Hotel{Address: address, Name: name, Description: description, Vendor: vendor, Pictures: pics}
 	return service.hotels.Create(hotel)
 }
 
@@ -64,6 +64,23 @@ func (service TravelServiceImpl) GetTravel(id uint) (*model.Travel, error) {
 	return service.travels.FindByID(id)
 }
 
+func HashGeneric[T comparable](a []T, b []T) []T {
+	set := make([]T, 0)
+	hash := make(map[T]struct{})
+
+	for _, v := range a {
+		hash[v] = struct{}{}
+	}
+
+	for _, v := range b {
+		if _, ok := hash[v]; ok {
+			set = append(set, v)
+		}
+	}
+
+	return set
+}
+
 func containsTag(s []uint, e []*model.Tag) bool {
 	for i := 0; i < len(s); i++ {
 		for j := 0; i < len(e); i++ {
@@ -89,4 +106,7 @@ func (service TravelServiceImpl) RemoveHotel(id uint) error {
 }
 func (service TravelServiceImpl) RemoveTravel(id uint) error {
 	return service.travels.Delete(id)
+}
+func (service TravelServiceImpl) ListHotelTravel() ([]*model.Hotel, error) {
+	return service.hotels.ListAll()
 }

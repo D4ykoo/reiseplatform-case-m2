@@ -2,9 +2,9 @@ package api
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/mig3177/travelmanagement/adapter/api/dto"
 	"github.com/mig3177/travelmanagement/domain"
 	"github.com/mig3177/travelmanagement/domain/model"
@@ -18,7 +18,7 @@ func New(service domain.TravelService) RestController {
 	return RestController{service: service}
 }
 
-func (con RestController) CreateHotelRequest(c *gin.Context) {
+func (ctr RestController) CreateHotelRequest(c *gin.Context) {
 
 	var hotel dto.CreateHotelRequest
 
@@ -26,86 +26,85 @@ func (con RestController) CreateHotelRequest(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	pics := dto.ToPictureModel(hotel.Pictures)
 
-	pics, address := toAddressPictures(&hotel)
-	controller.service.CreateHotel(hotel.HotelName, address, uuid.New(), hotel.Description, pics)
+	hotelRes, err := ctr.service.NewHotel(hotel.HotelName, model.Address{Street: hotel.Street, State: hotel.State, Land: hotel.HotelName}, model.Vendor{Id: hotel.VendorId, Username: hotel.VendorName}, hotel.Description, pics)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, dto.ToHotelResoponse(hotelRes))
+
 }
 
-func (controller RestHotelController) GetHotelsByNameRequest(c *gin.Context) {
+func (ctr RestController) FindHotels(c *gin.Context) {
 
 	query := c.Request.URL.Query()
 
-	if len(query) == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "filter is not set"})
-	}
+	var hotels []*model.Hotel
 
 	name := query.Get("name")
+	land := query.Get("land")
+	from := query.Get("from")
+	to := query.Get("to")
+	tags := query.Get("tags")
 
-	hotels, err := controller.service.FindHotelByName(name)
+	if len(query) == 0 {
+		var err error
+		hotels, err = ctr.service.ListHotelTravel()
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		}
+
+	}
+	// TODO
+	hotels, err := ctr.service.FindHotelTravel(name, land, "", "", []uint{})
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	hotelResponse := make([]dto.HotelRespnse, len(hotels))
+	hotelResponse := make([]*dto.HotelResponse, len(hotels))
 
 	for index, hotel := range hotels {
-		hotelResponse[index] = dto.HotelRespnse{
-			Id:          hotel.ID.String(),
-			HotelName:   hotel.Name,
-			Street:      hotel.Address.Street,
-			State:       hotel.Address.State,
-			Land:        hotel.Address.Land,
-			VendorID:    hotel.Vendor.ID.String(),
-			VendorName:  hotel.Vendor.Username,
-			Description: hotel.Description,
-			Pictures:    toPictures(hotel),
-		}
+		hotelResponse[index] = dto.ToHotelResoponse(hotel)
 	}
-	c.JSON(http.StatusOK, &hotelResponse)
+
+	c.JSON(http.StatusOK, hotelResponse)
 }
 
-func (controller RestHotelController) GetHotelRequest(c *gin.Context) {
+func (ctr RestController) GetHotelById(c *gin.Context) {
 
 	stringId := c.Param("id")
-	id, err := uuid.Parse(stringId)
+	id, err := strconv.Atoi(stringId)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	hotel, err := controller.service.FindHotelByID(id)
+	hotel, err := ctr.service.GetHotel(uint(id))
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	hotelResponse := dto.HotelRespnse{
-		Id:          hotel.ID.String(),
-		HotelName:   hotel.Name,
-		Street:      hotel.Address.Street,
-		State:       hotel.Address.State,
-		Land:        hotel.Address.Land,
-		VendorID:    hotel.Vendor.ID.String(),
-		VendorName:  hotel.Vendor.Username,
-		Description: hotel.Description,
-		Pictures:    toPictures(hotel),
-	}
+	hotelResponse := dto.ToHotelResoponse(hotel)
 
-	c.JSON(http.StatusOK, &hotelResponse)
+	c.JSON(http.StatusOK, hotelResponse)
 }
 
-func (controller RestHotelController) DeleteHotelRequest(c *gin.Context) {
+func (ctr RestController) DeleteHotelRequest(c *gin.Context) {
 	stringId := c.Param("id")
-	id, err := uuid.Parse(stringId)
+	id, err := strconv.Atoi(stringId)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	err = controller.service.DeleteHotel(id)
+	err = ctr.service.RemoveHotel(uint(id))
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -115,77 +114,35 @@ func (controller RestHotelController) DeleteHotelRequest(c *gin.Context) {
 
 }
 
-func (controller RestHotelController) UpdateHotelRequest(c *gin.Context) {
+func (ctr RestController) UpdateHotel(c *gin.Context) {
 
 	stringId := c.Param("id")
-	id, err := uuid.Parse(stringId)
+	id, err := strconv.Atoi(stringId)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	var hotel dto.CreateHotelRequest
-
-	if err := c.ShouldBindJSON(&hotel); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	stringVendorId := c.Param(hotel.Vendor)
-	vendorId, err := uuid.Parse(stringVendorId)
+	var hotel dto.UpdateHotelRequest
 
 	if err := c.ShouldBindJSON(&hotel); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	pics, address := toAddressPictures(&hotel)
-
-	hotelUpdate := model.Hotel{
-		ID:          id,
-		Name:        hotel.HotelName,
-		Address:     address,
-		Description: hotel.Description,
-		Vendor:      model.Vendor{ID: vendorId},
-		Pictures:    pics,
+	if uint(id) != hotel.Id {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Id mismatch"})
 	}
 
-	updatetedHotel, err := controller.service.UpdateHotel(&hotelUpdate)
+	updatetedHotel, err := ctr.service.UpdateHotel(dto.ToHotelModel(&hotel))
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	hotelResponse := dto.HotelRespnse{
-		Id:          updatetedHotel.ID.String(),
-		HotelName:   updatetedHotel.Name,
-		Street:      updatetedHotel.Address.Street,
-		State:       updatetedHotel.Address.State,
-		Land:        updatetedHotel.Address.Land,
-		VendorID:    updatetedHotel.Vendor.ID.String(),
-		VendorName:  updatetedHotel.Vendor.Username,
-		Description: updatetedHotel.Description,
-
-		Pictures: toPictures(updatetedHotel),
-	}
-
+	hotelResponse := dto.ToHotelResoponse(updatetedHotel)
 	c.JSON(http.StatusOK, &hotelResponse)
 
-}
-
-func toAddressPictures(hotel *dto.CreateHotelRequest) ([]*model.Picture, model.Address) {
-	pictures := make([]*model.Picture, len(hotel.Pictures))
-	for i, pic := range hotel.Pictures {
-		pictures[i] = &model.Picture{ID: uuid.New(), Payload: pic.Payload, Description: pic.Description}
-	}
-	return pictures, model.Address{Street: hotel.Street, State: hotel.State, Land: hotel.Land}
-}
-
-func toPictures(hotel *model.Hotel) []dto.PictureResponse {
-	pictures := make([]dto.PictureResponse, len(hotel.Pictures))
-	for i, pic := range hotel.Pictures {
-		pictures[i] = dto.PictureResponse{Id: pic.ID.String(), Payload: pic.Payload, Description: pic.Description}
-	}
-	return pictures
 }
