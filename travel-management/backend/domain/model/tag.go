@@ -3,7 +3,7 @@ package model
 import "encoding/json"
 
 type Tag struct {
-	Typ  int    `json:"typId"`
+	Id   uint   `json:"typId"`
 	Name string `json:"name"`
 }
 

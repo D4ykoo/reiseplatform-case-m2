@@ -5,6 +5,8 @@ import (
 	"time"
 
 	dbgorm "github.com/mig3177/travelmanagement/adapter/dbGoRm"
+	"github.com/mig3177/travelmanagement/application"
+	"github.com/mig3177/travelmanagement/domain"
 	"github.com/mig3177/travelmanagement/domain/model"
 	"github.com/mig3177/travelmanagement/ports/outbound"
 )
@@ -105,50 +107,6 @@ func main() {
 		fmt.Println(def)
 	*/
 
-	var repo outbound.HotelRepository
-	repo = dbgorm.NewHotelRepository(10, 100)
-
-	pic := model.Picture{Payload: "PAYLOAD", Description: "DES"}
-	pics := []*model.Picture{&pic}
-
-	hotel := model.Hotel{Name: "waterloo", Address: model.Address{Street: "STREET", State: "STATE", Land: "LAND"}, Description: "DES2", Vendor: model.Vendor{Id: 1253, Username: "user"}, Pictures: pics}
-
-	newhotel, _ := repo.Create(&hotel)
-
-	hotelByID, _ := repo.FindByID(newhotel.Id)
-	from := time.Date(
-
-		2009, 11, 17, 0, 0, 0, 0, time.UTC)
-
-	to := time.Date(
-
-		2009, 11, 25, 0, 0, 0, 0, time.UTC)
-	travel := model.Travel{Vendor: model.Vendor{Id: 12358, Username: "Herbert"}, From: from, To: to, Price: 8884.51, Description: "DES22", Tags: []*model.Tag{{Typ: 58, Name: "Wandern"}}}
-
-	//new_Pic := model.Picture{Payload: "Kuwukiland-PAYLOAD", Description: "Kuwukiland-DES"}
-	pic.Id = newhotel.Pictures[0].Id
-	//pics2 := []*model.Picture{&new_Pic, &pic}
-	//travels := []*model.Travel{&travel}
-
-	//newhotel.Address.Land = "Kuwukiland"
-	//newhotel.Pictures = pics2
-	//newhotel.Travels = travels
-
-	repo2 := dbgorm.NewTravelRepository(10, 100)
-	repo2.Create(&travel, newhotel.Id)
-
-	//updated_hotel, _ := repo.Update(newhotel)
-	//repo.Delete(newhotel.Id)
-	currentHotels, _ := repo.ListAll()
-
-	fmt.Println("--------------------------------------------------------------------------------")
-	fmt.Println(currentHotels)
-	fmt.Println("--------------------------------------------------------------------------------")
-	fmt.Println(hotelByID)
-	fmt.Println("--------------------------------------------------------------------------------")
-	hotelByID, _ = repo.FindByID(newhotel.Id)
-	fmt.Println(hotelByID)
-
 	//fmt.Println(updated_hotel)
 
 	/*
@@ -194,4 +152,73 @@ func main() {
 	   fmt.Println("--------------------------------------------------------------------------------")
 	   fmt.Println(updated_hotel)
 	*/
+
+	var repo outbound.HotelRepository
+	repo = dbgorm.NewHotelRepository(10, 100)
+
+	pic := model.Picture{Payload: "PAYLOAD", Description: "DES"}
+	pics := []*model.Picture{&pic}
+
+	hotel := model.Hotel{Name: "waterloo", Address: model.Address{Street: "STREET", State: "STATE", Land: "LAND"}, Description: "DES2", Vendor: model.Vendor{Id: 1253, Username: "user"}, Pictures: pics, Tags: []*model.Tag{&model.Tag{Name: "Wandern"}}}
+
+	newhotel, _ := repo.Create(&hotel)
+
+	hotelByID, _ := repo.FindByID(newhotel.Id)
+
+	/*from := time.Date(
+
+		2009, 11, 17, 0, 0, 0, 0, time.UTC)
+
+	to := time.Date(
+
+		2009, 11, 25, 0, 0, 0, 0, time.UTC)
+	travel := model.Travel{Vendor: model.Vendor{Id: 12358, Username: "Herbert"}, From: from, To: to, Price: 8884.51, Description: "DES22"}
+
+
+	//pics2 := []*model.Picture{&new_Pic, &pic}
+	//travels := []*model.Travel{&travel}
+
+	//newhotel.Address.Land = "Kuwukiland"
+	//newhotel.Pictures = pics2
+	//newhotel.Travels = travels
+
+	repo2 := dbgorm.NewTravelRepository(10, 100)
+	repo2.Create(&travel, newhotel.Id)
+
+	//updated_hotel, _ := repo.Update(newhotel)
+	//repo.Delete(newhotel.Id)
+	//currentHotels, _ := repo.ListAll()
+	*/
+
+	var abc domain.HotelService
+	abc = application.NewHotelService(repo)
+
+	from := time.Date(
+
+		2009, 11, 17, 0, 0, 0, 0, time.UTC)
+
+	to := time.Date(
+
+		2009, 11, 25, 0, 0, 0, 0, time.UTC)
+	travel := model.Travel{Vendor: model.Vendor{Id: 12358, Username: "Herbert"}, From: from, To: to, Price: 8884.51, Description: "DES22"}
+
+	repo2 := dbgorm.NewTravelRepository(10, 100)
+	newTravel, _ := repo2.Create(&travel, newhotel.Id)
+
+	pic.Id = newhotel.Pictures[0].Id
+	new_Pic := model.Picture{Payload: "Kuwukiland-PAYLOAD", Description: "Kuwukiland-DES"}
+	pics2 := []*model.Picture{&new_Pic, &pic}
+	newhotel.Pictures = pics2
+	newhotel.Address.Land = "Kuwukiland"
+
+	repo.Update(newhotel)
+	fmt.Println("--------------------------------------------------------------------------------")
+	//fmt.Println(currentHotels)
+	fmt.Println("--------------------------------------------------------------------------------")
+	fmt.Println(hotelByID)
+	fmt.Println("--------------------------------------------------------------------------------")
+	fmt.Println(repo.ListAll())
+	fmt.Println("--------------------------------------------------------------------------------")
+	//repo.Delete(newhotel.Id)
+	fmt.Println(repo2.FindByID(newTravel.Id))
 }

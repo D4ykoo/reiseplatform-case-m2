@@ -34,7 +34,7 @@ func (repo HotelRepositoryImpl) Update(hotel *model.Hotel) (*model.Hotel, error)
 
 	// search of existing entry
 	var entity entities.HotelEntity
-	result := repo.db.Connection.Model(&entities.HotelEntity{}).Preload("Pictures").First(&entity, hotel.Id)
+	result := repo.db.Connection.Model(&entities.HotelEntity{}).Preload(clause.Associations).First(&entity, hotel.Id)
 
 	// Cancel update if entry not exist
 	if result.Error != nil {
@@ -54,6 +54,7 @@ func (repo HotelRepositoryImpl) Update(hotel *model.Hotel) (*model.Hotel, error)
 	entity.Pictures = update.Pictures
 	entity.VendorRef = update.VendorRef
 	entity.Travels = update.Travels
+	entity.Tags = update.Tags
 
 	res := repo.db.Connection.Save(&entity)
 
@@ -63,19 +64,20 @@ func (repo HotelRepositoryImpl) Update(hotel *model.Hotel) (*model.Hotel, error)
 func (repo HotelRepositoryImpl) Delete(id uint) error {
 	// search of existing entry
 	var entity entities.HotelEntity
-	result := repo.db.Connection.Model(&entities.HotelEntity{}).Preload("Pictures").Preload("Travels").First(&entity, id)
+	result := repo.db.Connection.Model(&entities.HotelEntity{}).First(&entity, id)
 
 	// Cancel deletion if entry not exist
 	if result.Error != nil {
 		return result.Error
 	}
 
+	// Delte all
 	return repo.db.Connection.Select(clause.Associations).Delete(&entity).Error
 }
 
 func (repo HotelRepositoryImpl) ListAll() ([]*model.Hotel, error) {
 	var entity []entities.HotelEntity
-	res := repo.db.Connection.Model(&entities.HotelEntity{}).Preload("Pictures").Preload("Travels").Find(&entity)
+	res := repo.db.Connection.Model(&entities.HotelEntity{}).Preload(clause.Associations).Find(&entity)
 	hotels := make([]*model.Hotel, len(entity))
 
 	if res.Error == nil {
@@ -88,7 +90,7 @@ func (repo HotelRepositoryImpl) ListAll() ([]*model.Hotel, error) {
 
 func (repo HotelRepositoryImpl) FindByID(id uint) (*model.Hotel, error) {
 	var entity entities.HotelEntity
-	res := repo.db.Connection.Model(&entities.HotelEntity{}).Preload("Pictures").Preload("Travels").First(&entity, id)
+	res := repo.db.Connection.Model(&entities.HotelEntity{}).Preload(clause.Associations).First(&entity, id)
 	return entities.ToHotelModel(&entity), res.Error
 }
 

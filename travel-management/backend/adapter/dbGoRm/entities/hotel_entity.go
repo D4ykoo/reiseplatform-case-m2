@@ -17,6 +17,7 @@ type HotelEntity struct {
 	Description string
 	Pictures    []*PictureEntity `json:"pictures" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;foreignKey:HotelRef"`
 	Travels     []*TravelEntity  `json:"travels" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;foreignKey:HotelRef"`
+	Tags        []*TagEntity     `json:"tags" gorm:"many2many:tag_hotel;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
 func (h *HotelEntity) String() string {
@@ -38,9 +39,14 @@ func ToHotelEntity(hotel *model.Hotel) *HotelEntity {
 		travels[i] = ToTravelEntity(travel)
 	}
 
+	tags := make([]*TagEntity, len(hotel.Tags))
+	for i, tag := range hotel.Tags {
+		tags[i] = ToTagEntity(tag)
+	}
+
 	return &HotelEntity{Name: hotel.Name,
 		Street: hotel.Address.Street, State: hotel.Address.State, Land: hotel.Address.Land,
-		VendorRef: hotel.Vendor.Id, Description: hotel.Description, Pictures: pictures, Model: gorm.Model{ID: hotel.Id}, Travels: travels}
+		VendorRef: hotel.Vendor.Id, Description: hotel.Description, Pictures: pictures, Model: gorm.Model{ID: hotel.Id}, Travels: travels, Tags: tags}
 }
 
 func ToHotelModel(entity *HotelEntity) *model.Hotel {
@@ -54,7 +60,12 @@ func ToHotelModel(entity *HotelEntity) *model.Hotel {
 		travels[i] = ToTravelModel(travel)
 	}
 
+	tags := make([]*model.Tag, len(entity.Tags))
+	for i, tag := range entity.Tags {
+		tags[i] = ToTagModel(tag)
+	}
+
 	return &model.Hotel{Id: entity.ID, Name: entity.Name,
 		Address: model.Address{Street: entity.Street, State: entity.State, Land: entity.Land},
-		Vendor:  model.Vendor{Id: entity.VendorRef}, Description: entity.Description, Pictures: pictures, Travels: travels}
+		Vendor:  model.Vendor{Id: entity.VendorRef}, Description: entity.Description, Pictures: pictures, Travels: travels, Tags: tags}
 }

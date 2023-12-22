@@ -10,15 +10,15 @@ import (
 	"github.com/mig3177/travelmanagement/domain/model"
 )
 
-type RestHotelController struct {
-	service domain.HotelService
+type RestController struct {
+	service domain.TravelService
 }
 
-func NewRestHotelController(service domain.HotelService) RestHotelController {
-	return RestHotelController{service: service}
+func New(service domain.TravelService) RestController {
+	return RestController{service: service}
 }
 
-func (controller RestHotelController) CreateHotelRequest(c *gin.Context) {
+func (con RestController) CreateHotelRequest(c *gin.Context) {
 
 	var hotel dto.CreateHotelRequest
 

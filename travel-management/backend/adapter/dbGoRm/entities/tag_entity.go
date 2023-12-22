@@ -9,7 +9,6 @@ import (
 
 type TagEntity struct {
 	gorm.Model
-	Typ     int            `json:"typ" gorm:"primary_key;"`
 	Name    string         `json:"name"`
 	Travels []TravelEntity `json:"travels" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;many2many:travel_tags;"`
 }
@@ -23,9 +22,9 @@ func (t *TagEntity) String() string {
 }
 
 func ToTagEntity(tag *model.Tag) *TagEntity {
-	return &TagEntity{Typ: tag.Typ, Name: tag.Name}
+	return &TagEntity{Model: gorm.Model{ID: tag.Id}, Name: tag.Name}
 }
 
 func ToTagModel(tag *TagEntity) *model.Tag {
-	return &model.Tag{Typ: tag.Typ, Name: tag.Name}
+	return &model.Tag{Id: tag.ID, Name: tag.Name}
 }

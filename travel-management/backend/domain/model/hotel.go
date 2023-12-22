@@ -9,7 +9,8 @@ type Hotel struct {
 	Description string     `json:"description"`
 	Vendor      Vendor     `json:"vendor"`
 	Pictures    []*Picture `json:"pictures"`
-	Travels     []*Travel  `json:"Travels"`
+	Travels     []*Travel  `json:"travels"`
+	Tags        []*Tag     `json:"tags"`
 }
 
 func (h *Hotel) String() string {

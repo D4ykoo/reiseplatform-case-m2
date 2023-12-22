@@ -14,7 +14,6 @@ type Travel struct {
 	Description string    `json:"description"`
 	CreatedAt   time.Time `json:"createdAt"`
 	UpdatedAt   time.Time `json:"updatedAt"`
-	Tags        []*Tag    `json:"tags"`
 }
 
 func (t *Travel) String() string {
