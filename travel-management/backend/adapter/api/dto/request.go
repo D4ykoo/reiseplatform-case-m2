@@ -1,6 +1,8 @@
 package dto
 
-import "github.com/mig3177/travelmanagement/domain/model"
+import (
+	"github.com/mig3177/travelmanagement/domain/model"
+)
 
 type CreateHotelRequest struct {
 	HotelName   string           `json:"hotelname"`
@@ -34,10 +36,17 @@ type UpdateHotelRequest struct {
 }
 
 type TagRequest struct {
-	Id uint `json:"id"`
+	Id   uint   `json:"id"`
+	Name string `json:"name"`
 }
 
 type CreateTravelRequest struct {
+	VendorId    uint    `json:"vendorid"`
+	VendorName  string  `json:"vendorname"`
+	From        string  `json:"from"`
+	To          string  `json:"to"`
+	Price       float32 `json:"price"`
+	Description string  `json:"description"`
 }
 
 type DeleteTravelRequest struct {

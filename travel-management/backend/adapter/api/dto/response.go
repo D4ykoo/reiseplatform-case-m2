@@ -51,18 +51,26 @@ func ToPictureResopnse(pics []*model.Picture) []*PictureResponse {
 
 func ToHotelResoponse(hotel *model.Hotel) *HotelResponse {
 	pics := ToPictureResopnse(hotel.Pictures)
-	travels := ToTravelResoponse(hotel.Travels)
+	travels := make([]*TravelResponse, len(hotel.Travels))
+	for i, travel := range hotel.Travels {
+		travels[i] = ToTravelResoponse(travel)
+	}
+
+	tags := make([]*TagResponse, len(hotel.Tags))
+	for i, tag := range hotel.Tags {
+		tags[i] = ToTagResponse(tag)
+	}
 
 	return &HotelResponse{Id: hotel.Id, HotelName: hotel.Name, Street: hotel.Address.Street, State: hotel.Address.State, Land: hotel.Address.Land,
-		VendorID: hotel.Vendor.Username, VendorName: hotel.Vendor.Username, Description: hotel.Description, Pictures: pics, Travels: travels}
+		VendorID: hotel.Vendor.Username, VendorName: hotel.Vendor.Username, Description: hotel.Description, Pictures: pics, Travels: travels, Tags: tags}
 }
 
-func ToTravelResoponse(travels []*model.Travel) []*TravelResponse {
-	travelRes := make([]*TravelResponse, len(travels))
-	for i, travel := range travels {
-		travelRes[i] = &TravelResponse{Id: travel.Id, VendorID: travel.Vendor.Id, VendorName: travel.Vendor.Username,
-			From: travel.From.Local().String(), To: travel.To.Local().String(), Price: travel.Price,
-			Description: travel.Description, CreatedAt: travel.Description, UpdatedAt: travel.Description}
-	}
-	return travelRes
+func ToTravelResoponse(travel *model.Travel) *TravelResponse {
+	return &TravelResponse{Id: travel.Id, VendorID: travel.Vendor.Id, VendorName: travel.Vendor.Username,
+		From: travel.From.Local().String(), To: travel.To.Local().String(), Price: travel.Price,
+		Description: travel.Description, CreatedAt: travel.CreatedAt.Format("2006-01-02"), UpdatedAt: travel.UpdatedAt.Format("2006-01-02")}
+}
+
+func ToTagResponse(tag *model.Tag) *TagResponse {
+	return &TagResponse{Id: tag.Id, Name: tag.Name}
 }

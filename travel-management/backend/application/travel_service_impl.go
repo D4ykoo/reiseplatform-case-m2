@@ -1,6 +1,7 @@
 package application
 
 import (
+	"errors"
 	"strings"
 	"time"
 
@@ -11,10 +12,11 @@ import (
 type TravelServiceImpl struct {
 	hotels  outbound.HotelRepository
 	travels outbound.TravelRepository
+	tags    outbound.TagRepository
 }
 
-func New(hrepo outbound.HotelRepository, trepo outbound.TravelRepository) TravelServiceImpl {
-	return TravelServiceImpl{hotels: hrepo, travels: trepo}
+func New(hrepo outbound.HotelRepository, trepo outbound.TravelRepository, tagrepo outbound.TagRepository) TravelServiceImpl {
+	return TravelServiceImpl{hotels: hrepo, travels: trepo, tags: tagrepo}
 }
 
 func (service TravelServiceImpl) NewHotel(name string, address model.Address, vendor model.Vendor, description string, pics []*model.Picture) (*model.Hotel, error) {
@@ -29,10 +31,33 @@ func (service TravelServiceImpl) NewTravel(hotelRef uint, vendor uint, from time
 	return service.travels.Create(offer, hotelRef)
 }
 
-func (service TravelServiceImpl) FindHotel(name, land string, from, to time.Time, tags ...uint) ([]*model.Hotel, error) {
+func (service TravelServiceImpl) FindHotelByTravel(hotelId, travelId uint) (*model.Hotel, error) {
+	hotel, err := service.hotels.FindByID(hotelId)
+
+	if err != nil {
+		return &model.Hotel{}, err
+	}
+	var travels []*model.Travel
+
+	for _, t := range hotel.Travels {
+		if t.Id == travelId {
+			travels = append(travels, t)
+			break
+		}
+	}
+
+	if len(travels) != 1 {
+		return &model.Hotel{}, errors.New("Travel id not found")
+	}
+
+	hotel.Travels = travels
+	return hotel, err
+}
+
+func (service TravelServiceImpl) FindHotelTravel(name string, land string, from *time.Time, to *time.Time, tags []uint) ([]*model.Hotel, error) {
 	hotels, error := service.hotels.ListAll()
-	result := make([]*model.Hotel, len(hotels))
-	for i, hotel := range hotels {
+	var result []*model.Hotel
+	for _, hotel := range hotels {
 		if len(name) != 0 && !strings.Contains(strings.ToLower(name), strings.ToLower(hotel.Name)) {
 			break
 		}
@@ -43,15 +68,16 @@ func (service TravelServiceImpl) FindHotel(name, land string, from, to time.Time
 		if len(tags) != 0 && !containsTag(tags, hotel.Tags) {
 			break
 		}
-		result[i] = hotel
-		/*
-			resultT := make([]*model.Travel, len(hotel.Travels))
-			for j := 0; i < len(hotel.Travels); i++ {
-				if from.Unix() >= hotel.Travels[i].From.Unix() && to.Unix() <= hotel.Travels[i].From.Unix() {
-					resultT[] = hotel.Travels[j]
-				}
+
+		var resultT []*model.Travel
+		for j := 0; j < len(hotel.Travels); j++ {
+			if from.Unix() >= hotel.Travels[j].From.Unix() && to.Unix() <= hotel.Travels[j].From.Unix() {
+				resultT = append(resultT, hotel.Travels[j])
 			}
-		*/
+		}
+
+		hotel.Travels = resultT
+		result = append(result, hotel)
 	}
 	return result, error
 }
@@ -62,23 +88,6 @@ func (service TravelServiceImpl) GetHotel(id uint) (*model.Hotel, error) {
 
 func (service TravelServiceImpl) GetTravel(id uint) (*model.Travel, error) {
 	return service.travels.FindByID(id)
-}
-
-func HashGeneric[T comparable](a []T, b []T) []T {
-	set := make([]T, 0)
-	hash := make(map[T]struct{})
-
-	for _, v := range a {
-		hash[v] = struct{}{}
-	}
-
-	for _, v := range b {
-		if _, ok := hash[v]; ok {
-			set = append(set, v)
-		}
-	}
-
-	return set
 }
 
 func containsTag(s []uint, e []*model.Tag) bool {
@@ -109,4 +118,24 @@ func (service TravelServiceImpl) RemoveTravel(id uint) error {
 }
 func (service TravelServiceImpl) ListHotelTravel() ([]*model.Hotel, error) {
 	return service.hotels.ListAll()
+}
+
+func (service TravelServiceImpl) GetTag(id uint) (*model.Tag, error) {
+	return service.tags.FindByID(id)
+}
+
+func (service TravelServiceImpl) ListTags() ([]*model.Tag, error) {
+	return service.tags.ListAll()
+}
+
+func (service TravelServiceImpl) NewTag(name string) (*model.Tag, error) {
+	return service.tags.Create(&model.Tag{Name: name})
+}
+
+func (service TravelServiceImpl) RemoveTag(id uint) error {
+	return service.tags.Delete(id)
+}
+
+func (service TravelServiceImpl) UpdateTags(tag *model.Tag) (*model.Tag, error) {
+	return service.tags.Update(tag)
 }

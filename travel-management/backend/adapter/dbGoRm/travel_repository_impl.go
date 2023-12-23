@@ -28,11 +28,11 @@ func (repo TravelRepositoryImpl) Create(travel *model.Travel, hotelref uint) (*m
 	return entities.ToTravelModel(entity), res.Error
 }
 
-func (repo TravelRepositoryImpl) Update(travel *model.Travel) (*model.Travel, error) {
+func (repo TravelRepositoryImpl) Update(travel *model.Travel, hotelref uint) (*model.Travel, error) {
 
 	// search of existing entry
 	var entity entities.TravelEntity
-	result := repo.db.Connection.Model(&entities.TravelEntity{}).First(&entity, travel.Id)
+	result := repo.db.Connection.Model(&entities.TravelEntity{}).First(&entity, hotelref)
 
 	// Cancel update if entry not exist
 	if result.Error != nil {
