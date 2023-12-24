@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/mig3177/travelmanagement/adapter/api"
 	dbgorm "github.com/mig3177/travelmanagement/adapter/dbGoRm"
@@ -30,6 +31,7 @@ func main() {
 	service := api.New(travelService)
 	// Router
 	router := gin.Default()
+	router.Use(static.Serve("/", static.LocalFile("../frontend/dist/frontend/browser", false)))
 
 	// CRUD
 	// Create
