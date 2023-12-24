@@ -1,16 +1,34 @@
-<div class="card flex justify-content-center" style="width: 100%;">
-    <p-inputGroup>
+<div class="flex-container" style="width: 100%;">
+    <p-inputGroup class="search-label">
         <p-inputGroupAddon>
-           Land
+            <div class="search-icon">
+                <svg fill="none" height="100%" viewBox="0 0 28 28" width="100%" xmlns="http://www.w3.org/2000/svg">
+                    <path clip-rule="evenodd"
+                        d="M14 6C11.7909 6 10 7.79086 10 10C10 12.2091 11.7909 14 14 14C16.2091 14 18 12.2091 18 10C18 7.79086 16.2091 6 14 6ZM12 10C12 8.89543 12.8954 8 14 8C15.1046 8 16 8.89543 16 10C16 11.1046 15.1046 12 14 12C12.8954 12 12 11.1046 12 10Z"
+                        fill="black" fill-rule="evenodd" />
+                    <path clip-rule="evenodd"
+                        d="M23 10.1438C23 14.8819 20.359 22.3559 15.0771 26.6174C14.4449 27.1275 13.5551 27.1275 12.9229 26.6174C7.64096 22.3559 5 14.8819 5 10.1438C5 5.0938 9.02944 1 14 1C18.9706 1 23 5.0938 23 10.1438ZM21 10.1438C21 12.1757 20.4217 14.9456 19.1942 17.7283C18.0897 20.2321 16.5107 22.6301 14.4974 24.4574C14.2134 24.7152 13.7866 24.7152 13.5026 24.4574C11.4893 22.6301 9.91031 20.2321 8.80581 17.7283C7.57831 14.9456 7 12.1757 7 10.1438C7 6.21602 10.134 3.03195 14 3.03195C17.866 3.03195 21 6.21602 21 10.1438Z"
+                        fill="black" fill-rule="evenodd" />
+                </svg>
+            </div>
         </p-inputGroupAddon>
-        <input pInputText placeholder="Land" />
-    </p-inputGroup> 
-    <p-inputGroup>
+        <input class="search-input" pInputText placeholder="Land" />
+    </p-inputGroup>
+    <p-inputGroup class="search-label">
         <p-inputGroupAddon>
-           Hotel Name
+            <div class="search-icon">
+                <svg height="100%" viewBox="0 0 1792 1792" width="100%" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M128 1024h1728q26 0 45 19t19 45v448h-256v-256h-1536v256h-256v-1216q0-26 19-45t45-19h128q26 0 45 19t19 45v704zm576-320q0-106-75-181t-181-75-181 75-75 181 75 181 181 75 181-75 75-181zm1216 256v-64q0-159-112.5-271.5t-271.5-112.5h-704q-26 0-45 19t-19 45v384h1152z" />
+                </svg>
+            </div>
         </p-inputGroupAddon>
-        <input pInputText placeholder="Land" />
-    </p-inputGroup> 
-    <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true"></p-calendar>
-    <p-multiSelect [options]="cities" [(ngModel)]="selectedCities" optionLabel="name"></p-multiSelect>
+        <input class="search-input" pInputText placeholder="Hotel Name" />
+    </p-inputGroup>
+    <div class="search-label">
+        <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true" [showIcon]="true" [style]="{'width':'25em','height':'3.5rem'}"></p-calendar>
+    </div>
+    <div class="search-label">
+    <p-multiSelect [options]="cities" [(ngModel)]="selectedCities" optionLabel="name" [style]="{'width':'22em', 'height':'3.5rem'}"></p-multiSelect>
+    </div>
 </div>

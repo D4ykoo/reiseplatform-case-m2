@@ -1,0 +1,32 @@
+.flex-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    background-color: rgb(188, 221, 130);
+    align-content: center;
+    width: 100%;
+    padding-left: .5rem;
+    padding-right: .5rem;
+    height: 20%;
+    max-height: 100px;
+}
+
+.search-label {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.search-input {
+    width: 22rem;
+}
+
+.search-icon {
+    width: 2rem;
+    height: 2rem;
+}
+.search-input2 {
+    position: absolute;
+    width: 500px;
+}
