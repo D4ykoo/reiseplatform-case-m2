@@ -1,0 +1,16 @@
+<div class="card flex justify-content-center" style="width: 100%;">
+    <p-inputGroup>
+        <p-inputGroupAddon>
+           Land
+        </p-inputGroupAddon>
+        <input pInputText placeholder="Land" />
+    </p-inputGroup> 
+    <p-inputGroup>
+        <p-inputGroupAddon>
+           Hotel Name
+        </p-inputGroupAddon>
+        <input pInputText placeholder="Land" />
+    </p-inputGroup> 
+    <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true"></p-calendar>
+    <p-multiSelect [options]="cities" [(ngModel)]="selectedCities" optionLabel="name"></p-multiSelect>
+</div>
