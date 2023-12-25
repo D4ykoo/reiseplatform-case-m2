@@ -1,7 +1,7 @@
-<div class="flex-container" style="width: 100%;">
-    <p-inputGroup class="search-label">
+<div class="flex flex-row flex-wrap gap-3" style="margin-top: 0.2rem;">
+    <p-inputGroup class="sflex align-items-center justify-content-center w-22rem h-4rem ">
         <p-inputGroupAddon>
-            <div class="search-icon">
+            <div class="w-2rem h-2rem">
                 <svg fill="none" height="100%" viewBox="0 0 28 28" width="100%" xmlns="http://www.w3.org/2000/svg">
                     <path clip-rule="evenodd"
                         d="M14 6C11.7909 6 10 7.79086 10 10C10 12.2091 11.7909 14 14 14C16.2091 14 18 12.2091 18 10C18 7.79086 16.2091 6 14 6ZM12 10C12 8.89543 12.8954 8 14 8C15.1046 8 16 8.89543 16 10C16 11.1046 15.1046 12 14 12C12.8954 12 12 11.1046 12 10Z"
@@ -12,23 +12,44 @@
                 </svg>
             </div>
         </p-inputGroupAddon>
-        <input class="search-input" pInputText placeholder="Land" />
+        <input class="w-20rem h-4rem" pInputText placeholder="Land" />
     </p-inputGroup>
-    <p-inputGroup class="search-label">
+    <p-inputGroup class="flex align-items-center justify-content-center w-22rem h-4rem ">
         <p-inputGroupAddon>
-            <div class="search-icon">
+            <div class="w-2rem h-2rem">
                 <svg height="100%" viewBox="0 0 1792 1792" width="100%" xmlns="http://www.w3.org/2000/svg">
                     <path
                         d="M128 1024h1728q26 0 45 19t19 45v448h-256v-256h-1536v256h-256v-1216q0-26 19-45t45-19h128q26 0 45 19t19 45v704zm576-320q0-106-75-181t-181-75-181 75-75 181 75 181 181 75 181-75 75-181zm1216 256v-64q0-159-112.5-271.5t-271.5-112.5h-704q-26 0-45 19t-19 45v384h1152z" />
                 </svg>
             </div>
         </p-inputGroupAddon>
-        <input class="search-input" pInputText placeholder="Hotel Name" />
+        <input class="w-20rem h-4rem" pInputText placeholder="Hotel Name" />
     </p-inputGroup>
-    <div class="search-label">
-        <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true" [showIcon]="true" [style]="{'width':'25em','height':'3.5rem'}"></p-calendar>
-    </div>
-    <div class="search-label">
-    <p-multiSelect [options]="cities" [(ngModel)]="selectedCities" optionLabel="name" [style]="{'width':'22em', 'height':'3.5rem'}"></p-multiSelect>
-    </div>
+    <p-inputGroup class="flex align-items-center justify-content-center w-22rem h-4rem ">
+        <p-inputGroupAddon>
+            <div class="w-2rem h-2rem">
+                <svg height="100%" viewBox="0 0 1792 1792" width="100%" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M192 1664h1408v-1024h-1408v1024zm384-1216v-288q0-14-9-23t-23-9h-64q-14 0-23 9t-9 23v288q0 14 9 23t23 9h64q14 0 23-9t9-23zm768 0v-288q0-14-9-23t-23-9h-64q-14 0-23 9t-9 23v288q0 14 9 23t23 9h64q14 0 23-9t9-23zm384-64v1280q0 52-38 90t-90 38h-1408q-52 0-90-38t-38-90v-1280q0-52 38-90t90-38h128v-96q0-66 47-113t113-47h64q66 0 113 47t47 113v96h384v-96q0-66 47-113t113-47h64q66 0 113 47t47 113v96h128q52 0 90 38t38 90z" />
+                </svg>
+            </div>
+        </p-inputGroupAddon>
+        <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true"
+            [style]="{'width':'100%','height':'100%'}"></p-calendar>
+    </p-inputGroup>
+    <p-inputGroup class="flex align-items-center justify-content-center w-22rem h-4rem ">
+        <p-inputGroupAddon>
+            <div class="w-2rem h-2rem">
+                <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+                    <rect fill="none" height="100%" width="100%" />
+                    <path
+                        d="M194.4,196.4,240,128,194.4,59.6a7.9,7.9,0,0,0-6.7-3.6H40a8,8,0,0,0-8,8V192a8,8,0,0,0,8,8H187.7A7.9,7.9,0,0,0,194.4,196.4Z"
+                        fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="16" />
+                </svg>
+            </div>
+        </p-inputGroupAddon>
+        <p-multiSelect [options]="cities" [(ngModel)]="selectedCities" optionLabel="name"
+            [style]="{'width':'100%','height':'100%'}"></p-multiSelect>
+    </p-inputGroup>
+    <p-button [styleClass]="'sflex align-items-center justify-content-end w-6rem h-4rem'" label="Search"></p-button>
 </div>
