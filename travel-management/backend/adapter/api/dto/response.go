@@ -1,6 +1,8 @@
 package dto
 
 import (
+	"time"
+
 	"github.com/mig3177/travelmanagement/domain/model"
 )
 
@@ -67,8 +69,8 @@ func ToHotelResoponse(hotel *model.Hotel) *HotelResponse {
 
 func ToTravelResoponse(travel *model.Travel) *TravelResponse {
 	return &TravelResponse{Id: travel.Id, VendorID: travel.Vendor.Id, VendorName: travel.Vendor.Username,
-		From: travel.From.Local().String(), To: travel.To.Local().String(), Price: travel.Price,
-		Description: travel.Description, CreatedAt: travel.CreatedAt.Format("2006-01-02"), UpdatedAt: travel.UpdatedAt.Format("2006-01-02")}
+		From: travel.From.Format(time.RFC3339), To: travel.To.Format(time.RFC3339), Price: travel.Price,
+		Description: travel.Description, CreatedAt: travel.CreatedAt.Format(time.RFC3339), UpdatedAt: travel.UpdatedAt.Format(time.RFC3339)}
 }
 
 func ToTagResponse(tag *model.Tag) *TagResponse {

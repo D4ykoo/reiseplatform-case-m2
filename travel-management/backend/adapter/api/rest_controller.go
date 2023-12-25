@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -42,19 +43,17 @@ func (ctr RestController) CreateHotelRequest(c *gin.Context) {
 
 func (ctr RestController) FindHotels(c *gin.Context) {
 
-	query := c.Request.URL.Query()
-
+	name := c.Query("name")
+	land := c.Query("land")
+	fromStr := c.Query("from")
+	toStr := c.Query("to")
+	tagsStr := c.Query("tags")
+	tagsArray := strings.Split(tagsStr, ",")
 	var hotels []*model.Hotel
 
-	name := query.Get("name")
-	land := query.Get("land")
-	fromStr := query.Get("from")
-	toStr := query.Get("to")
-	tagsStr := query.Get("tags")
-	tagsArray := strings.Split(tagsStr, ",")
-
 	// Retun all result without querry parameter
-	if len(query) == 0 {
+
+	if len(name) == 0 && len(land) == 0 && len(fromStr) == 0 && len(toStr) == 0 && len(tagsStr) == 0 {
 		var err error
 		hotels, err = ctr.service.ListHotelTravel()
 		if err != nil {
@@ -73,14 +72,14 @@ func (ctr RestController) FindHotels(c *gin.Context) {
 	var to *time.Time
 
 	if len(fromStr) > 0 && len(toStr) > 0 {
-		fromTmp, errFrom := time.Parse("2006-01-02", fromStr)
+		fromTmp, errFrom := time.Parse(time.RFC3339, fromStr)
 
 		if errFrom != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": errFrom.Error()})
 			return
 		}
 
-		toTmp, errTo := time.Parse("2006-01-02", toStr)
+		toTmp, errTo := time.Parse(time.RFC3339, toStr)
 
 		if errTo != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": errTo.Error()})
@@ -95,6 +94,9 @@ func (ctr RestController) FindHotels(c *gin.Context) {
 	var tags []uint
 
 	for _, tag := range tagsArray {
+		if len(tag) == 0 {
+			break
+		}
 		i, err2 := strconv.Atoi(tag)
 		if err2 != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err2.Error()})
@@ -103,7 +105,6 @@ func (ctr RestController) FindHotels(c *gin.Context) {
 		tags = append(tags, uint(i))
 	}
 
-	// TODO
 	hotels, err3 := ctr.service.FindHotelTravel(name, land, from, to, tags)
 
 	if err3 != nil {
@@ -116,6 +117,7 @@ func (ctr RestController) FindHotels(c *gin.Context) {
 	for _, hotel := range hotels {
 		hotelResponse = append(hotelResponse, dto.ToHotelResoponse(hotel))
 	}
+	fmt.Println(hotelResponse)
 
 	c.JSON(http.StatusOK, hotelResponse)
 }

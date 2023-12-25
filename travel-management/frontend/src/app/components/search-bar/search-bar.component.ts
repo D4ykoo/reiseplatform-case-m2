@@ -4,11 +4,10 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { CalendarModule } from 'primeng/calendar';
 import { FormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
-
-interface City {
-  name: string,
-  code: string
-}
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment.development';
+import { OfferService } from '../../services/offer.service';
+import { Tag } from '../../models/tag';
 
 @Component({
   selector: 'app-search-bar',
@@ -20,18 +19,32 @@ interface City {
 
 export class SearchBarComponent {
   public rangeDates: Date[] | undefined;
+  public tags!: Tag[];
+  public selectedTags!: Tag[];
+  public destination!: string;
+  public hotelname!: string;
 
-  cities!: City[];
+  constructor(private readonly httpClient: HttpClient, private readonly offerService: OfferService) {
 
-  selectedCities!: City[];
+  }
 
   ngOnInit() {
-      this.cities = [
-          {name: 'New York', code: 'NY'},
-          {name: 'Rome', code: 'RM'},
-          {name: 'London', code: 'LDN'},
-          {name: 'Istanbul', code: 'IST'},
-          {name: 'Paris', code: 'PRS'}
-      ];
+    this.httpClient.get(environment.HotelAPI + "tags").subscribe((fetchedTags) => {
+      this.tags = (fetchedTags as Array<Tag>)
+    })
+  }
+
+  public searchOffers() {
+    let from;
+    let to;
+
+    if (this.rangeDates) {
+      from = this.rangeDates[0];
+      to = this.rangeDates[1];
+      if(!to){
+        to = from
+      }
+    }
+    this.offerService.fetchOffers(this.destination, this.hotelname, from, to, this.selectedTags);
   }
 }

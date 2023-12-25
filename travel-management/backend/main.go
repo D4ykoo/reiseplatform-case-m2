@@ -37,7 +37,7 @@ func main() {
 	config.AllowCredentials = true
 	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
 	config.AllowHeaders = []string{"Authorization", "Origin", "Content-Type", "Accept"}
-	router.Use(cors.New(config))
+	router.Use(cors.Default())
 
 	router.Use(static.Serve("/", static.LocalFile("../frontend/dist/frontend/browser", false)))
 
@@ -46,7 +46,10 @@ func main() {
 	router.POST("/api/v1/hotels", service.CreateHotelRequest)
 
 	// Read
-	router.GET("/api/v1/hotels", service.FindHotels)
+	router.GET("/api/v1/hotels", func(ctx *gin.Context) {
+		fmt.Println(ctx.Query("name"))
+		service.FindHotels(ctx)
+	})
 
 	router.GET("/api/v1/hotels/:id", service.GetHotelById)
 
@@ -56,24 +59,24 @@ func main() {
 	router.DELETE("/api/v1/hotels/:id", service.DeleteHotelRequest)
 
 	// Offers
-	router.POST("/api/v1/hotels/:id/travels", func(c *gin.Context) {
+	router.POST("/api/v1/hotels/:id/travels/", func(c *gin.Context) {
 		c.String(200, "Hello, World!")
 	})
 	// Read
-	router.GET("/api/v1/hotels/:id/travels", func(c *gin.Context) {
+	router.GET("/api/v1/hotels/:id/travels/", func(c *gin.Context) {
 		c.String(200, "Hello, World!")
 	})
 
-	router.GET("/api/v1/hotels/:id/travels/:tid", func(c *gin.Context) {
+	router.GET("/api/v1/hotels/:id/travels/:tid/", func(c *gin.Context) {
 		c.String(200, "Hello, World!")
 	})
 
 	// Update
-	router.PUT("/api/v1/hotels/:id/travels/:tid", func(c *gin.Context) {
+	router.PUT("/api/v1/hotels/:id/travels/:tid/", func(c *gin.Context) {
 		c.String(200, "Hello, World!")
 	})
 	// Delete
-	router.DELETE("/api/v1/hotels/:id/travels/:tid", func(c *gin.Context) {
+	router.DELETE("/api/v1/hotels/:id/travels/:tid/", func(c *gin.Context) {
 		c.String(200, "Hello, World!")
 	})
 

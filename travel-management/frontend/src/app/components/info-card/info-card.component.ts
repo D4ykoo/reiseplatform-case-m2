@@ -23,7 +23,7 @@ export class InfoCardComponent implements OnInit{
 
   show(){
     console.log("press button")
-    this.offerService.fetchOffers();
+   // this.offerService.fetchOffers();
   }
 /*
   visible: boolean = false;

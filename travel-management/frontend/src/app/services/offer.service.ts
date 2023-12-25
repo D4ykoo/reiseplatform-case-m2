@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Hotel } from '../models/hotel';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment.development';
 import { BehaviorSubject } from 'rxjs';
 import { OfferCart } from '../models/offerCart';
+import { Tag } from '../models/tag';
+
 
 @Injectable({
   providedIn: 'root'
@@ -17,9 +19,27 @@ export class OfferService {
 
   constructor(private readonly httpClient: HttpClient) { }
 
-  public fetchOffers(): void {
+  public fetchOffers(dest: string | undefined, name: string | undefined, from: Date | undefined, to: Date | undefined, tags: Array<Tag> | undefined): void {
     this.offerSubject.value.clear();
-    this.httpClient.get(environment.HotelAPI + "hotels").subscribe((hotelsResponse) => {
+    let params = new HttpParams();
+
+    if (dest) {
+      params = params.append('land', dest);
+    }
+    if (name) {
+      params = params.append('name', name);
+    }
+    if (from && to) {
+      params = params.append('from', from.toISOString());
+      params = params.append('to', to.toISOString());
+    }
+    if (tags) {
+      tags.forEach(tag => {
+        params = params.append('tags', tag.id);
+      });
+    }
+
+    this.httpClient.get(environment.HotelAPI + "hotels", { params: params }).subscribe((hotelsResponse) => {
       (hotelsResponse as Array<Hotel>).forEach((res: Hotel) => {
         this.offerSubject.value.set(res.id, res)
       })
@@ -41,7 +61,7 @@ export class OfferService {
 
 
   public addToCart(offer: OfferCart) {
-    this.offerCart.set(offer.travelId,offer);
+    this.offerCart.set(offer.travelId, offer);
   }
 
   private handleError(error: any): Promise<any> {
@@ -49,5 +69,3 @@ export class OfferService {
     return Promise.reject(error.message || error);
   }
 }
-
-
