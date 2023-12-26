@@ -3,6 +3,7 @@
 @import "primeng/resources/primeng.css";
 @import "primeflex/primeflex.css";
 @import "primeflex/themes/primeone-light.css";
+@import "quill/dist/quill.snow.css";
 
 body { 
 	max-width: 1600px; 
