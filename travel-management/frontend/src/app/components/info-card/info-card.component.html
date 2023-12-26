@@ -1,24 +1,55 @@
-<p-button (click)="show()" icon="pi pi-external-link" label="Show"></p-button>
-<!--<div>
-    <p-button (click)="showDialog()" icon="pi pi-external-link" label="Show"></p-button>
-    <p-dialog header="Header" [(visible)]="visible" [style]="{width: '50vw'}">
-        <div class="card flex justify-content-center">
-            <p-card header="Advanced Card" subheader="Card Subheader" [style]="{ width: '100%', height:'100%'}">
-                <ng-template pTemplate="header">
-                    <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png" />
+<div *ngIf="hotelOffer" style="width: 100%; height:100%;" class="card">
+    <p-card [header]="hotelOffer.hotelname" [subheader]="hotelOffer.vendorname"
+        [style]="{ width: '100%', height:'100%'}">
+        <ng-template pTemplate="header">
+            <p-galleria [value]="hotelOffer.pictures" [responsiveOptions]="responsiveOptions" [numVisible]="5">
+                <ng-template pTemplate="item" let-item>
+                    <img [src]="item.payload" style="width: auto; max-height: 480px;" />
                 </ng-template>
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae
-                    numquam deserunt quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse,
-                    cupiditate neque
-                    quas!
-                </p>
-                <ng-template pTemplate="footer">
-                    <p-button label="Save" icon="pi pi-check"></p-button>
-                    <p-button label="Cancel" icon="pi pi-times" styleClass="p-button-secondary"
-                        [style]="{ 'margin-left': '.5em' }"></p-button>
+                <ng-template pTemplate="thumbnail" let-item>
+                    <div class="grid grid-nogutter justify-content-center">
+                        <img [src]="item.payload" style="max-width: 100px; max-height: 100px;" />
+                    </div>
                 </ng-template>
-            </p-card>
-        </div>
-    </p-dialog>
-</div>-->
+            </p-galleria>
+        </ng-template>
+        <ng-template pTemplate="content">
+            <div class="grid">
+                <div class="col-12 md:col-12 lg:col-12 font-bold">Description:</div>
+                <div class="col-12 md:col-12 lg:col-12" style="margin-bottom: 5%;">hotelOffer.description:</div>
+            </div>
+            <p-dataView #dv [value]="hotelOffer.travels">
+                <ng-template pTemplate="list" let-travels>
+                    <div class="grid" *ngFor="let travel of travels; let first = first; index as i">
+                        <div class="col-12 md:col-12 lg:col-12 font-bold" [ngClass]="{ 'border-top-1 surface-border': !first }">{{travel.vendorname}}</div>
+                        <div class="col-12 md:col-3 lg:col-3">
+                            <div class="text-center font-bold">{{ travel.from }}</div>
+                            <div class="text-center font-bold">-</div>
+                            <div class="text-center font-bold">{{ travel.to }}</div>
+                        </div>
+                        <div class="col-12 md:col-6 lg:col-6">
+                            <div class="font-bold">
+                                Description:
+                                <div class="font-normal">
+                                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+                                    tempor
+                                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+                                    accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
+                                    sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur
+                                    sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna
+                                    aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea
+                                    rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit
+                                    amet.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-3 lg:col-3 text-center">
+                            <div class="text-2xl font-semibold">{{ '$' + travel.price }}</div>
+                            <p-button (click)="buy(i)">Buy</p-button>
+                        </div>
+                    </div>
+                </ng-template>
+            </p-dataView>
+        </ng-template>
+    </p-card>
+</div>

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Hotel } from '../models/hotel';
+import { Hotel, Hoteldemo } from '../models/hotel';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment.development';
 import { BehaviorSubject } from 'rxjs';
@@ -16,6 +16,8 @@ export class OfferService {
   public offers = this.offerSubject.asObservable();
 
   private offerCart: Map<number, OfferCart> = new Map<number, OfferCart>();
+
+  private currentSelectedOffer: Hotel | undefined;
 
   constructor(private readonly httpClient: HttpClient) { }
 
@@ -45,6 +47,20 @@ export class OfferService {
       })
       this.offerSubject.next(this.offerSubject.getValue());
     })
+  }
+
+  public selectOffer(id: number) {
+    this.currentSelectedOffer = this.offerSubject.value.get(id);
+  }
+
+  public getSelectedOffer(): Hotel | undefined {
+    return this.currentSelectedOffer;
+  }
+
+  public fetchOffersDemo() {
+    this.offerSubject.value.clear();
+    this.offerSubject.value.set(Hoteldemo.id, Hoteldemo)
+    this.offerSubject.next(this.offerSubject.getValue());
   }
 
   public getOffersByHotelId(id: number): Hotel | undefined {
