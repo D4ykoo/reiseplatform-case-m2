@@ -1,8 +1,7 @@
 <app-nav-bar></app-nav-bar>
 <app-search-bar></app-search-bar>
 <app-result-table></app-result-table>
-<!--<app-info-card></app-info-card>-->
-
+<app-edit-panel></app-edit-panel>
 <input type="file" (change)="onFileChange($event)" accept="image/*">
 <div class="card flex justify-content-center">
     <p-fileUpload mode="basic" name="demo[]" url="https://www.primefaces.org/cdn/api/upload.php" accept="image/*" (onUpload)="onFileChange($event)" [auto]="true" chooseLabel="Browse"></p-fileUpload>
