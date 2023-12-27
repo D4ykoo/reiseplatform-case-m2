@@ -54,6 +54,7 @@ func (repo HotelRepositoryImpl) Update(hotel *model.Hotel) (*model.Hotel, error)
 	entity.Pictures = update.Pictures
 	entity.VendorRef = update.VendorRef
 	entity.Travels = update.Travels
+	entity.Description = update.Description
 	entity.Tags = update.Tags
 
 	res := repo.db.Connection.Save(&entity)

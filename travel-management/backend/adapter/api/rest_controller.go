@@ -184,6 +184,7 @@ func (ctr RestController) UpdateHotel(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Id mismatch"})
 	}
 
+	fmt.Println("Rst input", hotel.Tags)
 	updatetedHotel, err := ctr.service.UpdateHotel(dto.ToHotelModel(&hotel))
 
 	if err != nil {

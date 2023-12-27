@@ -1,11 +1,11 @@
-<div class="formgrid grid" *ngIf="editorMode=='Edit'">
-    <div class="field col-12 md:col-12" style="margin-top: 1%; margin-bottom: 1%;">
-        <label for="hotel">Seclet Hotel:</label>
-        <p-dropdown id="hotel" [options]="hotels" [(ngModel)]="hotel" optionLabel="hotelname" [style]="{'width':'100%'}"
-            (onChange)="loadSettings()"></p-dropdown>
-    </div>
-</div>
 <div class="formgrid grid">
+    <div class="formgrid grid">
+        <div class="field col-12 md:col-12" style="margin-top: 1%; margin-bottom: 1%;">
+            <label for="hotel">Seclet Hotel:</label>
+            <p-dropdown id="hotel" [options]="hotels" [(ngModel)]="hotel" optionLabel="hotelname"
+                [style]="{'width':'100%'}" (onChange)="loadSettings()"></p-dropdown>
+        </div>
+    </div>
     <div class="field col-12 md:col-6">
         <label for="hotelname">Hotel Name</label>
         <input id="hotelname" type="text" [(ngModel)]="hotelname"
@@ -55,5 +55,5 @@
 <div class="flex justify-content-center gap-4">
     <p-button severity="secondary" label="Cancel" (click)="clear()"></p-button>
     <p-button label="Submit" (click)="submit()"></p-button>
-    <p-button *ngIf="editorMode=='Edit'" class="justify-content-end" severity="danger" label="Delete"></p-button>
+
 </div>

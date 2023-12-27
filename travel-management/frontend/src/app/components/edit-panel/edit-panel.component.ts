@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { HotelEditComponent } from "../hotel-edit/hotel-edit.component";
 import { TravelOfferEditComponent } from "../travel-offer-edit/travel-offer-edit.component";
 import { CommonModule } from '@angular/common';
+import { HotelEdit2Component } from "../hotel-edit2/hotel-edit2.component";
 
 interface TypeEdit {
   id: number;
@@ -14,11 +15,11 @@ interface TypeEdit {
 }
 
 @Component({
-  selector: 'app-edit-panel',
-  standalone: true,
-  templateUrl: './edit-panel.component.html',
-  styleUrl: './edit-panel.component.css',
-  imports: [TabMenuModule, DropdownModule, FormsModule, HotelEditComponent, TravelOfferEditComponent, CommonModule]
+    selector: 'app-edit-panel',
+    standalone: true,
+    templateUrl: './edit-panel.component.html',
+    styleUrl: './edit-panel.component.css',
+    imports: [TabMenuModule, DropdownModule, FormsModule, HotelEditComponent, TravelOfferEditComponent, CommonModule, HotelEdit2Component]
 })
 export class EditPanelComponent implements OnInit {
 

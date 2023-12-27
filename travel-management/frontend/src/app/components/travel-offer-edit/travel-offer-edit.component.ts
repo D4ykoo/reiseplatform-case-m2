@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { Hotel } from '../../models/hotel';
 import { FormsModule } from '@angular/forms';
@@ -10,6 +10,7 @@ import { lastValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
 import { CreateTravel } from '../../models/requests';
+import { Travel } from '../../models/travel';
 
 @Component({
   selector: 'app-travel-offer-edit',
@@ -18,10 +19,16 @@ import { CreateTravel } from '../../models/requests';
   templateUrl: './travel-offer-edit.component.html',
   styleUrl: './travel-offer-edit.component.css'
 })
-export class TravelOfferEditComponent implements OnInit {
+export class TravelOfferEditComponent implements OnInit, OnChanges {
 
-  hotels!: Hotel[] | undefined;
+
+  @Input()
+  editorMode!: string | undefined;
+
+  hotels!: Hotel[];
   selectedHotel: Hotel | undefined;
+  travels!: Travel[];
+  selectedTravel!: Travel | undefined;;
   price!: number;
   public rangeDates: Date[] | undefined;
   description: string | undefined;
@@ -29,13 +36,17 @@ export class TravelOfferEditComponent implements OnInit {
   constructor(private readonly httpClient: HttpClient) {
   }
 
+
   ngOnInit(): void {
+    this.setup();
+  }
+
+  public setup() {
     lastValueFrom(this.httpClient.get(environment.HotelAPI + "hotels")).then((hotels) => {
       if (hotels)
         this.hotels = (hotels as Hotel[])
     })
   }
-
   submit() {
     let from = new Date();
     let to = new Date();
@@ -47,14 +58,35 @@ export class TravelOfferEditComponent implements OnInit {
         to = from
       }
     }
-
-    let createTravel: CreateTravel = {
-
-      description: this.description as string, from: from.toISOString(), to: to.toISOString(), price: this.price, vendorid: 0, vendorname: "asdf"
-    };
-    lastValueFrom(this.httpClient.post(environment.HotelAPI + "hotels/"+ this.selectedHotel?.id+"/travels", createTravel)).then((e) => { this.clear(); console.log(e); }).catch((e) => console.log(e))
+    if (this.editorMode == "New") {
+      let createTravel: CreateTravel = {
+        description: this.description as string, from: from.toISOString(), to: to.toISOString(), price: this.price, vendorid: 0, vendorname: ""
+      };
+      lastValueFrom(this.httpClient.post(environment.HotelAPI + "hotels/" + this.selectedHotel?.id + "/travels", createTravel)).then((e) => { this.clear(); console.log(e); }).catch((e) => console.log(e))
+    }
+    if (this.editorMode == "Edit") {
+      let updateTravel: CreateTravel = {
+        description: this.description as string, from: from.toISOString(), to: to.toISOString(), price: this.price, vendorid: 0, vendorname: ""
+      };
+      lastValueFrom(this.httpClient.put(environment.HotelAPI + "hotels/" + this.selectedHotel?.id + "/travels/" + this.selectedTravel?.id, updateTravel)).then((e) => { this.clear(); console.log(e); }).catch((e) => console.log(e))
+    }
   }
 
+  loadTravels() {
+    if (this.editorMode == 'Edit' && this.selectedHotel) {
+      this.travels = this.selectedHotel.travels
+      this.selectedTravel = undefined;
+    }
+  }
+
+  loadTraveldata() {
+    if (this.editorMode == 'Edit' && this.selectedHotel && this.selectedTravel) {
+      this.description = this.selectedTravel.description;
+      this.price = this.selectedTravel.price;
+      this.rangeDates = [new Date(this.selectedTravel.from), new Date(this.selectedTravel.to)];
+    }
+
+  }
 
   clear() {
     lastValueFrom(this.httpClient.get(environment.HotelAPI + "hotels")).then(res => {
@@ -65,5 +97,16 @@ export class TravelOfferEditComponent implements OnInit {
     this.description = "";
     this.price = 0;
     this.rangeDates = new Array();
+    this.travels = new Array()
+    this.selectedTravel = undefined;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const mode = changes['editorMode'];
+    if (mode.currentValue != mode.previousValue && mode.currentValue == "Edit") {
+      this.setup();
+    } else {
+      this.clear();
+    }
   }
 }

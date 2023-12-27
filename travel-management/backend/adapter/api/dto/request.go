@@ -32,7 +32,7 @@ type UpdateHotelRequest struct {
 	VendorName  string           `json:"vendorname"`
 	Description string           `json:"description"`
 	Pictures    []PictureRequest `json:"pictures"`
-	Tags        []TagRequest     `json:"tagids"`
+	Tags        []TagRequest     `json:"tags"`
 }
 
 type TagRequest struct {
@@ -49,13 +49,23 @@ type CreateTravelRequest struct {
 	Description string  `json:"description"`
 }
 
+type UpdateTravelRequest struct {
+	Id          uint    `json:"id"`
+	VendorId    uint    `json:"vendorid"`
+	VendorName  string  `json:"vendorname"`
+	From        string  `json:"from"`
+	To          string  `json:"to"`
+	Price       float32 `json:"price"`
+	Description string  `json:"description"`
+}
+
 type DeleteTravelRequest struct {
 }
 
 func ToPictureModel(pics []PictureRequest) []*model.Picture {
 	pictures := make([]*model.Picture, len(pics))
 	for i, pic := range pics {
-		pictures[i] = &model.Picture{Payload: pic.Payload, Description: pic.Description}
+		pictures[i] = &model.Picture{Payload: pic.Payload, Description: pic.Description, Id: pic.Id}
 	}
 	return pictures
 }
@@ -63,7 +73,7 @@ func ToPictureModel(pics []PictureRequest) []*model.Picture {
 func ToHotelModel(hotel *UpdateHotelRequest) *model.Hotel {
 	pics := ToPictureModel(hotel.Pictures)
 	return &model.Hotel{Id: hotel.Id, Name: hotel.HotelName, Address: model.Address{Street: hotel.Street, State: hotel.State, Land: hotel.Land},
-		Description: hotel.Description, Vendor: model.Vendor{Id: hotel.VendorId, Username: hotel.VendorName}, Pictures: pics}
+		Description: hotel.Description, Vendor: model.Vendor{Id: hotel.VendorId, Username: hotel.VendorName}, Pictures: pics, Tags: ToTagsModel(hotel.Tags)}
 }
 
 func ToTagsModel(tags []TagRequest) []*model.Tag {
