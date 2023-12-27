@@ -21,7 +21,6 @@ import { Travel } from '../../models/travel';
 })
 export class TravelOfferEditComponent implements OnInit, OnChanges {
 
-
   @Input()
   editorMode!: string | undefined;
 
@@ -68,7 +67,34 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
       let updateTravel: CreateTravel = {
         description: this.description as string, from: from.toISOString(), to: to.toISOString(), price: this.price, vendorid: 0, vendorname: ""
       };
-      lastValueFrom(this.httpClient.put(environment.HotelAPI + "hotels/" + this.selectedHotel?.id + "/travels/" + this.selectedTravel?.id, updateTravel)).then((e) => { this.clear(); console.log(e); }).catch((e) => console.log(e))
+      lastValueFrom(this.httpClient.put(environment.HotelAPI + "hotels/" + this.selectedHotel?.id + "/travels/" + this.selectedTravel?.id, updateTravel)).then(
+        (res) => {
+          if (res) {
+            let tmp = (res as Travel)
+            if (this.selectedTravel) {
+              this.selectedTravel.id = tmp.id;
+              this.selectedTravel.createdat = tmp.createdat;
+              this.selectedTravel.description = tmp.description;
+              this.selectedTravel.from = tmp.from;
+              this.selectedTravel.price = tmp.price;
+              this.selectedTravel.to = tmp.to;
+              this.selectedTravel.updatedat = tmp.updatedat;
+              this.selectedTravel.vendorid = tmp.vendorid;
+              this.selectedTravel.vendorname = tmp.vendorname;
+              this.loadSettings();
+            } else {
+              this.selectedTravel = tmp;
+            }
+          }
+        }).catch((e) => console.log(e))
+    }
+  }
+
+  loadSettings() {
+    if (this.selectedTravel) {
+      this.description = this.selectedTravel.description;
+      this.price = this.selectedTravel.price;
+      this.rangeDates = [new Date(this.selectedTravel.from), new Date(this.selectedTravel.from)];
     }
   }
 
@@ -109,4 +135,14 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
       this.clear();
     }
   }
+  delete() {
+    if (this.selectedHotel && this.selectedTravel) {
+      lastValueFrom(this.httpClient.delete(environment.HotelAPI + "hotels/" + this.selectedHotel?.id + "/travels/" + this.selectedTravel.id)).then(
+        (e) => {
+          console.log(e);
+          this.clear()
+        }).catch((e) => console.log(e));
+    }
+  }
+
 }

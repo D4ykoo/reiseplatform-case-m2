@@ -7,13 +7,14 @@ import { ResultTableComponent } from "./components/result-table/result-table.com
 import { InfoCardComponent } from "./components/info-card/info-card.component";
 import { EditPanelComponent } from "./components/edit-panel/edit-panel.component";
 import { TravelOfferEditComponent } from "./components/travel-offer-edit/travel-offer-edit.component";
+import { MainComponent } from "./components/main/main.component";
 
 @Component({
     selector: 'app-root',
     standalone: true,
     templateUrl: './app.component.html',
     styleUrl: './app.component.css',
-    imports: [CommonModule, RouterOutlet, NavBarComponent, SearchBarComponent, ResultTableComponent, InfoCardComponent, EditPanelComponent, TravelOfferEditComponent]
+    imports: [CommonModule, RouterOutlet, NavBarComponent, SearchBarComponent, ResultTableComponent, InfoCardComponent, EditPanelComponent, TravelOfferEditComponent, MainComponent]
 })
 export class AppComponent {
   title = 'Travel';

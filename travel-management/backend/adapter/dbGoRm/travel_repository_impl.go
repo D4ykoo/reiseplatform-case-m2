@@ -1,6 +1,8 @@
 package dbgorm
 
 import (
+	"fmt"
+
 	"github.com/mig3177/travelmanagement/adapter/dbGoRm/entities"
 	"github.com/mig3177/travelmanagement/domain/model"
 )
@@ -28,12 +30,13 @@ func (repo TravelRepositoryImpl) Create(travel *model.Travel, hotelref uint) (*m
 	return entities.ToTravelModel(entity), res.Error
 }
 
-func (repo TravelRepositoryImpl) Update(travel *model.Travel, hotelref uint) (*model.Travel, error) {
+func (repo TravelRepositoryImpl) Update(travel *model.Travel, id uint, hotelref uint) (*model.Travel, error) {
 
 	// search of existing entry
 	var entity entities.TravelEntity
-	result := repo.db.Connection.Model(&entities.TravelEntity{}).First(&entity, hotelref)
+	result := repo.db.Connection.Model(&entities.TravelEntity{}).Where("hotel_ref = ?", hotelref).First(&entity, id)
 
+	fmt.Println(result)
 	// Cancel update if entry not exist
 	if result.Error != nil {
 		return travel, result.Error

@@ -108,8 +108,8 @@ func (service TravelServiceImpl) UpdateHotel(hotelUpdate *model.Hotel) (*model.H
 	return service.hotels.Update(hotelUpdate)
 }
 
-func (service TravelServiceImpl) UpdateTravel(offerUpdate *model.Travel, hotelRef uint) (*model.Travel, error) {
-	return service.travels.Update(offerUpdate, hotelRef)
+func (service TravelServiceImpl) UpdateTravel(offerUpdate *model.Travel, id uint, hotelRef uint) (*model.Travel, error) {
+	return service.travels.Update(offerUpdate, id, hotelRef)
 
 }
 

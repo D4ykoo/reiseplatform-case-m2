@@ -4,7 +4,6 @@
         <p-dropdown id="hotel" [options]="hotels" [(ngModel)]="selectedHotel" optionLabel="hotelname"
             [style]="{'width':'100%'}" (onChange)="loadTravels()"></p-dropdown>
     </div>
-
     <div class="field col-12 md:col-6" *ngIf="editorMode == 'Edit' ">
         <label for="travel">Travel</label>
         <p-dropdown id="travel" [options]="travels" [(ngModel)]="selectedTravel" optionLabel="id"
@@ -31,5 +30,5 @@
 <div class="flex justify-content-center gap-4">
     <p-button severity="secondary" label="Cancel" (click)="clear()"></p-button>
     <p-button label="Submit" (click)="submit()"></p-button>
-    <p-button *ngIf="editorMode=='Edit'" class="justify-content-end" severity="danger" label="Delete"></p-button>
+    <p-button *ngIf="editorMode=='Edit'" class="justify-content-end" severity="danger" label="Delete" (click)="delete()"></p-button>
 </div>

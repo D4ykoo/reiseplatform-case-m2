@@ -20,31 +20,23 @@
             </div>
             <p-dataView #dv [value]="hotelOffer.travels">
                 <ng-template pTemplate="list" let-travels>
-                    <div class="grid" *ngFor="let travel of travels; let first = first; index as i">
-                        <div class="col-12 md:col-12 lg:col-12 font-bold" [ngClass]="{ 'border-top-1 surface-border': !first }">{{travel.vendorname}}</div>
-                        <div class="col-12 md:col-3 lg:col-3">
-                            <div class="text-center font-bold">{{ travel.from }}</div>
+                    <div class="grid" *ngFor="let travel of travels; let first = first; index as i" [style]="{'margin-bottom': '1rem'}">
+                        <div class="col-12 md:col-12 lg:col-12 font-bold"
+                            [ngClass]="{ 'border-top-1 surface-border': !first }">{{travel.vendorname}}</div>
+                        <div class="col-12 md:col-2 lg:col-2">
+                            <div class="text-center font-bold">{{ travel.from.slice(0,10) }}</div>
                             <div class="text-center font-bold">-</div>
-                            <div class="text-center font-bold">{{ travel.to }}</div>
+                            <div class="text-center font-bold">{{ travel.to.slice(0,10) }}</div>
                         </div>
-                        <div class="col-12 md:col-6 lg:col-6">
+                        <div class="col-12 md:col-8 lg:col-8">
                             <div class="font-bold">
                                 Description:
-                                <div class="font-normal">
-                                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-                                    tempor
-                                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
-                                    accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
-                                    sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur
-                                    sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna
-                                    aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea
-                                    rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit
-                                    amet.
+                                <div class="font-normal" style="overflow-wrap: break-word;" [innerHTML]="travel.description">
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12 md:col-3 lg:col-3 text-center">
-                            <div class="text-2xl font-semibold">{{ '$' + travel.price }}</div>
+                        <div class="col-12 md:col-2 lg:col-2 text-center">
+                            <div class="text-2xl font-semibold" [style]="{'margin-bottom': '0.5rem'}">{{ '$' + travel.price }}</div>
                             <p-button (click)="buy(i)">Buy</p-button>
                         </div>
                     </div>

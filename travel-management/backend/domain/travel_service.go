@@ -21,7 +21,7 @@ type TravelService interface {
 	ListTags() ([]*model.Tag, error)
 
 	UpdateHotel(*model.Hotel) (*model.Hotel, error)
-	UpdateTravel(*model.Travel, uint) (*model.Travel, error)
+	UpdateTravel(*model.Travel, uint, uint) (*model.Travel, error)
 	UpdateTags(*model.Tag) (*model.Tag, error)
 
 	RemoveHotel(uint) error

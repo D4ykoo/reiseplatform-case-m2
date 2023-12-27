@@ -6,7 +6,7 @@ import (
 
 type TravelRepository interface {
 	Create(*model.Travel, uint) (*model.Travel, error)
-	Update(*model.Travel, uint) (*model.Travel, error)
+	Update(*model.Travel, uint, uint) (*model.Travel, error)
 	Delete(uint) error
 	ListAll(uint) ([]*model.Travel, error)
 	FindByID(uint) (*model.Travel, error)

@@ -41,11 +41,11 @@ export class SearchBarComponent {
     if (this.rangeDates) {
       from = this.rangeDates[0];
       to = this.rangeDates[1];
-      if(!to){
+      if (!to) {
         to = from
       }
     }
- //   this.offerService.fetchOffers(this.destination, this.hotelname, from, to, this.selectedTags);
-    this.offerService.fetchOffersDemo();
-}
+    this.offerService.fetchOffers(this.destination, this.hotelname, from, to, this.selectedTags);
+    //  this.offerService.fetchOffersDemo();
+  }
 }

@@ -14,6 +14,7 @@ import { catchError, lastValueFrom } from 'rxjs';
 import { Hotel } from '../../models/hotel';
 import { Tag } from '../../models/tag';
 import { DropdownModule } from 'primeng/dropdown';
+import { Travel } from '../../models/travel';
 
 @Component({
   selector: 'app-hotel-edit',
@@ -29,7 +30,7 @@ export class HotelEditComponent implements OnInit, OnChanges {
   editorMode!: string | undefined;
 
   hotels!: Hotel[];
-  hotel!: Hotel;
+  hotel!: Hotel | undefined;
 
   tags!: Tag[];
   selectedTags!: Tag[];
@@ -60,7 +61,7 @@ export class HotelEditComponent implements OnInit, OnChanges {
     }
   }
 
-  delete(index: number) {
+  deletePic(index: number) {
     if (index > -1) {
       this.images.splice(index, 1);
       this.pictures.splice(index, 1);
@@ -80,24 +81,27 @@ export class HotelEditComponent implements OnInit, OnChanges {
       let UpdateHotel: Hotel = {
         description: this.description as string, hotelname: this.hotelname,
         land: this.land, pictures: this.pictures, state: this.state, street: this.street,
-        tags: this.selectedTags, vendorid: 0, vendorname: "asdf", id: this.hotel.id, travels: this.hotel.travels
+        tags: this.selectedTags, vendorid: 0, vendorname: "asdf", id: (this.hotel?.id as number), travels: (this.hotel?.travels as Travel[])
       };
-      lastValueFrom(this.httpClient.put(environment.HotelAPI + "hotels/" + this.hotel.id, UpdateHotel))
+      lastValueFrom(this.httpClient.put(environment.HotelAPI + "hotels/" + this.hotel?.id, UpdateHotel))
         .then((res) => {
           if (res) {
             let tmp = (res as Hotel);
-            this.hotel.description = tmp.description;
-            this.hotel.hotelname = tmp.hotelname;
-            this.hotel.id = tmp.id;
-            this.hotel.land = tmp.land;
-            this.hotel.pictures = tmp.pictures;
-            this.hotel.state = tmp.state;
-            this.hotel.street = tmp.street;
-            this.hotel.tags = tmp.tags;
-            this.hotel.vendorid = tmp.vendorid;
-            this.hotel.vendorname = tmp.vendorname;
-            this.hotel.travels = tmp.travels;
-
+            if (this.hotel) {
+              this.hotel.description = tmp.description;
+              this.hotel.hotelname = tmp.hotelname;
+              this.hotel.id = tmp.id;
+              this.hotel.land = tmp.land;
+              this.hotel.pictures = tmp.pictures;
+              this.hotel.state = tmp.state;
+              this.hotel.street = tmp.street;
+              this.hotel.tags = tmp.tags;
+              this.hotel.vendorid = tmp.vendorid;
+              this.hotel.vendorname = tmp.vendorname;
+              this.hotel.travels = tmp.travels;
+            } else {
+              this.hotel = tmp;
+            }
             this.loadSettings();
           }
         }).catch((e) => console.log(e))
@@ -164,5 +168,14 @@ export class HotelEditComponent implements OnInit, OnChanges {
     }
   }
 
+  delete() {
+    lastValueFrom(this.httpClient.delete(environment.HotelAPI + "hotels/" + (this.hotel?.id as number))).then(res => {
+      console.log(res);
+      this.clear();
+      this.hotel = undefined;
+      this.hotels = new Array<Hotel>()
+      this.setup();
+    }).catch((e) => console.log(e));
+  }
 }
 

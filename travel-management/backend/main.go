@@ -61,22 +61,16 @@ func main() {
 	// Offers
 	router.POST("/api/v1/hotels/:id/travels", service.CreateTravelRequest)
 	// Read
-	router.GET("/api/v1/hotels/:id/travels", func(c *gin.Context) {
+	/*router.GET("/api/v1/hotels/:id/travels", func(c *gin.Context) {
 		c.String(200, "Hello, World!")
-	})
+	})*/
 
-	router.GET("/api/v1/hotels/:id/travels/:tid", func(c *gin.Context) {
-		c.String(200, "Hello, World!")
-	})
+	router.GET("/api/v1/hotels/:id/travels/:tid", service.GetTravelById)
 
 	// Update
-	router.PUT("/api/v1/hotels/:id/travels/:tid", func(c *gin.Context) {
-		c.String(200, "Hello, World!")
-	})
+	router.PUT("/api/v1/hotels/:id/travels/:tid", service.UpdateTravel)
 	// Delete
-	router.DELETE("/api/v1/hotels/:id/travels/:tid", func(c *gin.Context) {
-		c.String(200, "Hello, World!")
-	})
+	router.DELETE("/api/v1/hotels/:id/travels/:tid", service.DeleteTravel)
 
 	// Tags
 	router.POST("/api/v1/tags", service.CreateTagRequest)

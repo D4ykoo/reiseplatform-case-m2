@@ -268,6 +268,58 @@ func (ctr RestController) GetTravelById(c *gin.Context) {
 	c.JSON(http.StatusOK, travelResponse)
 }
 
+func (ctr RestController) DeleteTravel(c *gin.Context) {
+
+	travelStrId := c.Param("tid")
+	travelId, err := strconv.Atoi(travelStrId)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err = ctr.service.RemoveTravel(uint(travelId))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, "sucess")
+}
+
+func (ctr RestController) UpdateTravel(c *gin.Context) {
+
+	hotelStrId := c.Param("id")
+	hotelId, err := strconv.Atoi(hotelStrId)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	travelStrId := c.Param("tid")
+	travelId, err := strconv.Atoi(travelStrId)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var travel dto.UpdateTravelRequest
+
+	if err = c.ShouldBindJSON(&travel); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	res, err := ctr.service.UpdateTravel(dto.ToTravelModel(travel), uint(travelId), uint(hotelId))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, dto.ToTravelResoponse(res))
+}
+
 // tag
 
 func (ctr RestController) CreateTagRequest(c *gin.Context) {

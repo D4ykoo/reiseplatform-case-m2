@@ -26,7 +26,7 @@ func NewTagRepository(min int, max int) TagRepositoryImpl {
 func (repo TagRepositoryImpl) Create(tag *model.Tag) (*model.Tag, error) {
 	entity := entities.ToTagEntity(tag)
 
-	res := repo.db.Connection.Create(tag)
+	res := repo.db.Connection.Create(entity)
 	return entities.ToTagModel(entity), res.Error
 }
 

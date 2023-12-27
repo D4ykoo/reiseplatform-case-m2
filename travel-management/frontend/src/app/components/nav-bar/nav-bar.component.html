@@ -2,7 +2,7 @@
     <div class="sidbar-btn">
         <p-sidebar [(visible)]="sidebarVisible">
             <h3>Menu</h3>
-            <p-button [text]="true" [plain]="true">
+            <p-button [text]="true" [plain]="true" (click)="navigateToSearch()">
                 <div class="sidbar-icon">
                     <svg height="100%" version="1.1" viewBox="0 0 18 18" width="100%" xmlns="http://www.w3.org/2000/svg"
                         xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"
@@ -23,7 +23,7 @@
                 <div class="sidbar-link"> Travel Search
                 </div>
             </p-button>
-            <p-button [text]="true" [plain]="true">
+            <p-button [text]="true" [plain]="true" (click)="navigateToTravelMngt()">
                 <div class="sidbar-icon">
                     <svg height="100%" viewBox="0 0 48 48" width="100%" xmlns="http://www.w3.org/2000/svg">
                         <path d="M0 0h48v48H0z" fill="none" />
@@ -34,7 +34,7 @@
                 <div class="sidbar-link"> Travels Management
                 </div>
             </p-button>
-            <p-button [text]="true" [plain]="true">
+            <p-button [text]="true" [plain]="true" (click)="navigateToUserMngt()"> 
                 <div class="sidbar-icon">
                     <svg fill="none" height="100%" viewBox="0 0 28 28" width="100%" xmlns="http://www.w3.org/2000/svg">
                         <path clip-rule="evenodd"
@@ -45,7 +45,7 @@
                 <div class="sidbar-link"> User Profile
                 </div>
             </p-button>
-            <p-button [text]="true" [plain]="true">
+            <p-button [text]="true" [plain]="true" (click)="navigateToStatMngt()">
                 <div class="sidbar-icon">
                     <svg id="Layer_1_1_" style="enable-background:new 0 0 16 16;" version="1.1" height="100%"
                         viewBox="0 0 16 16" width="100%" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"

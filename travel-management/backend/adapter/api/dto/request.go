@@ -1,6 +1,8 @@
 package dto
 
 import (
+	"time"
+
 	"github.com/mig3177/travelmanagement/domain/model"
 )
 
@@ -82,4 +84,11 @@ func ToTagsModel(tags []TagRequest) []*model.Tag {
 		tagsRes[i] = &model.Tag{Id: tag.Id, Name: tag.Name}
 	}
 	return tagsRes
+}
+
+func ToTravelModel(travel UpdateTravelRequest) *model.Travel {
+	from, _ := time.Parse(time.RFC3339, travel.From)
+	to, _ := time.Parse(time.RFC3339, travel.To)
+	return &model.Travel{Id: travel.Id, Vendor: model.Vendor{Id: travel.Id, Username: travel.VendorName}, From: from,
+		To: to, Price: travel.Price, Description: travel.Description}
 }
