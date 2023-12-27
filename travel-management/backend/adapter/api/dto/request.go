@@ -65,3 +65,11 @@ func ToHotelModel(hotel *UpdateHotelRequest) *model.Hotel {
 	return &model.Hotel{Id: hotel.Id, Name: hotel.HotelName, Address: model.Address{Street: hotel.Street, State: hotel.State, Land: hotel.Land},
 		Description: hotel.Description, Vendor: model.Vendor{Id: hotel.VendorId, Username: hotel.VendorName}, Pictures: pics}
 }
+
+func ToTagsModel(tags []TagRequest) []*model.Tag {
+	tagsRes := make([]*model.Tag, len(tags))
+	for i, tag := range tags {
+		tagsRes[i] = &model.Tag{Id: tag.Id, Name: tag.Name}
+	}
+	return tagsRes
+}

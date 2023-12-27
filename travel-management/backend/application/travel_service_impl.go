@@ -20,10 +20,10 @@ func New(hrepo outbound.HotelRepository, trepo outbound.TravelRepository, tagrep
 	return TravelServiceImpl{hotels: hrepo, travels: trepo, tags: tagrepo}
 }
 
-func (service TravelServiceImpl) NewHotel(name string, address model.Address, vendor model.Vendor, description string, pics []*model.Picture) (*model.Hotel, error) {
+func (service TravelServiceImpl) NewHotel(name string, address model.Address, vendor model.Vendor, description string, pics []*model.Picture, tags []*model.Tag) (*model.Hotel, error) {
 	// TODO check user is valid
 	// TODO check hotel already exist
-	hotel := &model.Hotel{Address: address, Name: name, Description: description, Vendor: vendor, Pictures: pics}
+	hotel := &model.Hotel{Address: address, Name: name, Description: description, Vendor: vendor, Pictures: pics, Tags: tags}
 	return service.hotels.Create(hotel)
 }
 

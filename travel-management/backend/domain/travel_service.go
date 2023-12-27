@@ -7,7 +7,7 @@ import (
 )
 
 type TravelService interface {
-	NewHotel(string, model.Address, model.Vendor, string, []*model.Picture) (*model.Hotel, error)
+	NewHotel(string, model.Address, model.Vendor, string, []*model.Picture, []*model.Tag) (*model.Hotel, error)
 	NewTravel(hotelRef uint, vendor uint, from time.Time, to time.Time, price float32, description string) (*model.Travel, error)
 	NewTag(string) (*model.Tag, error)
 

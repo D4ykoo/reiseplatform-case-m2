@@ -1,0 +1,52 @@
+<div class="formgrid grid">
+    <div class="field col-12 md:col-6">
+        <label for="hotelname">Hotel Name</label>
+        <input id="hotelname" type="text" [(ngModel)]="hotelname" 
+            class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+    </div>
+    <div class="field col-12 md:col-6">
+        <label for="tag">Tags</label>
+        <p-multiSelect id="tag" [options]="tags" [(ngModel)]="selectedTags" optionLabel="name"
+            [style]="{'width':'100%'}"></p-multiSelect>
+    </div>
+    <div class="field col-12 md:col-4">
+        <label for="land">Land</label>
+        <input id="land" type="text" [(ngModel)]="land" 
+            class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+    </div>
+    <div class="field col-12 md:col-4">
+        <label for="state">State</label>
+        <input id="state" type="text" [(ngModel)]="state" 
+            class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+    </div>
+    <div class="field col-12 md:col-4">
+        <label for="street">Street</label>
+        <input id="street" type="text" [(ngModel)]="street" 
+            class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+    </div>
+    <div class="field col-12">
+        <label for="description">Description</label>
+        <p-editor [(ngModel)]="description" [style]="{ height: '320px' }" id="description"></p-editor>
+    </div>
+        <div class="field col-12">
+            <div class="flex flex-row flex-wrap sflex align-items-center justify-content-start gap-3">
+                <div class="w-7rem h-7rem" *ngFor="let img of images; let i = index">
+                    <img #imga src={{img}} style="width: 100%; height: 100%;">
+                    <p-contextMenu [target]="imga" [model]="actions" (click)="delete(i)"></p-contextMenu>
+                </div>
+            </div>
+        <div class="field col-12">
+            <div class="flex flex-row flex-wrap sflex align-items-center justify-content-start" style="margin-top: 1%;">
+                <label class="p-button font-bold" for="file-upload">
+                    Browse
+                </label>
+                <input id="file-upload" type='file' (change)="onFileChange($event); " style="display: none;" />
+            </div>
+        </div>
+    </div>
+</div>
+<div class="flex justify-content-center gap-4">
+    <p-button severity="secondary" label="Cancel" (click)="clear()"></p-button>
+    <p-button label="Submit" (click)="submit()"></p-button>
+
+</div>

@@ -19,6 +19,7 @@
         <p-editor [(ngModel)]="description" [style]="{ height: '320px' }" id="description"></p-editor>
     </div>
 </div>
-<div class="flex justify-content-center">
-    <p-button label="Submit"></p-button>
+<div class="flex justify-content-center gap-3">
+    <p-button severity="secondary" label="Cancel" (click)="clear()"></p-button>
+    <p-button label="Submit" (click)="submit()"></p-button>
 </div>

@@ -1,72 +1,48 @@
-import { Component, OnInit } from '@angular/core';
-import { TabMenuModule } from 'primeng/tabmenu';
-import { MenuItem } from 'primeng/api';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { Tag } from 'primeng/tag';
-import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment.development';
-import { EditorModule } from 'primeng/editor';
-import { InputMaskModule } from 'primeng/inputmask';
-import { FileUploadModule } from 'primeng/fileupload';
+import { Component, OnInit } from '@angular/core';
+import { MenuItem } from 'primeng/api';
+import { TabMenuModule } from 'primeng/tabmenu';
+import { DropdownModule } from 'primeng/dropdown';
+import { FormsModule } from '@angular/forms';
+import { HotelEditComponent } from "../hotel-edit/hotel-edit.component";
+import { TravelOfferEditComponent } from "../travel-offer-edit/travel-offer-edit.component";
 import { CommonModule } from '@angular/common';
-import { ContextMenuModule } from 'primeng/contextmenu';
+
+interface TypeEdit {
+  id: number;
+  name: string;
+}
 
 @Component({
   selector: 'app-edit-panel',
   standalone: true,
-  imports: [TabMenuModule, MultiSelectModule, FormsModule, EditorModule, InputMaskModule, FileUploadModule, CommonModule, ContextMenuModule],
   templateUrl: './edit-panel.component.html',
-  styleUrl: './edit-panel.component.css'
+  styleUrl: './edit-panel.component.css',
+  imports: [TabMenuModule, DropdownModule, FormsModule, HotelEditComponent, TravelOfferEditComponent, CommonModule]
 })
 export class EditPanelComponent implements OnInit {
-  tags!: Tag[];
-  selectedTags!: Tag[];
-  description: string | undefined;
-  images = new Array<any>();
-  actions: MenuItem[] | undefined;
-  items: MenuItem[] | undefined;
-  activeItem: MenuItem | undefined;
 
+  items!: MenuItem[];
+  activeItem!: MenuItem;
+  editType!: TypeEdit[] | undefined;
+  showEditPanel: number = 0;
+  selectedType: TypeEdit = { id: 0, name: "" };
   constructor(private readonly httpClient: HttpClient) {
 
   }
 
-  onFileChange(event: any) {
-    if (event.target.files && event.target.files[0]) {
-      const file = event.target.files[0];
-
-      const reader = new FileReader();
-      reader.onload = e => this.images.push(reader.result);
-
-      reader.readAsDataURL(file);
-    }
-  }
-  delete(index: number) {
-    if (index > -1) {
-      this.images.splice(index, 1);
-    }
-  }
-
   ngOnInit() {
     this.items = [
-      { label: 'Home', icon: 'pi pi-fw pi-home' },
       { label: 'New', icon: 'pi pi-fw pi-calendar' },
       { label: 'Edit', icon: 'pi pi-fw pi-pencil' },
     ];
     this.activeItem = this.items[0];
-    this.httpClient.get(environment.HotelAPI + "tags").subscribe((res) => {
-      if (res)
-        this.tags = (res as Tag[]);
-    })
-
-    this.actions = [
-      { label: 'Delete', icon: 'pi pi-fw pi-trash' }
-    ];
-
+    this.editType = [{ id: 1, name: "Hotel" }, { id: 2, name: "Travel" }]
   }
 
   changeView(event: any) {
     console.log(event);
+    console.log(this.activeItem);
+   // this.showEditPanel = event.value.id;
   }
 }

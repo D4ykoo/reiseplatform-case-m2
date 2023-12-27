@@ -30,8 +30,10 @@ func (ctr RestController) CreateHotelRequest(c *gin.Context) {
 		return
 	}
 	pics := dto.ToPictureModel(hotel.Pictures)
+	tags := dto.ToTagsModel(hotel.Tags)
 
-	hotelRes, err := ctr.service.NewHotel(hotel.HotelName, model.Address{Street: hotel.Street, State: hotel.State, Land: hotel.HotelName}, model.Vendor{Id: hotel.VendorId, Username: hotel.VendorName}, hotel.Description, pics)
+	hotelRes, err := ctr.service.NewHotel(hotel.HotelName, model.Address{Street: hotel.Street, State: hotel.State, Land: hotel.HotelName},
+		model.Vendor{Id: hotel.VendorId, Username: hotel.VendorName}, hotel.Description, pics, tags)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -212,14 +214,14 @@ func (ctr RestController) CreateTravelRequest(c *gin.Context) {
 		return
 	}
 
-	from, err := time.Parse("2006-01-02", travel.From)
+	from, err := time.Parse(time.RFC3339, travel.From)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	to, err := time.Parse("2006-01-02", travel.To)
+	to, err := time.Parse(time.RFC3339, travel.To)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

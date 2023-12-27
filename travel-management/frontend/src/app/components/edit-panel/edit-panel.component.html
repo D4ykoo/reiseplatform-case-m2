@@ -1,69 +1,13 @@
 <div class="card">
-    <p-tabMenu [model]="items" [activeItem]="activeItem" (activeItemChange)="changeView($event)"></p-tabMenu>
-    <div>Home (list all hotels)</div>
-    <div>new
-        <div>
-            hotel: name, pics, Beschreibung, Addresse (Land strasse state), tags
-        </div>
-        <div>
-            travel: Beschreibung, preis, zeitraum
-        </div>
-    </div>
-    <div>
-        edit:
-    </div>
+    <p-tabMenu [model]="items" [(activeItem)]="activeItem" (activeItemChange)="changeView($event)"></p-tabMenu>
 </div>
 
 <div class="formgrid grid">
-    <div class="field col-12 md:col-6">
-        <label for="hotelname">Hotel Name</label>
-        <input id="hotelname" type="text"
-            class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
-    </div>
-    <div class="field col-12 md:col-6">
-        <label for="tag">Tags</label>
-        <p-multiSelect id="tag" [options]="tags" [(ngModel)]="selectedTags" optionLabel="name"
-            [style]="{'width':'100%'}"></p-multiSelect>
-    </div>
-    <div class="field col-12 md:col-4">
-        <label for="land">Land</label>
-        <input id="land" type="text"
-            class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
-    </div>
-    <div class="field col-12 md:col-4">
-        <label for="state">State</label>
-        <input id="state" type="text"
-            class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
-    </div>
-    <div class="field col-12 md:col-4">
-        <label for="street">Street</label>
-        <input id="street" type="text"
-            class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
-    </div>
-    <div class="field col-12">
-        <label for="description">Description</label>
-        <p-editor [(ngModel)]="description" [style]="{ height: '320px' }" id="description"></p-editor>
-    </div>
-        <div class="field col-12">
-            <div class="flex flex-row flex-wrap sflex align-items-center justify-content-start gap-3">
-                <div class="w-7rem h-7rem" *ngFor="let img of images; let i = index">
-                    <img #imga src={{img}} style="width: 100%; height: 100%;">
-                    <p-contextMenu [target]="imga" [model]="actions" (click)="delete(i)"></p-contextMenu>
-                </div>
-            </div>
-        <div class="field col-12">
-            <div class="flex flex-row flex-wrap sflex align-items-center justify-content-start" style="margin-top: 1%;">
-                <label class="p-button font-bold" for="file-upload">
-                    Browse
-                </label>
-                <input id="file-upload" type='file' (change)="onFileChange($event); " style="display: none;" />
-            </div>
-        </div>
+    <div class="field col-12 md:col-12" style="margin-top: 1%;">
+        <label for="hotel">Seclet Type to edit:</label>
+        <p-dropdown id="hotel" [options]="editType" [(ngModel)]="selectedType" optionLabel="name"
+            [style]="{'width':'100%'}"></p-dropdown>
     </div>
 </div>
-<div class="flex justify-content-center">
-    <p-button label="Submit"></p-button>
-</div>
-
-
-
+<app-hotel-edit *ngIf="selectedType.id==1 && activeItem.label == 'New'"></app-hotel-edit>
+<app-travel-offer-edit *ngIf="selectedType.id==2 && activeItem.label == 'New'"></app-travel-offer-edit>
