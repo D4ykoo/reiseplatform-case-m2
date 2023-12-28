@@ -41,6 +41,7 @@ export class ResultTableComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     this.offerService.offers.subscribe((a) => {
+      console.log(Array.from(a.values()));
       this.hotels = Array.from(a.values());
     })
   }

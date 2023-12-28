@@ -2,7 +2,6 @@ package application
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 	"time"
 
@@ -57,7 +56,6 @@ func (service TravelServiceImpl) FindHotelByTravel(hotelId, travelId uint) (*mod
 
 func (service TravelServiceImpl) FindHotelTravel(name string, land string, from *time.Time, to *time.Time, tags []uint) ([]*model.Hotel, error) {
 	hotels, error := service.hotels.ListAll()
-	fmt.Println(hotels)
 
 	var result []*model.Hotel
 	for _, hotel := range hotels {
@@ -72,14 +70,15 @@ func (service TravelServiceImpl) FindHotelTravel(name string, land string, from 
 			continue
 		}
 
-		var resultT []*model.Travel
-		for j := 0; j < len(hotel.Travels); j++ {
-			if from != nil && from.Unix() >= hotel.Travels[j].From.Unix() && to != nil && to.Unix() <= hotel.Travels[j].To.Unix() {
-				resultT = append(resultT, hotel.Travels[j])
+		var resultT = make([]*model.Travel, 0)
+		if from != nil && to != nil {
+			for j := 0; j < len(hotel.Travels); j++ {
+				if hotel.Travels[j].From.Unix() >= from.Unix() && hotel.Travels[j].To.Unix() <= to.Unix() {
+					resultT = append(resultT, hotel.Travels[j])
+				}
 			}
+			hotel.Travels = resultT
 		}
-
-		hotel.Travels = resultT
 		result = append(result, hotel)
 	}
 	return result, error
@@ -95,7 +94,7 @@ func (service TravelServiceImpl) GetTravel(id uint) (*model.Travel, error) {
 
 func containsTag(s []uint, e []*model.Tag) bool {
 	for i := 0; i < len(s); i++ {
-		for j := 0; i < len(e); i++ {
+		for j := 0; j < len(e); j++ {
 			if s[i] == e[j].Id {
 				return true
 			}

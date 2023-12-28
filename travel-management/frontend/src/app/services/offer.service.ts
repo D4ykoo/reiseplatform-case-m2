@@ -42,11 +42,21 @@ export class OfferService {
     }
 
     this.httpClient.get(environment.HotelAPI + "hotels", { params: params }).subscribe((hotelsResponse) => {
-      (hotelsResponse as Array<Hotel>).forEach((res: Hotel) => {
-        this.offerSubject.value.set(res.id, res)
-      })
-      this.offerSubject.next(this.offerSubject.getValue());
+      // Show only hits
+      if (hotelsResponse || (hotelsResponse as Array<Hotel>).length == 0) {
+        (hotelsResponse as Array<Hotel>).forEach((res: Hotel) => {
+          if (res.travels.length > 0) {
+            this.offerSubject.value.set(res.id, res)
+          } else {
+            this.offerSubject.value.delete(res.id)
+          }
+        })
+        this.offerSubject.next(this.offerSubject.getValue());
+      } else {
+        this.offerSubject.next(new Map())
+      }
     })
+
   }
 
   public selectOffer(id: number) {

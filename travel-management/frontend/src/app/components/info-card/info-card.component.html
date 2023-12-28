@@ -15,12 +15,16 @@
         </ng-template>
         <ng-template pTemplate="content">
             <div class="grid">
+                <div class="col-12 md:col-4 lg:col-4 text-center">{{hotelOffer.land}}</div>
+                <div class="col-12 md:col-4 lg:col-4 text-center">{{hotelOffer.state}}</div>
+                <div class="col-12 md:col-4 lg:col-4 text-center">{{hotelOffer.street}}</div>
                 <div class="col-12 md:col-12 lg:col-12 font-bold">Description:</div>
-                <div class="col-12 md:col-12 lg:col-12" style="margin-bottom: 5%;">hotelOffer.description:</div>
+                <div class="col-12 md:col-12 lg:col-12" [innerHTML]=" hotelOffer.description"></div>
             </div>
             <p-dataView #dv [value]="hotelOffer.travels">
                 <ng-template pTemplate="list" let-travels>
-                    <div class="grid" *ngFor="let travel of travels; let first = first; index as i" [style]="{'margin-bottom': '1rem'}">
+                    <div class="grid" *ngFor="let travel of travels; let first = first; index as i"
+                        [style]="{'margin-bottom': '1rem'}">
                         <div class="col-12 md:col-12 lg:col-12 font-bold"
                             [ngClass]="{ 'border-top-1 surface-border': !first }">{{travel.vendorname}}</div>
                         <div class="col-12 md:col-2 lg:col-2">
@@ -31,12 +35,20 @@
                         <div class="col-12 md:col-8 lg:col-8">
                             <div class="font-bold">
                                 Description:
-                                <div class="font-normal" style="overflow-wrap: break-word;" [innerHTML]="travel.description">
+                                <div class="font-normal" style="overflow-wrap: break-word;"
+                                    [innerHTML]="travel.description">
+                                </div>
+                            </div>
+                            <div class="font-bold">
+                                Vendor:
+                                <div class="font-normal" style="overflow-wrap: break-word;">
+                                    {{travel.vendorname}}
                                 </div>
                             </div>
                         </div>
                         <div class="col-12 md:col-2 lg:col-2 text-center">
-                            <div class="text-2xl font-semibold" [style]="{'margin-bottom': '0.5rem'}">{{ '$' + travel.price }}</div>
+                            <div class="text-2xl font-semibold" [style]="{'margin-bottom': '0.5rem'}">{{ '$' +
+                                travel.price }}</div>
                             <p-button (click)="buy(i)">Buy</p-button>
                         </div>
                     </div>
