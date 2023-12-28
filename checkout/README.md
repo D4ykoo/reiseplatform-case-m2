@@ -59,6 +59,11 @@ Now run the image:
 ```bash
 sudo docker run -p 3000:3000 checkout-frontend
 ```
+optional append the arg for the frontend paths when having different configuration on the system and not the default structure like after cloning the repository:
+```bash
+# trailing slash for the path is needed
+sudo docker run -p 3000:3000 checkout-frontend --build-arg="/path/to/dir/"
+```
 
 ## Technology Stack
 * Svelte + SvelteKit + bun + TailwindCSS + daisyUI
