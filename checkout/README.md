@@ -25,8 +25,32 @@ cargo build --release
 ./target/release/checkout-backend
 ```
 
+### Frontend
+#### Development
+```bash
+bun --bun run dev
+```
+
+#### Production
+First change the directory and add the recommended SvelteKit adapter:
+```bash
+cd frontend
+bun add -D svelte-adapter-bun
+```
+Then import it by replacing the existing one in `svelte.config.js` 
+
+```bash
+ - import adapter from "@sveltejs/adapter-auto";
+ + import adapter from "svelte-adapter-bun";
+```
+
+Finally build the frontend:
+```bash
+bun run build
+```
+
 ## Technology Stack
-* Svelte + SvelteKit + TailwindCSS + daisyUI 
+* Svelte + SvelteKit + bun + TailwindCSS + daisyUI
 * Rust + Actix Web + Diesel
 
 ## Additional Information
