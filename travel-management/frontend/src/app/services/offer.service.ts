@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Hotel, Hoteldemo } from '../models/hotel';
+import { Hotel } from '../models/hotel';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment.development';
 import { BehaviorSubject } from 'rxjs';
@@ -65,12 +65,6 @@ export class OfferService {
 
   public getSelectedOffer(): Hotel | undefined {
     return this.currentSelectedOffer;
-  }
-
-  public fetchOffersDemo() {
-    this.offerSubject.value.clear();
-    this.offerSubject.value.set(Hoteldemo.id, Hoteldemo)
-    this.offerSubject.next(this.offerSubject.getValue());
   }
 
   public getOffersByHotelId(id: number): Hotel | undefined {

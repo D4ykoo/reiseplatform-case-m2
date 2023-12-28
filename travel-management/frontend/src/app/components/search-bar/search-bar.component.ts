@@ -46,6 +46,5 @@ export class SearchBarComponent {
       }
     }
     this.offerService.fetchOffers(this.destination, this.hotelname, from, to, this.selectedTags);
-    //  this.offerService.fetchOffersDemo();
   }
 }

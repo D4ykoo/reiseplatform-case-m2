@@ -1,7 +1,6 @@
 .flex-container {
     display: flex;
     flex-direction: row;
-    background-color: rgb(202, 191, 191);
     align-content: center;
     width: 100%;
     padding-left: .5rem;
