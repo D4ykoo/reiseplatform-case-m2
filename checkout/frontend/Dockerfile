@@ -7,6 +7,9 @@ RUN mkdir -p /tmp/dev
 COPY package.json bun.lockb /tmp/dev/
 RUN cd /tmp/dev && bun install --frozen-lockfile
 
+# NOTE: this step is quite nice BUT
+# not suitable for this use case with svelte kit
+# otherwise necessary packages are missing (strange behaviour)
 # without dev dependencies
 RUN mkdir -p /tmp/prod
 COPY package.json bun.lockb /tmp/prod/
@@ -23,14 +26,10 @@ ENV NODE_ENV=production
 RUN bun run build
 COPY . .
 
-# for debugging purposes 
-RUN dir -s    
-RUN dir build   
-
 # copy production dependencies and source code into final image
 FROM base AS release
 RUN file="$(ls -1 /usr/src/app/)" && echo $file
-COPY --from=install /tmp/prod/node_modules node_modules
+COPY --from=install /tmp/dev/node_modules node_modules
 COPY --from=prerelease /usr/src/app/build .
 
 # run the app

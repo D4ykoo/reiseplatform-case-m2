@@ -49,6 +49,17 @@ Finally build the frontend:
 bun run build
 ```
 
+## How to run - Dockerfile
+Since the `docker build` is marked as deprecated the new `cli` extension is used:
+```bash
+cd frontend
+sudo docker buildx build --pull -t checkout-frontend .
+```
+Now run the image:
+```bash
+sudo docker run -p 3000:3000 checkout-frontend
+```
+
 ## Technology Stack
 * Svelte + SvelteKit + bun + TailwindCSS + daisyUI
 * Rust + Actix Web + Diesel
