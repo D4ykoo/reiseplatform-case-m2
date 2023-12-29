@@ -1,4 +1,4 @@
-# reiseplatform-case-m2
+# Travelplatform CASE-M2
 Project for the lecture Cloud Native Development
 
 ### Default Ports when deployed
