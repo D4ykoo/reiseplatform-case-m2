@@ -44,11 +44,11 @@ jobs:
 
       - name: Install Node.js dependencies
         run: |
+          npm ci
           npm i eslint
           npm i prettier
           npm i eslint-plugin-prettier
-          npm ci
-
+          
       - name: Run linters
         uses: wearerequired/lint-action@v2
         with:
