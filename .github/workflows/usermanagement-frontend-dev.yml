@@ -10,7 +10,8 @@ on:
     paths:
       - ./usermanagement/frontend
   workflow_call:
-
+  workflow_dispatch:
+  
 defaults:
   run: 
     shell: bash
