@@ -9,14 +9,14 @@ on:
     branches:
       - develop
     paths:
-      - checkout/backend
+      - ./checkout/backend
   workflow_call:
   workflow_dispatch:
   
 defaults:
   run: 
     shell: bash
-    working-directory: checkout/backend"
+    working-directory: "checkout/backend"
 
 jobs:
   lint:
