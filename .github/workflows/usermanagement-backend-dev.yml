@@ -10,12 +10,13 @@ on:
     paths:
       - ./usermanagement/backend
   workflow_call:
-
+  workflow_dispatch:
+  
 defaults:
   run: 
     shell: bash
     working-directory: "./usermanagement/backend"
-
+  
 jobs:
   security:
     name: Security 
