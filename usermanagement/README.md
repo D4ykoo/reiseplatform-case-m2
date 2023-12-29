@@ -3,6 +3,12 @@
 ## Prerequisites
 * A postgresql database where the configuration and credentials are known
 
+## How to deploy
+For the non container way follow the instructions below.
+
+Otherwise have a look in the READMEs located at:
+`./frontend/README.md` and `./backend/README.md` 
+
 ## How to run - bare metal
 
 ### Configuration
