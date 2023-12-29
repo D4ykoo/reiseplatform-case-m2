@@ -16,5 +16,5 @@ WORKDIR /app
 COPY --from=builder /usermanagement/usermanagement-backend .
 COPY --from=builder /usermanagement/.env . 
 
-EXPOSE 8083
+EXPOSE 8082
 CMD ["./usermanagement-backend"]
