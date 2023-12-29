@@ -5,7 +5,6 @@ name: Dev - Usermanagement frontend - security and build
 run-name: ${{ github.actor }} started usermanagement pipeline
 
 concurrency: production
-cancel-in-progress: true
 
 on:
   pull_request:
@@ -14,7 +13,8 @@ on:
       - main
     paths:
       - ./usermanagement
-
+  workflow_dispatch:
+  
 defaults:
   run: 
     shell: bash
@@ -22,9 +22,9 @@ defaults:
 
 jobs:
   frontend-test-workflow:
-    - uses: ./.github/workflows/usermanagement-frontend-dev.yml
+    uses: ./.github/workflows/usermanagement-frontend-dev.yml
   backend-test-workflow:
-    - uses: ./.github/workflows/usermanagement-backend-dev.yml
+    uses: ./.github/workflows/usermanagement-backend-dev.yml
   # plain-deployment:
   #   name: Usermanagement Deployment 
   #   runs-on: ubuntu-latest
