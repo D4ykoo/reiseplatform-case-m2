@@ -11,7 +11,8 @@ on:
     paths:
       - ./checkout/backend
   workflow_call:
-
+  workflow_dispatch:
+  
 defaults:
   run: 
     shell: bash
