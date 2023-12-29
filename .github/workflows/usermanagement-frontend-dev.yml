@@ -44,6 +44,7 @@ jobs:
 
       - name: Install Node.js dependencies
         run: |
+          npm i eslint
           npm i prettier
           npm i eslint-plugin-prettier
           npm ci
