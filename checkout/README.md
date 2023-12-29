@@ -50,20 +50,34 @@ bun run build
 ```
 
 ## How to run - Dockerfile
+Note: due to the microservice architecture the frontend __and__ backend have a `Dockerfile`. The `Dockerfile` at the root of this directory is the All-in-One Solution, only the frontend will be exposed.
+
 Since the `docker build` is marked as deprecated the new `cli` extension is used:
 ```bash
 cd frontend
-sudo docker buildx build --pull -t checkout-frontend .
+docker buildx build --pull -t checkout-frontend .
 ```
 Now run the image:
 ```bash
-sudo docker run -p 3000:3000 checkout-frontend
+docker run -p 3000:3000 checkout-frontend
 ```
 optional append the arg for the frontend paths when having different configuration on the system and not the default structure like after cloning the repository:
 ```bash
 # trailing slash for the path is needed
-sudo docker run -p 3000:3000 checkout-frontend --build-arg="/path/to/dir/"
+docker run -p 3000:3000 checkout-frontend --build-arg="/path/to/dir/"
 ```
+#### Backend
+Build image:
+```bash
+cd backend
+docker buildx build -t checkout-backend .
+```
+
+Run with optional path, not needed when just cloning and running:
+```bash
+docker run -p 8071:8071 checkout-backend --build-arg="/path/to/dir/"
+```
+
 
 ## Technology Stack
 * Svelte + SvelteKit + bun + TailwindCSS + daisyUI
