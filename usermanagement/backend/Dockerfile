@@ -11,7 +11,10 @@ COPY . .
 COPY ${env_file} /usermanagement/.env
 RUN go build -o /usermanagement/usermanagement-backend
 
-RUN ls -la /usermanagement
+FROM alpine:latest
+WORKDIR /app
+COPY --from=builder /usermanagement/usermanagement-backend .
+COPY --from=builder /usermanagement/.env . 
 
-EXPOSE 8081
-CMD ["/usermanagement/usermanagement-backend"]
+EXPOSE 8083
+CMD ["./usermanagement-backend"]
