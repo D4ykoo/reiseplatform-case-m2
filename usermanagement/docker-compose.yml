@@ -1,0 +1,59 @@
+# All-in-One solution (still starts different containers) 
+# for the usermanagement microservices 
+version: '3'
+services:
+  postgres:
+    image: postgres
+    container_name: usermanagement-db
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: usermanagement
+      POSTGRES_DB: usermanagement
+    ports: 
+    - "8092:5432"
+
+  backend:
+    image: dak4408/travma-usermanagement-backend:latest
+    container_name: usermanagement-backend
+    restart: always
+    # not every enviroment variable needs to be set
+    # just delete the environment vars when the default is not changed
+    environment:
+      DOMAIN: http://localhost:8081
+      API_URL: localhost:8082
+      
+      SALT: your-secret-salt
+      JWT_SECRET: your-jwt-secret
+
+      # Change to true when using tls
+      PRODUCTION: false
+      
+      # Gives additional information of the webserver
+      DEBUG: true
+
+      # BROKERS should be just one value
+      BROKERS: localhost:9092
+      TOPIC: usermanagement
+
+      # DB
+      DB_HOST: localhost
+      DB_USER: usermanagement
+      DB_PASSWORD: password
+      DB_NAME: usermanagement
+      DB_PORT: 8092
+      SSL_TLS: disable
+      TIMEZONE: Europe/Berlin
+    depends_on:
+      - postgres
+    # note that this is an security issue
+    network_mode: host
+    ports:
+      - "8082:8082"
+  
+  frontend:
+    image: dak4408/travma-usermanagement-backend:latest
+    container_name: usermanagement-frontend
+    restart: always
+    ports:
+      - "8081:80"

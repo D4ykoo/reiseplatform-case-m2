@@ -18,6 +18,17 @@ Follow the instructions in the [RunInVM.md](RunInVM.md) of this directory.
 Follow the instructions in the READMEs located at:
 [/frontend/README.md](/frontend/README.md) and [/backend/README.md](/backend/README.md).
 
+## How to run - Docker Compose
+#### Run with local (registry) built image
+```bash
+docker compose -f docker-compose-local.ylm up -d 
+```
+
+#### Run with image from docker hub registry 
+```bash
+docker compose -f docker-compose.ylm up -d 
+```
+
 ## How to run - Bare Metal
 Follow the instructions in the [RunBareMetal.md](RunBareMetal.md) of this directory.
 
