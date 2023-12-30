@@ -1,0 +1,21 @@
+-- Your SQL goes here
+CREATE TABLE user_event (
+  id SERIAL PRIMARY KEY,
+  type TEXT NOT NULL,
+  log TEXT,
+  time TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+CREATE TABLE checkout_event (
+  id SERIAL PRIMARY KEY,
+  type TEXT NOT NULL,
+  log TEXT,
+  time TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+CREATE TABLE hotel_event (
+  id SERIAL PRIMARY KEY,
+  type TEXT NOT NULL,
+  log TEXT,
+  time TIMESTAMP WITH TIME ZONE NOT NULL
+);

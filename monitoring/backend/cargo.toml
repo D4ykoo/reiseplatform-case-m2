@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+    "monitoring_db",
+    "monitorig_service"
+]
