@@ -2,9 +2,9 @@ pub mod model;
 pub mod schema;
 
 use chrono::{DateTime, Utc};
+use deadpool_diesel::Pool;
+use deadpool_diesel::postgres::Manager;
 use diesel::prelude::*;
-use diesel::r2d2::ConnectionManager;
-use diesel::r2d2::Pool;
 use diesel::PgConnection;
 use dotenvy::dotenv;
 use model::CheckoutEvent;
@@ -18,16 +18,16 @@ use schema::hotel_event;
 use schema::user_event;
 use std::env;
 
-pub fn get_connection_pool() -> Pool<ConnectionManager<PgConnection>> {
+
+pub fn get_connection_pool() -> Pool<Manager> {
     dotenv().ok();
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-
-    let manager = ConnectionManager::<PgConnection>::new(database_url);
-
-    Pool::builder()
-        .test_on_check_out(true)
-        .build(manager)
-        .expect("Could not build connection pool")
+    let db_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    // set up connection pool
+    let manager = deadpool_diesel::postgres::Manager::new(db_url, deadpool_diesel::Runtime::Tokio1);
+    let pool = deadpool_diesel::postgres::Pool::builder(manager)
+        .build()
+        .unwrap();
+    pool
 }
 
 pub fn establish_connection() -> PgConnection {
@@ -76,33 +76,27 @@ pub fn add_checkout_event(
 
 pub fn get_user_events(
     conn: &mut PgConnection,
-    from: &Option<DateTime<Utc>>,
+    from: &DateTime<Utc>,
 ) -> Result<Vec<UserEvent>, diesel::result::Error> {
-    let default = "2000-01-01T00:00:00+00:00";
-    let default_time = DateTime::parse_from_rfc3339(default).unwrap().into();
-    let start_time = from.unwrap_or(default_time);
     user_event::table
         .filter(
             user_event::time
-                .gt(start_time)
-                .or(user_event::time.eq(start_time)),
+                .gt(from)
+                .or(user_event::time.eq(from)),
         )
         .select(UserEvent::as_select())
-        .load(conn)
+        .get_results(conn)
 }
 
 pub fn get_hotel_events(
     conn: &mut PgConnection,
-    from: &Option<DateTime<Utc>>,
+    from: &DateTime<Utc>,
 ) -> Result<Vec<HotelEvent>, diesel::result::Error> {
-    let default = "2000-01-01T00:00:00+00:00";
-    let default_time = DateTime::parse_from_rfc3339(default).unwrap().into();
-    let start_time = from.unwrap_or(default_time);
     hotel_event::table
         .filter(
             hotel_event::time
-                .gt(start_time)
-                .or(hotel_event::time.eq(start_time)),
+                .gt(from)
+                .or(hotel_event::time.eq(from)),
         )
         .select(HotelEvent::as_select())
         .load(conn)
@@ -110,16 +104,13 @@ pub fn get_hotel_events(
 
 pub fn get_checkout_events(
     conn: &mut PgConnection,
-    from: &Option<DateTime<Utc>>,
+    from: &DateTime<Utc>,
 ) -> Result<Vec<CheckoutEvent>, diesel::result::Error> {
-    let default = "2000-01-01T00:00:00+00:00";
-    let default_time = DateTime::parse_from_rfc3339(default).unwrap().into();
-    let start_time = from.unwrap_or(default_time);
     checkout_event::table
         .filter(
             checkout_event::time
-                .gt(start_time)
-                .or(checkout_event::time.eq(start_time)),
+                .gt(from)
+                .or(checkout_event::time.eq(from)),
         )
         .select(CheckoutEvent::as_select())
         .load(conn)
@@ -134,16 +125,16 @@ mod tests {
 
     #[test]
     fn it_works() {
-        let pool = &mut get_connection_pool().get().unwrap();
+        let pool = &mut establish_connection();
 
         let binding = Utc::now();
-        let new_event = NewUserEvent::new("login", Some("bad message"), &binding);
+        let new_event = NewUserEvent::new("login".into(), Some("bad message".into()), binding);
         let res: Result<usize, diesel::result::Error> = add_user_event(pool, new_event);
 
         let date_str = "2023-12-30T12:53:29.260266Z";
         let datetime: DateTime<Utc> = DateTime::parse_from_rfc3339(date_str).unwrap().into();
 
-        let result = get_user_events(pool, &Some(datetime));
+        let result = get_user_events(pool, &datetime);
 
         println!("{result:?}");
         println!("{res:?}");
