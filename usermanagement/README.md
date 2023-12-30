@@ -12,7 +12,7 @@ Otherwise have a look in the READMEs located at:
 ## How to run - bare metal
 
 ### Configuration
-All the configuration for the backend is done in the .env of the file. See comments for some additional information.
+All the configuration for the backend is done in the .env file located in `backend/.env` . See comments for some additional information.
 
 The `apiURL` in the frontend:
 ```bash
