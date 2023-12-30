@@ -31,7 +31,7 @@
     <div class="navbar-center hidden lg:flex">
       <ul class="menu menu-horizontal px-1">
         <li><a href="/">Login/ Register</a></li>
-        <li><a href="/users">Usermanagement</a></li>
+        <li><router-link :to="{name: 'usermanagement'}"><a>Usermanagement</a></router-link></li>
       </ul>
     </div>
     <div class="navbar-end">
