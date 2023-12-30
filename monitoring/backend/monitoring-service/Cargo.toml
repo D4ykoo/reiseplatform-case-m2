@@ -15,3 +15,4 @@ serde = { version = "1.0", features = ["derive"] }
 chrono = { version = "0.4", features = ["serde"] }
 monitoring-db = {path="../monitoring-db"}
 deadpool-diesel = { version = "0.4.1", features = ["postgres"] }
+tower-cookies = "0.10.0"

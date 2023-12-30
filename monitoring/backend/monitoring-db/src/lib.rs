@@ -118,7 +118,6 @@ pub fn get_checkout_events(
 
 #[cfg(test)]
 mod tests {
-    use crate::{model::UserEvent, schema::user_event};
     use chrono::Utc;
 
     use super::*;

@@ -5,14 +5,14 @@ use axum::Json;
 use axum::{http::StatusCode, routing::get, Router};
 use chrono::{DateTime, Utc};
 use model::Period;
-use monitoring_db::model::{CheckoutEvent, HotelEvent, UserEvent};
 use monitoring_db::get_connection_pool;
+use monitoring_db::model::{CheckoutEvent, HotelEvent, UserEvent};
 
+use tower_cookies::{Cookie, CookieManagerLayer, Cookies};
 use tower_http::services::ServeDir;
 
 #[tokio::main]
 async fn main() {
-
     let pool = get_connection_pool();
 
     let app = Router::new()
@@ -23,6 +23,8 @@ async fn main() {
         .route("/api/v1/user-events", get(get_user_events))
         .route("/api/v1/hotel-events", get(get_hotel_events))
         .route("/api/v1/checkout-events", get(get_checkout_events))
+        .route("/cookie", get(handler))
+        .layer(CookieManagerLayer::new())
         .with_state(pool);
 
     // run our app with hyper, listening globally on port 3000
@@ -31,6 +33,7 @@ async fn main() {
 }
 
 async fn get_user_events(
+    cookies: Cookies,
     State(pool): State<deadpool_diesel::postgres::Pool>,
     querry: Query<Period>,
 ) -> Result<Json<Vec<UserEvent>>, (StatusCode, String)> {
@@ -50,6 +53,7 @@ async fn get_user_events(
 }
 
 async fn get_hotel_events(
+    cookies: Cookies,
     State(pool): State<deadpool_diesel::postgres::Pool>,
     querry: Query<Period>,
 ) -> Result<Json<Vec<HotelEvent>>, (StatusCode, String)> {
@@ -69,6 +73,7 @@ async fn get_hotel_events(
 }
 
 async fn get_checkout_events(
+    cookies: Cookies,
     State(pool): State<deadpool_diesel::postgres::Pool>,
     querry: Query<Period>,
 ) -> Result<Json<Vec<CheckoutEvent>>, (StatusCode, String)> {
@@ -85,6 +90,15 @@ async fn get_checkout_events(
         .map_err(internal_error)?;
 
     Ok(Json(res.unwrap()))
+}
+
+// TODO REMOVE
+async fn handler(cookies: Cookies) -> &'static str {
+    let a = cookies.get("hello_world").unwrap();
+    println!("{a:?}");
+    cookies.add(Cookie::new("hello_world", "hello_world"));
+
+    "Check your cookies."
 }
 
 fn parse_time_querry(time: &Option<String>, default: &str) -> DateTime<Utc> {
