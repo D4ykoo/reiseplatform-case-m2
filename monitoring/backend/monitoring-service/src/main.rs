@@ -5,9 +5,9 @@ use axum::Json;
 use axum::{http::StatusCode, routing::get, Router};
 use chrono::{DateTime, Utc};
 use model::Period;
-use monitoring_db::model::{CheckoutEvent, HotelEvent, NewUserEvent, UserEvent};
-use monitoring_db::{add_user_event, get_connection_pool};
-use serde::{Deserialize, Serialize};
+use monitoring_db::model::{CheckoutEvent, HotelEvent, UserEvent};
+use monitoring_db::get_connection_pool;
+
 use tower_http::services::ServeDir;
 
 #[tokio::main]
@@ -37,7 +37,7 @@ async fn get_user_events(
     let period = querry.0;
 
     let from = parse_time_querry(&period.from, "1970-01-01T01:00:01+01:00");
-    let to = parse_time_querry(&period.to, "2100-01-01T01:00:01+01:00");
+    let _to = parse_time_querry(&period.to, "2100-01-01T01:00:01+01:00");
 
     let conn = pool.get().await.map_err(internal_error)?;
 
@@ -56,7 +56,7 @@ async fn get_hotel_events(
     let period = querry.0;
 
     let from = parse_time_querry(&period.from, "1970-01-01T01:00:01+01:00");
-    let to = parse_time_querry(&period.to, "2100-01-01T01:00:01+01:00");
+    let _to = parse_time_querry(&period.to, "2100-01-01T01:00:01+01:00");
 
     let conn = pool.get().await.map_err(internal_error)?;
 
@@ -75,7 +75,7 @@ async fn get_checkout_events(
     let period = querry.0;
 
     let from = parse_time_querry(&period.from, "1970-01-01T01:00:01+01:00");
-    let to = parse_time_querry(&period.to, "2100-01-01T01:00:01+01:00");
+    let _to = parse_time_querry(&period.to, "2100-01-01T01:00:01+01:00");
 
     let conn = pool.get().await.map_err(internal_error)?;
 
@@ -89,12 +89,12 @@ async fn get_checkout_events(
 
 fn parse_time_querry(time: &Option<String>, default: &str) -> DateTime<Utc> {
     match time {
-        None => chrono::DateTime::parse_from_rfc3339(&default)
+        None => chrono::DateTime::parse_from_rfc3339(default)
             .unwrap()
             .into(),
         Some(s) => {
-            let result = chrono::DateTime::parse_from_rfc3339(&s)
-                .unwrap_or(chrono::DateTime::parse_from_rfc3339(&default).unwrap());
+            let result = chrono::DateTime::parse_from_rfc3339(s)
+                .unwrap_or(chrono::DateTime::parse_from_rfc3339(default).unwrap());
             result.into()
         }
     }
