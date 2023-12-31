@@ -2,10 +2,11 @@ pub mod model;
 pub mod schema;
 
 use chrono::{DateTime, Utc};
-use deadpool_diesel::Pool;
 use deadpool_diesel::postgres::Manager;
+use deadpool_diesel::Pool;
 use diesel::prelude::*;
 use diesel::PgConnection;
+use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use dotenvy::dotenv;
 use model::CheckoutEvent;
 use model::HotelEvent;
@@ -17,25 +18,36 @@ use schema::checkout_event;
 use schema::hotel_event;
 use schema::user_event;
 use std::env;
+use std::error::Error;
 
+const MIGRATIONS: EmbeddedMigrations = embed_migrations!("migrations/");
 
 pub fn get_connection_pool() -> Pool<Manager> {
     dotenv().ok();
     let db_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     // set up connection pool
-    let manager = deadpool_diesel::postgres::Manager::new(db_url, deadpool_diesel::Runtime::Tokio1);
-    let pool = deadpool_diesel::postgres::Pool::builder(manager)
+    let manager =
+        deadpool_diesel::postgres::Manager::new(&db_url, deadpool_diesel::Runtime::Tokio1);
+
+    deadpool_diesel::postgres::Pool::builder(manager)
         .build()
-        .unwrap();
-    pool
+        .unwrap_or_else(|_| panic!("Error connecting to {db_url}"))
 }
 
 pub fn establish_connection() -> PgConnection {
     dotenv().ok();
 
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    PgConnection::establish(&database_url)
-        .unwrap_or_else(|_| panic!("Error connecting to {database_url}"))
+    let db_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    PgConnection::establish(&db_url).unwrap_or_else(|_| panic!("Error connecting to {db_url}"))
+}
+
+pub fn run_migrations(
+    conn: &mut PgConnection,
+) -> Result<(), Box<dyn Error + Send + Sync + 'static>> {
+    // This will run the necessary migrations.
+    conn.run_pending_migrations(MIGRATIONS)?;
+
+    Ok(())
 }
 
 pub fn add_user_event(
@@ -79,11 +91,7 @@ pub fn get_user_events(
     from: &DateTime<Utc>,
 ) -> Result<Vec<UserEvent>, diesel::result::Error> {
     user_event::table
-        .filter(
-            user_event::time
-                .gt(from)
-                .or(user_event::time.eq(from)),
-        )
+        .filter(user_event::time.gt(from).or(user_event::time.eq(from)))
         .select(UserEvent::as_select())
         .get_results(conn)
 }
@@ -93,11 +101,7 @@ pub fn get_hotel_events(
     from: &DateTime<Utc>,
 ) -> Result<Vec<HotelEvent>, diesel::result::Error> {
     hotel_event::table
-        .filter(
-            hotel_event::time
-                .gt(from)
-                .or(hotel_event::time.eq(from)),
-        )
+        .filter(hotel_event::time.gt(from).or(hotel_event::time.eq(from)))
         .select(HotelEvent::as_select())
         .load(conn)
 }

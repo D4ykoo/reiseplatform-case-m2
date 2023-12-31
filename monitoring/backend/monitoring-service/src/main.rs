@@ -5,8 +5,8 @@ use axum::Json;
 use axum::{http::StatusCode, routing::get, Router};
 use chrono::{DateTime, Utc};
 use model::Period;
-use monitoring_db::get_connection_pool;
 use monitoring_db::model::{CheckoutEvent, HotelEvent, UserEvent};
+use monitoring_db::{get_connection_pool, run_migrations};
 
 use jwt_auth::validate_jwt;
 use tower_cookies::{CookieManagerLayer, Cookies};
@@ -17,6 +17,15 @@ use crate::model::TokenError;
 #[tokio::main]
 async fn main() {
     let pool = get_connection_pool();
+
+    // run the migrations on server startup
+    {
+        let conn = pool.get().await.unwrap();
+        conn.interact(move |pg| run_migrations(pg))
+            .await
+            .unwrap()
+            .unwrap();
+    }
 
     let app = Router::new()
         .nest_service(
@@ -39,7 +48,6 @@ async fn get_user_events(
     State(pool): State<deadpool_diesel::postgres::Pool>,
     querry: Query<Period>,
 ) -> Result<Json<Vec<UserEvent>>, (StatusCode, String)> {
-
     validate_auth(cookies)?;
 
     let period = querry.0;
@@ -62,7 +70,6 @@ async fn get_hotel_events(
     State(pool): State<deadpool_diesel::postgres::Pool>,
     querry: Query<Period>,
 ) -> Result<Json<Vec<HotelEvent>>, (StatusCode, String)> {
-
     validate_auth(cookies)?;
 
     let period = querry.0;
@@ -85,7 +92,6 @@ async fn get_checkout_events(
     State(pool): State<deadpool_diesel::postgres::Pool>,
     querry: Query<Period>,
 ) -> Result<Json<Vec<CheckoutEvent>>, (StatusCode, String)> {
- 
     validate_auth(cookies)?;
 
     let period = querry.0;
@@ -104,7 +110,6 @@ async fn get_checkout_events(
 }
 
 fn validate_auth(cookies: Cookies) -> Result<bool, (StatusCode, String)> {
-
     let cookie = cookies.get("authTravel");
 
     let token = cookie.ok_or(TokenError::new("Missing Token"));
@@ -122,7 +127,6 @@ fn validate_auth(cookies: Cookies) -> Result<bool, (StatusCode, String)> {
 }
 
 fn parse_time_querry(time: &Option<String>, default: &str) -> DateTime<Utc> {
-    
     match time {
         None => chrono::DateTime::parse_from_rfc3339(default)
             .unwrap()
