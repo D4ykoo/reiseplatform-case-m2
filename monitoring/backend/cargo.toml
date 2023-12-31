@@ -1,6 +1,7 @@
 [workspace]
 
 members = [
+    "../../checkout/backend/jwt-auth",
     "monitoring-db",
     "monitoring-service"
 ]

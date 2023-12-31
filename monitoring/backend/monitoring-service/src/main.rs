@@ -8,8 +8,11 @@ use model::Period;
 use monitoring_db::get_connection_pool;
 use monitoring_db::model::{CheckoutEvent, HotelEvent, UserEvent};
 
-use tower_cookies::{Cookie, CookieManagerLayer, Cookies};
+use jwt_auth::validate_jwt;
+use tower_cookies::{CookieManagerLayer, Cookies};
 use tower_http::services::ServeDir;
+
+use crate::model::TokenError;
 
 #[tokio::main]
 async fn main() {
@@ -23,7 +26,6 @@ async fn main() {
         .route("/api/v1/user-events", get(get_user_events))
         .route("/api/v1/hotel-events", get(get_hotel_events))
         .route("/api/v1/checkout-events", get(get_checkout_events))
-        .route("/cookie", get(handler))
         .layer(CookieManagerLayer::new())
         .with_state(pool);
 
@@ -37,6 +39,9 @@ async fn get_user_events(
     State(pool): State<deadpool_diesel::postgres::Pool>,
     querry: Query<Period>,
 ) -> Result<Json<Vec<UserEvent>>, (StatusCode, String)> {
+
+    validate_auth(cookies)?;
+
     let period = querry.0;
 
     let from = parse_time_querry(&period.from, "1970-01-01T01:00:01+01:00");
@@ -57,6 +62,9 @@ async fn get_hotel_events(
     State(pool): State<deadpool_diesel::postgres::Pool>,
     querry: Query<Period>,
 ) -> Result<Json<Vec<HotelEvent>>, (StatusCode, String)> {
+
+    validate_auth(cookies)?;
+
     let period = querry.0;
 
     let from = parse_time_querry(&period.from, "1970-01-01T01:00:01+01:00");
@@ -77,6 +85,9 @@ async fn get_checkout_events(
     State(pool): State<deadpool_diesel::postgres::Pool>,
     querry: Query<Period>,
 ) -> Result<Json<Vec<CheckoutEvent>>, (StatusCode, String)> {
+ 
+    validate_auth(cookies)?;
+
     let period = querry.0;
 
     let from = parse_time_querry(&period.from, "1970-01-01T01:00:01+01:00");
@@ -92,16 +103,26 @@ async fn get_checkout_events(
     Ok(Json(res.unwrap()))
 }
 
-// TODO REMOVE
-async fn handler(cookies: Cookies) -> &'static str {
-    let a = cookies.get("hello_world").unwrap();
-    println!("{a:?}");
-    cookies.add(Cookie::new("hello_world", "hello_world"));
+fn validate_auth(cookies: Cookies) -> Result<bool, (StatusCode, String)> {
 
-    "Check your cookies."
+    let cookie = cookies.get("authTravel");
+
+    let token = cookie.ok_or(TokenError::new("Missing Token"));
+
+    if token.is_err() {
+        return Err(auth_error(token.err().unwrap()));
+    }
+
+    let res = validate_jwt(token.unwrap().value());
+    if res.is_ok() {
+        Ok(true)
+    } else {
+        Err(auth_error(res.err().unwrap()))
+    }
 }
 
 fn parse_time_querry(time: &Option<String>, default: &str) -> DateTime<Utc> {
+    
     match time {
         None => chrono::DateTime::parse_from_rfc3339(default)
             .unwrap()
@@ -112,6 +133,13 @@ fn parse_time_querry(time: &Option<String>, default: &str) -> DateTime<Utc> {
             result.into()
         }
     }
+}
+
+fn auth_error<E>(err: E) -> (StatusCode, String)
+where
+    E: std::error::Error,
+{
+    (StatusCode::UNAUTHORIZED, err.to_string())
 }
 
 fn internal_error<E>(err: E) -> (StatusCode, String)
