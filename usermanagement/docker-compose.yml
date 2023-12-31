@@ -52,7 +52,7 @@ services:
       - "8082:8082"
   
   frontend:
-    image: dak4408/travma-usermanagement-backend:latest
+    image: dak4408/travma-usermanagement-frontend:latest
     container_name: usermanagement-frontend
     restart: always
     ports:

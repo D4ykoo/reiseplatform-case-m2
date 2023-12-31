@@ -32,6 +32,16 @@ docker compose -f docker-compose.ylm up -d
 ## How to run - Bare Metal
 Follow the instructions in the [RunBareMetal.md](RunBareMetal.md) of this directory.
 
+## How the multi platform images were made
+Create the builder:
+```bash
+ sudo docker buildx create --name armbuilder --driver=docker-container
+```
+Then build and push the multi platform images: 
+```bash
+sudo docker buildx build --push --platform linux/amd64,linux/arm64,linux/arm/v7 --builder=armbuilder -t dak4408/travma-usermanagement-<checkout/backend>:latest .
+```
+
 ## Technology Stack
 * TypeScript + VueJS 3 + TailwindCSS + daisyUI 
 * Go + Gin + GORM
