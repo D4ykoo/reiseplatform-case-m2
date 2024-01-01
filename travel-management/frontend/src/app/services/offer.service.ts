@@ -43,7 +43,7 @@ export class OfferService {
 
     this.httpClient.get(environment.HotelAPI + "hotels", { params: params }).subscribe((hotelsResponse) => {
       // Show only hits
-      if (hotelsResponse || (hotelsResponse as Array<Hotel>).length == 0) {
+      if (hotelsResponse && (hotelsResponse as Array<Hotel>).length > 0) {
         (hotelsResponse as Array<Hotel>).forEach((res: Hotel) => {
           if (res.travels.length > 0) {
             this.offerSubject.value.set(res.id, res)

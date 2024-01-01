@@ -23,8 +23,6 @@ services:
     image: mig3177/travelmanagement
     container_name: travelmngt-app
     restart: always
-    ports:
-      - "8093:8093"
     depends_on:
       travelmngt-db:
         condition: service_healthy
@@ -52,7 +50,7 @@ services:
       SSL_TLS: disable
       TIMEZONE: Europe/Berlin
 
-      API_URL_FR: "http://localhost:12345/admin/api/v1/"
+      API_URL_FR: "http://localhost:12345/adminbak/api/v1/"
 
     networks:
       - publicnet
