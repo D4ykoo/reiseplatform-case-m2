@@ -75,7 +75,7 @@ export class HotelEditComponent implements OnInit, OnChanges {
         land: this.land, pictures: this.pictures, state: this.state, street: this.street,
         tagids: this.selectedTags, vendorid: 0, vendorname: "asdf"
       };
-      lastValueFrom(this.httpClient.post(environment.HotelAPI + "hotels", createHotel)).then((e) => { this.clear(); console.log(e); }).catch((e) => console.log(e))
+      lastValueFrom(this.httpClient.post(environment.HotelAPI + "hotels", createHotel)).then((e) => { this.clear(); }).catch((e) => console.log(e))
     }
     if (this.editorMode == "Edit") {
       let UpdateHotel: Hotel = {

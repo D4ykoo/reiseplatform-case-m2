@@ -39,10 +39,4 @@ export class EditPanelComponent implements OnInit {
     this.activeItem = this.items[0];
     this.editType = [{ id: 1, name: "Hotel" }, { id: 2, name: "Travel" }]
   }
-
-  changeView(event: any) {
-    console.log(event);
-    console.log(this.activeItem);
-   // this.showEditPanel = event.value.id;
-  }
 }

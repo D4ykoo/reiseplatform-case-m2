@@ -1,9 +1,19 @@
+### Frontend build ###
 FROM node:21.5.0 AS build
 WORKDIR /usr/src/app
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm install
 COPY frontend .
 RUN npm run build
-### STAGE 2: Run ###
-FROM nginx:alpine
-COPY --from=build /usr/src/app/dist/frontend/browser /usr/share/nginx/html
+### Backend build ###
+FROM golang:alpine3.19 
+WORKDIR /app
+COPY ./backend/go.mod ./backend/go.sum ./
+RUN go mod download
+COPY ./backend ./
+RUN CGO_ENABLED=0 GOOS=linux go build -o /travelmanagement
+### RUN ###
+RUN mkdir html
+COPY --from=build /usr/src/app/dist/frontend/browser ./html
+EXPOSE 8083 5432
+CMD ["/travelmanagement"]

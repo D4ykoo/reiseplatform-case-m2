@@ -2,30 +2,45 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"strconv"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/mig3177/travelmanagement/adapter/api"
 	dbgorm "github.com/mig3177/travelmanagement/adapter/dbGoRm"
+	"github.com/mig3177/travelmanagement/adapter/kafka"
 	"github.com/mig3177/travelmanagement/application"
+	"github.com/mig3177/travelmanagement/utils"
 )
 
 func main() {
 
 	// Env
+	utils.LoadFile()
+	isDebug, errBool := strconv.ParseBool(os.Getenv("DEBUG"))
+
+	if errBool != nil {
+		log.Fatal(errBool, "Try to change the DEBUG field in the .env file")
+	}
+
+	if !isDebug {
+		gin.SetMode(gin.ReleaseMode)
+	}
 
 	// Outgoing
 	// Repository
 	hotelRepo := dbgorm.NewHotelRepository(10, 100)
 	travelRepo := dbgorm.NewTravelRepository(10, 100)
 	tagRepo := dbgorm.NewTagRepository(10, 100)
+	// Message broker
+	eventService := kafka.New()
 
 	// Application
 	// Service
-	travelService := application.New(hotelRepo, travelRepo, tagRepo)
-
-	fmt.Println(travelService.FindHotelByTravel(1, 8))
+	travelService := application.New(hotelRepo, travelRepo, tagRepo, eventService)
 
 	// Incomming
 	// Controller
@@ -39,7 +54,7 @@ func main() {
 	config.AllowHeaders = []string{"Authorization", "Origin", "Content-Type", "Accept"}
 	router.Use(cors.Default())
 
-	router.Use(static.Serve("/", static.LocalFile("../frontend/dist/frontend/browser", false)))
+	router.Use(static.Serve("/", static.LocalFile("./html", false)))
 
 	// CRUD
 	// Create
@@ -84,6 +99,9 @@ func main() {
 	// Delete
 	router.DELETE("/api/v1/tags/:id", service.DeleteTagRequest)
 
-	// Run the server on port 8080
-	router.Run(":8080")
+	err := router.Run(os.Getenv("API_URL"))
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
 }

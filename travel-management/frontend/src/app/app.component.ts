@@ -19,17 +19,4 @@ import { MainComponent } from "./components/main/main.component";
 export class AppComponent {
   title = 'Travel';
 
-  public onFileChange(event:any) {
-    console.log(event);
-    const file = event.files[0];
-    const reader = new FileReader();
-    reader.onload=()=> {
-      const baseString64 = reader.result as string;
-      console.log(baseString64);
-    }
-
-    if(file) {
-      reader.readAsDataURL(file);
-    }
-  }
 }

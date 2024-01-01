@@ -27,7 +27,6 @@ export class InfoCardComponent implements OnInit {
 
   ngOnInit(): void {
     this.hotelOffer = this.offerService.getSelectedOffer();
-    console.log(this.hotelOffer);
     this.responsiveOptions = [
       {
           breakpoint: '1024px',
@@ -49,7 +48,6 @@ closeDialog() {
 }
 
 buy(id: number) {
-  console.log("press button")
   this.offerService.addToCart({hotelId: (this.hotelOffer as Hotel).id,travelId:(this.hotelOffer as Hotel).travels[id].id, userId: 0 });
   this.closeDialog()
 }

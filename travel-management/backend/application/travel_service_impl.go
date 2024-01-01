@@ -13,10 +13,11 @@ type TravelServiceImpl struct {
 	hotels  outbound.HotelRepository
 	travels outbound.TravelRepository
 	tags    outbound.TagRepository
+	events  outbound.TravelEvents
 }
 
-func New(hrepo outbound.HotelRepository, trepo outbound.TravelRepository, tagrepo outbound.TagRepository) TravelServiceImpl {
-	return TravelServiceImpl{hotels: hrepo, travels: trepo, tags: tagrepo}
+func New(hrepo outbound.HotelRepository, trepo outbound.TravelRepository, tagrepo outbound.TagRepository, events outbound.TravelEvents) TravelServiceImpl {
+	return TravelServiceImpl{hotels: hrepo, travels: trepo, tags: tagrepo, events: events}
 }
 
 func (service TravelServiceImpl) NewHotel(name string, address model.Address, vendor model.Vendor, description string, pics []*model.Picture, tags []*model.Tag) (*model.Hotel, error) {

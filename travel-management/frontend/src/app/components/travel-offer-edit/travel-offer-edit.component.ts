@@ -61,7 +61,7 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
       let createTravel: CreateTravel = {
         description: this.description as string, from: from.toISOString(), to: to.toISOString(), price: this.price, vendorid: 0, vendorname: ""
       };
-      lastValueFrom(this.httpClient.post(environment.HotelAPI + "hotels/" + this.selectedHotel?.id + "/travels", createTravel)).then((e) => { this.clear(); console.log(e); }).catch((e) => console.log(e))
+      lastValueFrom(this.httpClient.post(environment.HotelAPI + "hotels/" + this.selectedHotel?.id + "/travels", createTravel)).then((e) => { this.clear(); }).catch((e) => console.log(e))
     }
     if (this.editorMode == "Edit") {
       let updateTravel: CreateTravel = {
@@ -139,7 +139,6 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
     if (this.selectedHotel && this.selectedTravel) {
       lastValueFrom(this.httpClient.delete(environment.HotelAPI + "hotels/" + this.selectedHotel?.id + "/travels/" + this.selectedTravel.id)).then(
         (e) => {
-          console.log(e);
           this.clear()
         }).catch((e) => console.log(e));
     }
