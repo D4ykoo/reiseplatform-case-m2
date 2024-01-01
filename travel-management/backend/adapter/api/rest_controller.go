@@ -18,10 +18,16 @@ type RestController struct {
 }
 
 func New(service domain.TravelService) RestController {
+
 	return RestController{service: service}
 }
 
 func (ctr RestController) CreateHotelRequest(c *gin.Context) {
+
+	// Function can only be executed with a valid login status
+	if err := ValidateLoginStatus(c); err != nil {
+		return
+	}
 
 	var hotel dto.CreateHotelRequest
 
@@ -146,6 +152,12 @@ func (ctr RestController) GetHotelById(c *gin.Context) {
 }
 
 func (ctr RestController) DeleteHotelRequest(c *gin.Context) {
+
+	// Function can only be executed with a valid login status
+	if err := ValidateLoginStatus(c); err != nil {
+		return
+	}
+
 	stringId := c.Param("id")
 	id, err := strconv.Atoi(stringId)
 
@@ -164,6 +176,11 @@ func (ctr RestController) DeleteHotelRequest(c *gin.Context) {
 }
 
 func (ctr RestController) UpdateHotel(c *gin.Context) {
+
+	// Function can only be executed with a valid login status
+	if err := ValidateLoginStatus(c); err != nil {
+		return
+	}
 
 	stringId := c.Param("id")
 	id, err := strconv.Atoi(stringId)
@@ -199,6 +216,11 @@ func (ctr RestController) UpdateHotel(c *gin.Context) {
 // travel
 
 func (ctr RestController) CreateTravelRequest(c *gin.Context) {
+
+	// Function can only be executed with a valid login status
+	if err := ValidateLoginStatus(c); err != nil {
+		return
+	}
 
 	stringId := c.Param("id")
 	hotelId, err := strconv.Atoi(stringId)
@@ -270,6 +292,11 @@ func (ctr RestController) GetTravelById(c *gin.Context) {
 
 func (ctr RestController) DeleteTravel(c *gin.Context) {
 
+	// Function can only be executed with a valid login status
+	if err := ValidateLoginStatus(c); err != nil {
+		return
+	}
+
 	travelStrId := c.Param("tid")
 	travelId, err := strconv.Atoi(travelStrId)
 
@@ -288,6 +315,11 @@ func (ctr RestController) DeleteTravel(c *gin.Context) {
 }
 
 func (ctr RestController) UpdateTravel(c *gin.Context) {
+
+	// Function can only be executed with a valid login status
+	if err := ValidateLoginStatus(c); err != nil {
+		return
+	}
 
 	hotelStrId := c.Param("id")
 	hotelId, err := strconv.Atoi(hotelStrId)
@@ -323,6 +355,11 @@ func (ctr RestController) UpdateTravel(c *gin.Context) {
 // tag
 
 func (ctr RestController) CreateTagRequest(c *gin.Context) {
+
+	// Function can only be executed with a valid login status
+	if err := ValidateLoginStatus(c); err != nil {
+		return
+	}
 
 	var tag dto.TagRequest
 
@@ -361,6 +398,11 @@ func (ctr RestController) GetTagById(c *gin.Context) {
 }
 
 func (ctr RestController) DeleteTagRequest(c *gin.Context) {
+	// Function can only be executed with a valid login status
+	if err := ValidateLoginStatus(c); err != nil {
+		return
+	}
+
 	stringId := c.Param("id")
 	id, err := strconv.Atoi(stringId)
 
@@ -397,6 +439,11 @@ func (ctr RestController) ListAllTags(c *gin.Context) {
 }
 
 func (ctr RestController) UpdateTag(c *gin.Context) {
+
+	// Function can only be executed with a valid login status
+	if err := ValidateLoginStatus(c); err != nil {
+		return
+	}
 
 	tagStrId := c.Param("id")
 	tagId, err := strconv.Atoi(tagStrId)
