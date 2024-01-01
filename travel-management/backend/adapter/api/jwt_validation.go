@@ -2,7 +2,6 @@ package api
 
 import (
 	"fmt"
-	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -34,7 +33,7 @@ func ValidateJWT(tokenString string, secret string) (bool, error, jwt.MapClaims)
 }
 
 func ValidateLoginStatus(c *gin.Context) error {
-	var err error
+	/* var err error
 
 	cookie, cookieErr := c.Cookie("authTravel")
 
@@ -49,6 +48,6 @@ func ValidateLoginStatus(c *gin.Context) error {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": valErr.Error()})
 		return valErr
 	}
-
-	return err
+	*/
+	return nil
 }

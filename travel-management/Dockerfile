@@ -15,5 +15,5 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /travelmanagement
 ### RUN ###
 RUN mkdir html
 COPY --from=build /usr/src/app/dist/frontend/browser ./html
-EXPOSE 8083 5432
-CMD ["/travelmanagement"]
+RUN apk --update add envsubst
+CMD ["/bin/sh",  "-c",  "envsubst < ./html/assets/env.template.js > ./html/assets/env.js && /travelmanagement"]

@@ -51,6 +51,9 @@ services:
       DB_PORT: 5432
       SSL_TLS: disable
       TIMEZONE: Europe/Berlin
+
+      API_URL_FR: "http://localhost:12345/admin/api/v1/"
+
     networks:
       - publicnet
       - travelmngtnet
