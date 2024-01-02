@@ -9,7 +9,8 @@ on:
     branches:
       - develop
     paths:
-      - ./checkout/backend
+      - 'checkout/backend/**'
+      - '!checkout/backend/**.md'
   workflow_call:
   workflow_dispatch:
   
