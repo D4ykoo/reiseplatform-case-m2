@@ -51,15 +51,11 @@ func main() {
 	config.AllowCredentials = true
 	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
 	config.AllowHeaders = []string{"Authorization", "Origin", "Content-Type", "Accept"}
-	config.AllowOriginFunc = func(origin string) bool {
-		fmt.Println("ORI: " + origin)
-		return origin == "https://github.com"
-	}
-	router.ForwardedByClientIP = true
-	router.SetTrustedProxies([]string{"travelmngt-web"})
-	//router.Use(cors.New(config))
 
-	//router.Use(static.Serve("/", static.LocalFile("./html", false)))
+	// TODO CORS
+	router.ForwardedByClientIP = true
+	router.SetTrustedProxies([]string{""})
+	//router.Use(cors.New(config))
 
 	// CRUD
 	// Create

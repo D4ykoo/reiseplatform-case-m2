@@ -17,18 +17,18 @@ services:
       - travelmngt-db:/data/postgres
     restart: always
     networks:
-      - travelmngtnet
+      - dbnettravmgnt
 
   travelmngt-app:
-    image: mig3177/travelmanagement
+    image: mig3177/travmngt-backend:latest
     container_name: travelmngt-app
     restart: always
     depends_on:
       travelmngt-db:
         condition: service_healthy
     environment:
-      DOMAIN: :8093
-      API_URL: :8093
+      DOMAIN: :8086
+      API_URL: :8086
       JWT_SECRET: your-jwt-secret
 
       # Change to true when using tls
@@ -36,6 +36,8 @@ services:
 
       # Gives additional information of the webserver
       DEBUG: true
+
+      GIN_MODE: release
 
       # BROKER Settings
       BROKERS: localhost:9092
@@ -50,12 +52,23 @@ services:
       SSL_TLS: disable
       TIMEZONE: Europe/Berlin
 
-      API_URL_FR: "http://localhost:12345/adminbak/api/v1/"
-
     networks:
-      - publicnet
-      - travelmngtnet
+      - privatenet
+      - dbnettravmgnt
 
+  travelmngt-web:
+    image: mig3177/travmngt-frontend:latest
+    container_name: travelmngt-web
+    depends_on: 
+      - travelmngt-app
+    environment:
+      API_URL_FR: "http://localhost:12345/travma/api/v1/"
+    networks:
+      - privatenet
+      - publicnet
+    volumes:
+      - "./travel-management/frontend/nginx.conf:/etc/nginx/nginx.conf"
+  
   proxy:
     image: nginx:stable-alpine3.17
     ports:
@@ -63,14 +76,14 @@ services:
     volumes:
       - "./nginx.conf:/etc/nginx/nginx.conf"
     depends_on:
-      - travelmngt-app
+      - travelmngt-web
     networks:
-      - travelmngtnet
+      - publicnet
 
 volumes:
   travelmngt-db:
 
-
 networks:
-  travelmngtnet:
+  dbnettravmgnt:
+  privatenet:
   publicnet:
