@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	"github.com/gin-contrib/cors"
-	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/mig3177/travelmanagement/adapter/api"
 	dbgorm "github.com/mig3177/travelmanagement/adapter/dbGoRm"
@@ -48,13 +47,19 @@ func main() {
 	// Router
 	router := gin.Default()
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:4200"}
+	config.AllowOrigins = []string{"http://travelmngt-web:8085"}
 	config.AllowCredentials = true
 	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
 	config.AllowHeaders = []string{"Authorization", "Origin", "Content-Type", "Accept"}
-	router.Use(cors.Default())
+	config.AllowOriginFunc = func(origin string) bool {
+		fmt.Println("ORI: " + origin)
+		return origin == "https://github.com"
+	}
+	router.ForwardedByClientIP = true
+	router.SetTrustedProxies([]string{"travelmngt-web"})
+	//router.Use(cors.New(config))
 
-	router.Use(static.Serve("/", static.LocalFile("./html", false)))
+	//router.Use(static.Serve("/", static.LocalFile("./html", false)))
 
 	// CRUD
 	// Create
