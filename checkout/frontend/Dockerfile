@@ -2,6 +2,9 @@ FROM node:latest as builder
 WORKDIR /app
 ARG frontend_path=./
 
+ARG env_file=./example.docker.env
+ENV ENV_FILE=$env_file
+
 FROM builder AS install
 RUN mkdir -p /tmp/dev
 COPY ${frontend_path}package.json ${frontend_path}package-lock.json /tmp/dev/
@@ -25,4 +28,4 @@ COPY --from=prerelease /app/dist/frontend/browser /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/nignx.conf
 
 EXPOSE 8083
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/bin/sh",  "-c",  "envsubst < /usr/share/nginx/html/assets/env.template.js > /usr/share/nginx/html/assets/env.js && exec nginx -g 'daemon off;'"]
