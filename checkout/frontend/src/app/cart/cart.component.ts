@@ -28,6 +28,10 @@ export class CartComponent {
 
   ngOnInit() {
     this.getCart();
+    this.cart = [
+      { name: 'Hotel 1', price: 100 },
+      { name: 'Hotel 2', price: 200 },
+    ];
   }
 
   public getCart() {
