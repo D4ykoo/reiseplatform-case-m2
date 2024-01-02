@@ -1,27 +1,30 @@
-# Frontend
+# How to run 
+### Configuration
+In [src/environment/environment.prod.ts](src/environment/enviroment.prod.ts), when running in dev mode change the config on the non prod file.
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.8.
+## Bare Metal
+```bash
+npm install 
+# now run
+npm run dev 
+# or for prod with a webserver like nginx
+npm run build
+```
+Now the whole application is located in the dist/ directory.<br>
+The application can be served by any desired webserver after coping the whole directory to e. g. `var/www/html/`.
 
-## Development server
+## Docker
+Create the network if it does not already exist:
+```bash
+docker network create checkout
+```
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Build the image:
+```bash
+docker buildx build -t checkout-frontend:latest .
+```
 
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+Run the container:
+```bash
+docker run --name checkout-frontend --network checkout -p 8083:80 -d checkout-frontend
+```

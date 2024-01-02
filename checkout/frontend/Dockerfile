@@ -1,3 +1,7 @@
+FROM node:latest as builder
+WORKDIR /app
+ARG frontend_path=./
+
 FROM builder AS install
 RUN mkdir -p /tmp/dev
 COPY ${frontend_path}package.json ${frontend_path}package-lock.json /tmp/dev/
@@ -16,7 +20,7 @@ RUN cd ${frontend_path} && npm run build
 COPY ${frontend_path}dist .
 
 FROM nginx:alpine 
-COPY --from=prerelease /app/dist/ /usr/share/nginx/html
+COPY --from=prerelease /app/dist/frontend/browser /usr/share/nginx/html
 
 COPY nginx.conf /etc/nginx/nignx.conf
 
