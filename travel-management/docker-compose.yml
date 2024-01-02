@@ -16,6 +16,8 @@ services:
     volumes:
       - travelmngt-db:/data/postgres
     restart: always
+    ports:
+      - "8096:8096"
     networks:
       - travelmngtnet
 
@@ -49,6 +51,8 @@ services:
       DB_PORT: 5432
       SSL_TLS: disable
       TIMEZONE: Europe/Berlin
+    ports:
+      - "8086:8086"
 
     networks:
       - publicnet
@@ -58,11 +62,11 @@ services:
     image: mig3177/travmngt-frontend:latest
     container_name: travelmngt-web
     ports:
-      - "8001:8085"
+      - "8085:8085"
     depends_on: 
       - travelmngt-app
     environment:
-      API_URL_FR: "http://localhost:8001/api/v1/"
+      API_URL_FR: "http://localhost:8085/api/v1/"
     networks:
       - publicnet
     volumes:
