@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: allinone-checkout
+  labels:
+    app: allinone-checkout
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: allinone-checkout
+  template:
+    metadata:
+      labels:
+        app: allinone-checkout
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:9.6
+          env:
+            - name: POSTGRES_USER
+              value: checkout
+            - name: POSTGRES_PASSWORD
+              value: password
+            - name: POSTGRES_DB
+              value: checkout
+          ports:
+            - containerPort: 8094
+        - name: checkout-backend
+          image: dak4408/checkout-backend:latest
+          env:
+            - name: POSTGRES_USER
+              value: checkout
+            - name: POSTGRES_PASSWORD
+              value: password
+            - name: POSTGRES_DB
+              value: checkout
+          ports:
+            - containerPort: 8084
+        - name: checkout-frontend
+          image: dak4408/checkout-frontend:latest
+          env:
+            - name: API_URL
+              value: http://localhost:8084
+            - name: USERMANGEMENT_URL
+              value: http://localhost:8081
+            - name: HOTELMANGEMENT_URL
+              value: http://localhost:8085
+            -name: MONITORING_URL
+              value: http://localhost:8087
+          ports:
+            - containerPort: 80

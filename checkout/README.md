@@ -16,10 +16,12 @@ Follow the instructions in the [RunInVM.md](RunInVM.md) of this directory.
 Follow the instructions in the READMEs located at:
 [/frontend/README.md](/frontend/README.md) and [/backend/README.md](/backend/README.md).
 
-#### Run with image from docker hub registry 
+<!-- #### Run with image from docker hub registry 
 ```bash
-docker compose -f docker-compose.ylm up -d 
-```
+docker compose -f docker-compose.yml up -d 
+``` -->
+## How to run the k8s manifests
+Follow the instructions located in [ApplyManifests.md](ApplyManifests.md)
 
 ## How to run - Bare Metal
 Follow the instructions in the [RunBareMetal.md](RunBareMetal.md) of this directory.
