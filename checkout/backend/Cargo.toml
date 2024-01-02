@@ -1,0 +1,8 @@
+[workspace]
+resolver = "2"
+members = [
+    "jwt-auth",
+    "message-service",
+    "checkout-db",
+    "checkout-backend"
+]

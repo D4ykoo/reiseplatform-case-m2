@@ -1,0 +1,32 @@
+# Runs when PR open event emits if a PR is on the main branch 
+# Used for production - security, build/ test and deployment
+  
+name: Dev - Usermanagement frontend - security and build 
+run-name: ${{ github.actor }} started usermanagement pipeline
+
+concurrency: production
+
+on:
+  pull_request:
+    types: opened
+    branches:
+      - main
+    paths:
+      - ./usermanagement
+  workflow_dispatch:
+  
+defaults:
+  run: 
+    shell: bash
+    working-directory: "./usermanagement"
+
+jobs:
+  frontend-test-workflow:
+    uses: ./.github/workflows/usermanagement-frontend-dev.yml
+  backend-test-workflow:
+    uses: ./.github/workflows/usermanagement-backend-dev.yml
+  # plain-deployment:
+  #   name: Usermanagement Deployment 
+  #   runs-on: ubuntu-latest
+  #   environment: production
+  #   steps: 

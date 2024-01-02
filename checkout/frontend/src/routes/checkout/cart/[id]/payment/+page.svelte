@@ -1,0 +1,72 @@
+<script>
+	import paypal from '$lib/images/checkout-logo-69x26-2x.png';
+	import { goto } from '$app/navigation';
+
+	let loading = false;
+	let showToast = false;
+
+	async function pay() {
+		loading = true;
+		await new Promise((resolve) => setTimeout(resolve, 3000));
+		loading = false;
+
+		showToast = true;
+		await new Promise((resolve) => setTimeout(resolve, 3000));
+		showToast = false;
+
+		goto('/');
+	}
+</script>
+
+<div class="flex flex-col justify-center ml-auto mr-auto items-center">
+	<h1 class="mb-4 font-bold text-2xl">Payment</h1>
+
+	<form>
+		<label class="form-control w-full max-w-xs">
+			<input type="email" placeholder="email" class="input input-bordered w-full max-w-xs" />
+		</label>
+		<label class="form-control w-full max-w-xs mt-4">
+			<input type="password" placeholder="password" class="input input-bordered w-full max-w-xs" />
+		</label>
+		<div class="flex flex-row align-middle items-center mt-6 justify-center ml-auto mr-auto">
+			<button on:click={pay} class="btn btn-primary w-4/5 flex text-white">
+				{#if !loading}
+					<span id="submit-text">Authorize</span>
+				{/if}
+				{#if loading}
+					<span id="loading-circle" class="loading loading-spinner loading-md"></span>
+					<span> Processing</span>
+				{/if}
+			</button>
+		</div>
+		<button class="btn btn-error btn-outline w-4/5 flex ml-auto mr-auto mt-4"> Cancel </button>
+	</form>
+	<div class="ml-auto mr-auto mt-4 mb-8 flex justify-center w-3/5 sm:w-3/5 lg:w-3/12">
+		<div role="alert" class="alert">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				fill="none"
+				viewBox="0 0 24 24"
+				class="stroke-info shrink-0 w-6 h-6"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+				></path>
+			</svg>
+			<span>
+				<b>Info:</b> It is just mocked, it does not matter what credentials are in there. Also there
+				is no actual PayPal authorization.</span
+			>
+		</div>
+	</div>
+	{#if showToast}
+		<div class="toast toast-end mb-32 transition-all ease-in-out duration-700">
+			<div class="alert alert-success">
+				<span>Thank you! The trip is booked now!</span>
+			</div>
+		</div>
+	{/if}
+</div>
