@@ -10,4 +10,4 @@ Project for the lecture Cloud Native Development
 |                         |                  |                   |
 | Checkout Frontend       | 8083             | 80                |
 | Checkout Backend        | 8084             | 8084              |
-| Postgres Checkout | 8094             | -                 |
+| Postgres Checkout       | 8094             | -                 |

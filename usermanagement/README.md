@@ -1,50 +1,46 @@
 # User Management
+Frontend and backend can be deployed seperatly. For simplicty of this lecture it is one directory in a monorepo instead of two seperate repositories.
 
 ## Prerequisites
-* A postgresql database where the configuration and credentials are known
+* A postgresql database with known configuration and credentials
+* See [backend/README.md](backend/README.md) for docker postgresdb instructions (the network arg can be removed when the other services are not deployed with docker) 
+* Make sure to install `npm` and `golang` when running in bare metal mode
+## Configuration
+All the configuration for the backend is done in the .env file located in [backend/.env](backend/.env) . See comments for some additional information.
 
-## How to deploy
-For the non container way follow the instructions below.
-
-Otherwise have a look in the READMEs located at:
-`./frontend/README.md` and `./backend/README.md` 
-
-## How to run - bare metal
-
-### Configuration
-All the configuration for the backend is done in the .env of the file. See comments for some additional information.
-
-The `apiURL` in the frontend:
-```bash
-frontend/src/assets/config.ts
-```
+The `apiURL` in the frontend: [frontend/src/assets/config.ts](frontend/src/assets/config.ts) 
 must match with the config for the `API_URL` line, located in the .env file.
 
-### Backend
-#### Development
+## How to run - VM
+Follow the instructions in the [RunInVM.md](RunInVM.md) of this directory.
+
+## How to run - Docker
+Follow the instructions in the READMEs located at:
+[/frontend/README.md](/frontend/README.md) and [/backend/README.md](/backend/README.md).
+
+## How to run - Docker Compose
+#### Run with local (registry) built image
 ```bash
-cd backend
-go run ./main.go
+docker compose -f docker-compose-local.ylm up -d 
 ```
-#### Production
+
+#### Run with image from docker hub registry 
 ```bash
-cd backend
-go build
-./usermanagement
+docker compose -f docker-compose.ylm up -d 
 ```
-### Frontend
-#### Development
+
+## How to run - Bare Metal
+Follow the instructions in the [RunBareMetal.md](RunBareMetal.md) of this directory.
+
+## How the multi platform images were made
+Create the builder:
 ```bash
-cd frontend
-npm run dev
+ sudo docker buildx create --name armbuilder --driver=docker-container
 ```
-#### Production
+Then build and push the multi platform images: 
 ```bash
-cd frontend
-npm run build
+sudo docker buildx build --push --platform linux/amd64,linux/arm64,linux/arm/v7 --builder=armbuilder -t dak4408/travma-usermanagement-<checkout/backend>:latest .
 ```
-Now the whole application is located in the dist/ directory.<br>
-The application can be served by any desired webserver by coping the whole directory and renaming it to e.g. usermanagement. 
 
 ## Technology Stack
 * TypeScript + VueJS 3 + TailwindCSS + daisyUI 
@@ -65,7 +61,10 @@ The following represents a quick and small overview about the microservice struc
 │   ├── ports
 │   ├── tests
 │   ├── utils
-│ 
+│   ├── .env
+│   ├── README.md
+│   ├── Dockerfile
+│
 ├── frontend
 │   ├── public
 │   ├── src
@@ -76,9 +75,11 @@ The following represents a quick and small overview about the microservice struc
 │   │   └── services
 │   │   └── store
 │   │   └── views
+│   ├── README.md
+│   ├── Dockerfile
 │ 
 ├── resources
-├── .env
+
 ```
 
 ## Additional Information
@@ -91,6 +92,6 @@ The following represents a quick and small overview about the microservice struc
 ## Future Work
 * Add UUIDs for db scheme
 * Make username and email unique in DB
-* Make use of .env file in the frontend
+* Some more enhanced frontend configuration 
 * Reset password link generation
 * SMTP for email 
