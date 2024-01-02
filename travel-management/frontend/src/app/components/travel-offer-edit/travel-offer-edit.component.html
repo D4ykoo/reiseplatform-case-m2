@@ -1,0 +1,34 @@
+<div class="formgrid grid">
+    <div class="field col-12 md:col-6">
+        <label for="hotel">Hotel</label>
+        <p-dropdown id="hotel" [options]="hotels" [(ngModel)]="selectedHotel" optionLabel="hotelname"
+            [style]="{'width':'100%'}" (onChange)="loadTravels()"></p-dropdown>
+    </div>
+    <div class="field col-12 md:col-6" *ngIf="editorMode == 'Edit' ">
+        <label for="travel">Travel</label>
+        <p-dropdown id="travel" [options]="travels" [(ngModel)]="selectedTravel" optionLabel="id"
+            [style]="{'width':'100%'}" (onChange)="loadTraveldata()"></p-dropdown>
+    </div>
+</div>
+<div class="formgrid grid" *ngIf="editorMode == 'New' || (selectedHotel && selectedTravel)">
+    <div class="field col-12 md:col-6">
+        <label for="land">Duration</label>
+        <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true"
+            [style]="{'width':'100%'}"></p-calendar>
+    </div>
+    <div class="field col-12 md:col-6">
+        <label for="price">Price</label>
+        <input type="number"
+            class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+            [(ngModel)]="price" value="1.0" min="1.0" step="1.0" />
+    </div>
+    <div class="field col-12">
+        <label for="description">Description</label>
+        <p-editor [(ngModel)]="description" [style]="{ height: '320px' }" id="description"></p-editor>
+    </div>
+</div>
+<div class="flex justify-content-center gap-4">
+    <p-button severity="secondary" label="Cancel" (click)="clear()"></p-button>
+    <p-button label="Submit" (click)="submit()"></p-button>
+    <p-button *ngIf="editorMode=='Edit'" class="justify-content-end" severity="danger" label="Delete" (click)="delete()"></p-button>
+</div>
