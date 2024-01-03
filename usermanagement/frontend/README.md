@@ -1,6 +1,6 @@
 # How to run 
 ### Configuration
-In `src/assets/config.ts`
+In the [.env](.env) file of the this frontend directory. It will also affect the docker environments. 
 
 ## Bare Metal
 ```bash

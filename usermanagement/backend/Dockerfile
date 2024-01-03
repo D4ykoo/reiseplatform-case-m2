@@ -1,8 +1,8 @@
 FROM golang:alpine as builder
 WORKDIR /app
 
-ARG env_file=../.env
-ENV ENV_FILE=$env_file
+ARG env_file=.env
+ENV ENV_FILE=${env_file}
 
 COPY go.mod .
 RUN go mod download
