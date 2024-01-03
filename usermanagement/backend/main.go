@@ -14,6 +14,7 @@ import (
 func RunWebServer() {
 	utils.LoadFile()
 	isDebug, errBool := strconv.ParseBool(os.Getenv("DEBUG"))
+	//isDemo, errBoolDemo := strconv.ParseBool(os.Getenv("DEMO"))
 
 	if errBool != nil {
 		log.Fatal(errBool, "Try to change the DEBUG field in the .env file")
@@ -22,6 +23,21 @@ func RunWebServer() {
 	if !isDebug {
 		gin.SetMode(gin.ReleaseMode)
 	}
+
+	//if errBoolDemo != nil {
+	//	log.Fatal(errBool, "Try to change the DEMO field in the .env file")
+	//}
+	// add user -> find a place were to include this, since it is a hexagonal architecture
+	//user := domain.User{
+	//	Username:  "demoUser",
+	//	Firstname: "demo",
+	//	Lastname:  "user",
+	//	Email:     "user@demo.demo",
+	//	Password:  "demo",
+	//}
+	//user.Password = HashPassword(user.Password, []byte(os.Getenv("SALT")))
+	//
+	//_ = dbGorm.Save(user)
 
 	router := gin.Default()
 	config := cors.DefaultConfig()
