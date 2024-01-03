@@ -47,19 +47,19 @@ func RunWebServer() {
 	config.AllowHeaders = []string{"Authorization", "Origin", "Content-Type", "Accept"}
 	router.Use(cors.New(config))
 
-	v1 := router.Group("/v1")
+	v1 := router.Group("/api/v1")
 	{
-		v1.GET("/api/users", api.ListUserRequest)
-		v1.GET("/api/users/:id", api.GetUserRequest)
-		v1.POST("/api/users", api.CreateUserRequest)
-		v1.PUT("/api/users/:id", api.UpdateUserRequest)
-		v1.DELETE("/api/users/:id", api.DeleteUserRequest)
+		v1.GET("/users", api.ListUserRequest)
+		v1.GET("/users/:id", api.GetUserRequest)
+		v1.POST("/users", api.CreateUserRequest)
+		v1.PUT("/users/:id", api.UpdateUserRequest)
+		v1.DELETE("/users/:id", api.DeleteUserRequest)
 
-		v1.POST("/api/login", api.LoginRequest)
-		v1.POST("/api/register", api.RegisterRequest)
+		v1.POST("/login", api.LoginRequest)
+		v1.POST("/register", api.RegisterRequest)
 
-		v1.PUT("/api/reset", api.ResetPasswordRequest)
-		v1.GET("/api/logout", api.LogoutRequest)
+		v1.PUT("/reset", api.ResetPasswordRequest)
+		v1.GET("/logout", api.LogoutRequest)
 	}
 	// start server
 	err := router.Run(os.Getenv("API_URL"))

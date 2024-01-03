@@ -121,7 +121,7 @@ services:
       - privatenet
       - publicnet
     volumes:
-      - "./usermanagement/frontend/nginx.conf:/etc/nginx/nginx.conf"
+      - "./usermanagement/frontend/nginx.conf:/etc/nginx/nignx.conf"
 
   proxy:
     image: nginx:stable-alpine3.17
