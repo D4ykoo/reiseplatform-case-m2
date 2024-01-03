@@ -7,14 +7,13 @@ services:
       POSTGRES_USER: travelmanagement
       POSTGRES_PASSWORD: password
       POSTGRES_DB: travelmanagement
-      PGDATA: /data/travelmanagement
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U travelmanagement" ]
       interval: 5s
       timeout: 5s
       retries: 10
     volumes:
-      - travelmngt-db:/data/postgres
+      - travelmngt-db:/var/lib/postgresql/data
     restart: always
     networks:
       - dbnettravmgnt

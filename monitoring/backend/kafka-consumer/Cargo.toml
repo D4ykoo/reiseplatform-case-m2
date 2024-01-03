@@ -1,0 +1,16 @@
+[package]
+name = "kafka-consumer"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rdkafka = "0.36.0"
+tracing = "0.1"
+dotenvy = "0.15"
+chrono = { version = "0.4", features = ["serde"] }
+serde = { version = "1.0", features = ["derive"] }
+deadpool-diesel = { version = "0.4.1", features = ["postgres"] }
+monitoring-db = {path="../monitoring-db"}
+tokio = { version = "1.0", features = ["full"] }

@@ -4,18 +4,24 @@ use axum::extract::{Query, State};
 use axum::Json;
 use axum::{http::StatusCode, routing::get, Router};
 use chrono::{DateTime, Utc};
+use kafka_consumer::{create_consumer, start_and_subscribe, sub, subscribe};
 use model::Period;
 use monitoring_db::model::{CheckoutEvent, HotelEvent, UserEvent};
 use monitoring_db::{get_connection_pool, run_migrations};
 
 use jwt_auth::validate_jwt;
+use std::sync::mpsc::channel;
 use tower_cookies::{CookieManagerLayer, Cookies};
 use tower_http::services::ServeDir;
 
 use crate::model::TokenError;
+use std::{thread, time};
 
 #[tokio::main]
 async fn main() {
+    tracing_subscriber::fmt::init();
+    let (tx, rx) = channel();
+
     let pool = get_connection_pool();
 
     // run the migrations on server startup
@@ -25,6 +31,44 @@ async fn main() {
             .await
             .unwrap()
             .unwrap();
+
+        let dsdf = pool.get().await.unwrap();
+
+        tokio::spawn(async move {
+           /*  for i in 0..10 {
+                if let Err(_) = tx.send(i) {
+                    println!("receiver dropped");
+                    return;
+                }
+                println!("BIN SA");
+                let ten_millis = time::Duration::from_millis(1000);
+                thread::sleep(ten_millis);
+            }*/
+            sub(tx).await
+        });
+
+        tokio::spawn(async move {
+            println!("got = {}", "dssaf");
+            loop {
+                                let i = rx.recv().unwrap_or(7454) ;
+                println!("got = {}", i);
+            }}
+        );
+
+        /*
+
+        tokio::spawn(async move {
+            let abc = create_consumer("localhost:9092", "topic123");
+            subscribe(abc.unwrap(), "", "").await;
+        });
+        tokio::spawn(async move {
+            let abc = create_consumer("localhost:9092", "topic123");
+            subscribe(abc.unwrap(), "", "").await;
+        });
+        tokio::spawn(async move {
+            let abc = create_consumer("localhost:9092", "topic123");
+            subscribe(abc.unwrap(), "", "").await;
+        });*/
     }
 
     let app = Router::new()

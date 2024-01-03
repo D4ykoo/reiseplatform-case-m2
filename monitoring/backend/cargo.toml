@@ -3,5 +3,6 @@
 members = [
     "../../checkout/backend/jwt-auth",
     "monitoring-db",
-    "monitoring-service"
+    "monitoring-service",
+    "kafka-consumer"
 ]

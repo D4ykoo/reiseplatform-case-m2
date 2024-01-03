@@ -15,14 +15,14 @@ type MessageService struct {
 func NewMsgService(url, topic string) (MessageService, error) {
 
 	config := sarama.NewConfig()
-
 	config.Version = sarama.DefaultVersion
 	config.Producer.RequiredAcks = sarama.WaitForLocal
 	config.Producer.Compression = sarama.CompressionSnappy
 	config.Producer.Flush.Frequency = 500 * time.Millisecond // Flush batches every 500ms
 	config.Producer.Retry.Max = 5
 	config.Producer.Partitioner = sarama.NewRandomPartitioner
-	conn, err := sarama.NewSyncProducer([]string{url}, config)
+	config.Producer.Return.Successes = true
+	conn, err := sarama.NewSyncProducer([]string{"localhost:9092"}, config)
 
 	return MessageService{
 		topic:       topic,
