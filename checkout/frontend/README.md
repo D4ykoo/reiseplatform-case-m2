@@ -12,7 +12,7 @@ The first option is via the [`src/assets/env.js`](src/assets/env.js) file.
 Or by exporting the following and replacing [`env.js`](src/assets/env.js) with the template:
 ```bash
 # example export API_URL
-export API_URL="https://localost:8084";
+export API_URL="https://localost:8084/api/v1";
 
 # Replace variables in env.js
 envsubst < assets/env.template.js > assets/env.js

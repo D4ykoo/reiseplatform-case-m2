@@ -82,12 +82,12 @@ metadata:
             image: dak4408/checkout-frontend:latest
             env:
               - name: API_URL
-                value: http://localhost:8084
+                value: http://localhost:8084/api/v1
               - name: USERMANGEMENT_URL
-                value: http://localhost:8081
+                value: http://localhost:8081/users
               - name: HOTELMANGEMENT_URL
-                value: http://localhost:8085
+                value: http://localhost:8085/travma
               -name: MONITORING_URL
-                value: http://localhost:8087
+                value: http://localhost:8087/*
             ports:
               - containerPort: 80

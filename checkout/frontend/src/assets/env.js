@@ -5,10 +5,10 @@
     window["env"] = window["env"] || {};
 
     window["env"].production = false;
-    window["env"].apiUrl = 'http://localhost:8084';
+    window["env"].apiUrl = 'http://localhost:8084/api/v1';
 
     // Enviroment for frontends
-    window["env"].usermanagementUrl = 'http://localhost:8081';
-    window["env"].hotelmanagementUrl = 'http://localhost:8085';
-    window["env"].monitoringUrl = 'http://localhost:8087';
+    window["env"].usermanagementUrl = 'http://localhost:8081/users';
+    window["env"].hotelmanagementUrl = 'http://localhost:8085/travma';
+    window["env"].monitoringUrl = 'http://localhost:8087/*';
     })(this);
