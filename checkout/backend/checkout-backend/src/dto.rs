@@ -39,3 +39,23 @@ impl CartRequest {
         }
     }
 }
+
+
+#[derive(Serialize)]
+pub struct HotelTravelResponse {
+    pub id: i64,
+    pub hotelname: String,
+    pub land: String,
+    pub vendorname: String,
+    pub description: String,
+    pub pictures: String,
+    pub travels: Vec<TravelSlice>,
+}
+
+#[derive(Serialize)]
+pub struct TravelSlice {
+    pub vendorname: String,
+    pub from: String,
+    pub to: String,
+    pub price: i64,
+}
