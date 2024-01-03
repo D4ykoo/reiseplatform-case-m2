@@ -12,7 +12,7 @@
     // eslint-disable-next-line no-undef
     window["env"].usermanagementUrl = `${USERMANAGEMENT_URL}`;
     // eslint-disable-next-line no-undef
-    window["env"].hotelManagementUrl = `${HOTELMANAGEMENT_URL}`;
+    window["env"].hotelmanagementUrl = `${HOTELMANAGEMENT_URL}`;
     // eslint-disable-next-line no-undef
     window["env"].monitoringUrl = `${MONITORING_URL}`;
     })(this);

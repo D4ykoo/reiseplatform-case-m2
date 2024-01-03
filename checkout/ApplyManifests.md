@@ -6,7 +6,6 @@ There are two different manifests:
 #### Configuration
 Can be done in the manifests inside the `env` section.
 
-
 #### Apply the manifest:
 ```bash
 kubectl apply -f <allinone/deployments>.yml

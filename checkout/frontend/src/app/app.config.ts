@@ -3,7 +3,8 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { HttpClientModule } from '@angular/common/http';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideRouter(routes), importProvidersFrom(HttpClientModule)]
+  providers: [provideRouter(routes), {provide: LocationStrategy, useClass: HashLocationStrategy}, importProvidersFrom(HttpClientModule)]
 };

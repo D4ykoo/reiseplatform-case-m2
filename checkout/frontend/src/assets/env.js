@@ -9,6 +9,6 @@
 
     // Enviroment for frontends
     window["env"].usermanagementUrl = 'http://localhost:8081';
-    window["env"].hotelManagementUrl = 'http://localhost:8085';
+    window["env"].hotelmanagementUrl = 'http://localhost:8085';
     window["env"].monitoringUrl = 'http://localhost:8087';
     })(this);
