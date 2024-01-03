@@ -10,13 +10,23 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: usermanagement
       POSTGRES_DB: usermanagement
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U travelmanagement" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     ports: 
     - "8092:5432"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
 
   backend:
     image: dak4408/travma-usermanagement-backend:latest
     container_name: usermanagement-backend
     restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
     # not every enviroment variable needs to be set
     # just delete the environment vars when the default is not changed
     environment:
@@ -44,12 +54,13 @@ services:
       DB_PORT: 8092
       SSL_TLS: disable
       TIMEZONE: Europe/Berlin
-    depends_on:
-      - postgres
     # note that this is an security issue
-    network_mode: host
+    # network_mode: host
     ports:
       - "8082:8082"
+    networks:
+      - publicnet
+      - usermanagementnet
   
   frontend:
     image: dak4408/travma-usermanagement-frontend:latest
@@ -57,3 +68,12 @@ services:
     restart: always
     ports:
       - "8081:80"
+    volumes:
+      - "./frontend/nginx.conf:/etc/nginx/nginx.conf"
+
+volumes:
+  postgres-data:
+
+networks:
+  publicnet:
+  usermanagementnet:

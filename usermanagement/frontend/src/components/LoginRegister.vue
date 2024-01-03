@@ -178,6 +178,8 @@ export default {
   },
   methods: {
     login() {
+      console.log(this.$route.query.name);
+
       var payload: LoginUser = {
         username: this.loginForm.username.value,
         password: this.loginForm.password.value,
@@ -185,7 +187,12 @@ export default {
 
       loginRegisterService.LoginRequest(payload).subscribe((res: any) => {
         if (res.status === 200) {
-          this.$router.push("/users");
+          console.log(this.$route.query.page);
+          if (this.$route.query.name === "travmngt") {
+            window.location.href = "http://localhost:54321/travmngt";
+          } else {
+            this.$router.push("/users");
+          }
         }
       });
     },
