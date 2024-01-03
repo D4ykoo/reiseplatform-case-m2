@@ -1,13 +1,14 @@
 package main
 
 import (
+	"log"
+	"os"
+	"strconv"
+
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/api"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/utils"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"log"
-	"os"
-	"strconv"
 )
 
 func RunWebServer() {

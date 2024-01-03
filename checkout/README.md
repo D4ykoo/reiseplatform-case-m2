@@ -73,9 +73,9 @@ cd backend
 docker buildx build -t checkout-backend .
 ```
 
-Run with optional path, not needed when just cloning and running:
+Run:
 ```bash
-docker run -p 8071:8071 checkout-backend --build-arg="/path/to/dir/"
+docker run -p 8071:8071 checkout-backend
 ```
 
 

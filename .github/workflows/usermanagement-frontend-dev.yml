@@ -7,8 +7,11 @@ on:
     types: opened
     branches:
       - develop
+      - main
     paths:
-      - ./usermanagement/frontend
+      - 'usermanagement/frontend/**'
+      - '!usermanagement/frontend/**.md'
+      
   workflow_call:
   workflow_dispatch:
   

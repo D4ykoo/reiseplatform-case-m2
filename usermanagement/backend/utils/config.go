@@ -6,9 +6,10 @@ import (
 )
 
 func LoadFile() {
-	err := godotenv.Load("../.env")
+	path := ".env"
+	err := godotenv.Load(path)
 
 	if err != nil {
-		log.Panic("Error loading .env file")
+		log.Panic("Error loading .env file at path: " + path)
 	}
 }
