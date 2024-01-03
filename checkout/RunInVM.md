@@ -12,7 +12,7 @@ When running the services with docker skip the first steps and jump to the last 
 apt install git
 ```
 
-#### Node
+### Node
 Follow the instructions of the official nodesource repository: [https://github.com/nodesource/distributions](https://github.com/nodesource/distributions)
 1. Download and import GPG key
 ```bash
@@ -34,13 +34,18 @@ sudo apt-get update
 sudo apt-get install nodejs -y
 ```
 
-#### Golang
-Install via apt
+### Rust
+Install using rustup:
 ```bash
-sudo apt install golang 
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
+More information cna be found here:
+[https://www.rust-lang.org/tools/install](https://www.rust-lang.org/tools/install)
 
-#### Docker (optional)
+**IMPORTANT:** Restart the terminal or log out. Otherwise the compiler and cargo will not be available in current session.
+
+
+### Docker (optional)
 Required for a fast and easy docker setup when no native build of the services and installation of the db is desired.
 In case something is not working follow the instruction on the official docker website [https://docs.docker.com/engine/install/ubuntu/](https://docs.docker.com/engine/install/ubuntu/#prerequisites)
 
@@ -77,39 +82,35 @@ sudo apt-get -y install postgresql
 
 Example default configuration for the database:
 ```bash
-POSTGRES_USER="usermanagement"
+POSTGRES_USER="checkout"
 POSTGRES_PASSWORD="password"
-POSTGRES_DB="usermanagement"
+POSTGRES_DB="checkout"
 SSL_TLS="disable"
 TIMEZONE="Europe/Berlin"
 ```
 
 When running with a native installation please make sure the configuration in `backend/.env`is the same as the database.
 
-## Run the services by building on the host
-#### 1. Clone the repository
+## Run the checkout services by building on host
+#### 1. Clone the repository if not already done
 ```bash
 https://github.com/D4ykoo/travelplatform-case-m2.git
 ```
 #### 2. Install and run backend
 ```bash
-cd ./travelplatform-case-m2/usermanagement/backend
+cd ./travelplatform-case-m2/checkout/backend
 # create the binary
-go build 
+cargo build 
 # run the binary 
-./usermanagement
+./target/release/checkout-backend
 ```
 
 #### 3. Install and run frontend
 For the quick serve, make sure the `backend/.env` configuration has the same port in the `DOMAIN` entry:
 ```bash
-cd ./travelplatform-case-m2/usermanagement/frontend
-npm run dev
-```
-
-```bash
-cd ./travelplatform-case-m2/usermanagement/frontend
-npm run build
+cd ./travelplatform-case-m2/checkout/frontend
+npm install
+ng build
 ```
 Now the whole application is located in the dist/ directory.<br>
 The application can be served by any desired webserver by coping the whole directory and renaming it to e.g. usermanagement. 
@@ -118,7 +119,7 @@ The application can be served by any desired webserver by coping the whole direc
 #### 1. Clone the repository if not already done
 ```bash
 git clone https://github.com/D4ykoo/travelplatform-case-m2.git
-cd ./travelplatform-case-m2/usermanagement/
+cd ./travelplatform-case-m2/checkout/
 
 ```
 

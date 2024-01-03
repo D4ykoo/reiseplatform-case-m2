@@ -40,7 +40,7 @@ async fn create_cart(
     }
 }
 
-#[get("/get/{cart_id}")]
+#[get("/cart/{cart_id}")]
 async fn get_cart(
     pool: Data<PostgresPool>,
     producer: web::Data<MessageProducer>,
@@ -66,7 +66,7 @@ async fn get_cart(
     }
 }
 
-#[put("/update/{cart_id}")]
+#[put("/cart/{cart_id}")]
 async fn change_cart(
     pool: web::Data<PostgresPool>,
     new_cart: web::Json<dto::CartRequest>,
@@ -99,7 +99,7 @@ async fn change_cart(
     }
 }
 
-#[delete("/delete/{cart_id}")]
+#[delete("/cart/{cart_id}")]
 async fn delete_cart(
     pool: web::Data<PostgresPool>,
     producer: web::Data<MessageProducer>,
@@ -142,7 +142,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(pool.clone()))
             .app_data(web::Data::new(producer.clone()))
             .service(
-                web::scope("/c")
+                web::scope("/cart")
                     .service(get_cart)
                     .service(change_cart)
                     .service(delete_cart)

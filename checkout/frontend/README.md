@@ -1,38 +1,51 @@
-# create-svelte
+# How to run 
+### Configuration
+There are three different ways for configuration:
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+#### Development
+Change the values of [`src/environment/environment.ts`](src/environment/enviroment.ts)
 
-## Creating a project
+#### Production
+The following configuration methods make it possible to set the environment variables in the Dockerfile. That is the reason why this was implemented for production.  
 
-If you're seeing this, you've probably already done this step. Congrats!
-
+The first option is via the [`src/assets/env.js`](src/assets/env.js) file.  
+Or by exporting the following and replacing [`env.js`](src/assets/env.js) with the template:
 ```bash
-# create a new project in the current directory
-npm create svelte@latest
+# example export API_URL
+export API_URL="https://localost:8084";
 
-# create a new project in my-app
-npm create svelte@latest my-app
+# Replace variables in env.js
+envsubst < assets/env.template.js > assets/env.js
 ```
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
+## Bare Metal
 ```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
+npm install 
+# now run
+npm run dev 
+# or for prod with a webserver like nginx
 npm run build
 ```
+Now the whole application is located in the dist/ directory.<br>
+The application can be served by any desired webserver after coping the whole directory to e. g. `var/www/html/`.
 
-You can preview the production build with `npm run preview`.
+## Docker
+Create the network if it does not already exist:
+```bash
+docker network create checkout
+```
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+Build the image:
+```bash
+docker buildx build -t checkout-frontend:latest .
+```
+
+Run the container:
+```bash
+docker run --name checkout-frontend --network checkout -p 8083:80 -d checkout-frontend
+```
+
+Optional pass the env file path as argument when chaning the default path:
+```bash
+docker run --env ENV_FILE="./example.docker.env" --name checkout-frontend --network checkout -p 8083:80 -d checkout-frontend
+```

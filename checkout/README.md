@@ -1,86 +1,43 @@
 # Checkout/ Payment Microservice
+Frontend and backend can be deployed seperatly. For simplicty of this lecture it is one directory in a monorepo instead of two seperate repositories.
 
 ## Prerequisites
 * A postgresql database where the configuration and credentials are known
+* See [backend/README.md](backend/README.md) for docker postgresdb instructions (the network arg can be removed when the other services are not deployed with docker) 
+* Make sure to install `npm`, `angular` and `rustc` compared with `cargo` when running in bare metal mode
 
-## How to run - bare metal
+## Configuration
+All configuration instructions can be viewed in the corresponding READMEs of the backend and frontend directory.
 
-### Configuration
-All the configuration for the backend is done in the .env of the file. See comments for some additional information.
+## How to run - VM
+Follow the instructions in the [RunInVM.md](RunInVM.md) of this directory.
 
-### Backend
-#### Development
+## How to run - Docker
+Follow the instructions in the READMEs located at:
+[/frontend/README.md](/frontend/README.md) and [/backend/README.md](/backend/README.md).
+
+<!-- #### Run with image from docker hub registry 
 ```bash
-cd backend
-cargo run 
-# alternatively use hot reload with
-cargo install cargo-watch
-cargo watch -x run
-```
+docker compose -f docker-compose.yml up -d 
+``` -->
+## How to run the k8s manifests
+Follow the instructions located in [ApplyManifests.md](ApplyManifests.md)
 
-#### Production
-```bash
-cd backend
-cargo build --release
-./target/release/checkout-backend
-```
+## How to run - Bare Metal
+Follow the instructions in the [RunBareMetal.md](RunBareMetal.md) of this directory.
 
-### Frontend
-#### Development
+## How the multi platform images were made
+Create the builder:
 ```bash
-bun --bun run dev
+ sudo docker buildx create --name armbuilder --driver=docker-container
 ```
-
-#### Production
-First change the directory and add the recommended SvelteKit adapter:
+Then build and push the multi platform images: 
 ```bash
-cd frontend
-bun add -D svelte-adapter-bun
+sudo docker buildx build --push --platform linux/amd64,linux/arm64,linux/arm/v7 --builder=armbuilder -t dak4408/travma-usermanagement-<checkout/backend>:latest .
 ```
-Then import it by replacing the existing one in `svelte.config.js` 
-
-```bash
- - import adapter from "@sveltejs/adapter-auto";
- + import adapter from "svelte-adapter-bun";
-```
-
-Finally build the frontend:
-```bash
-bun run build
-```
-
-## How to run - Dockerfile
-Note: due to the microservice architecture the frontend __and__ backend have a `Dockerfile`. The `Dockerfile` at the root of this directory is the All-in-One Solution, only the frontend will be exposed.
-
-Since the `docker build` is marked as deprecated the new `cli` extension is used:
-```bash
-cd frontend
-docker buildx build --pull -t checkout-frontend .
-```
-Now run the image:
-```bash
-docker run -p 3000:3000 checkout-frontend
-```
-optional append the arg for the frontend paths when having different configuration on the system and not the default structure like after cloning the repository:
-```bash
-# trailing slash for the path is needed
-docker run -p 3000:3000 checkout-frontend --build-arg="/path/to/dir/"
-```
-#### Backend
-Build image:
-```bash
-cd backend
-docker buildx build -t checkout-backend .
-```
-
-Run:
-```bash
-docker run -p 8071:8071 checkout-backend
-```
-
 
 ## Technology Stack
-* Svelte + SvelteKit + bun + TailwindCSS + daisyUI
+* Angular + typescript + npm + TailwindCSS + daisyUI
 * Rust + Actix Web + Diesel
 
 ## Additional Information
@@ -89,3 +46,7 @@ docker run -p 8071:8071 checkout-backend
   * Username included 
   * -> extract JWT via browser dev tools and paste into [https://jwt.io/](https://jwt.io/)
   * Different users have different usernames
+
+## Future Work
+* Add UUIDs for db scheme
+* Payment method using actual services 
