@@ -9,10 +9,10 @@ export class UserManagementService {
 
   utils = new UtilService(); 
 
-
+  apiUrl = import.meta.env.VITE_API_URL;
 
   public getSingleUserRequest(id: number) {
-    return Axios.get(enviroment.apiUrl + `/users/${id}`, headerConf).subscribe({
+    return Axios.get(this.apiUrl + `/users/${id}`, headerConf).subscribe({
       next: (result: any) => {
         console.log(result);
         return result;
@@ -24,25 +24,25 @@ export class UserManagementService {
   }
 
   public getAllUserRequests(): Observable<AxiosResponse<any>> {
-    return Axios.get(enviroment.apiUrl + `/users`, headerConf).pipe(
+    return Axios.get(this.apiUrl + `/users`, headerConf).pipe(
       catchError(this.handleError)
     );
   }
 
   public updateUser(id: number, payload: UpdateUser) {
-    return Axios.put(enviroment.apiUrl + `/users/${id}`, payload, headerConf).pipe(
+    return Axios.put(this.apiUrl + `/users/${id}`, payload, headerConf).pipe(
       catchError(this.handleError)
     );
   }
 
   public deleteUser(id: number) {
-    return Axios.delete(enviroment.apiUrl + `/users/${id}`, headerConf).pipe(
+    return Axios.delete(this.apiUrl + `/users/${id}`, headerConf).pipe(
       catchError(this.handleError)
     );
   }
 
   public createUser(payload: any) {
-    return Axios.post(enviroment.apiUrl + `/users`, payload, headerConf).pipe(
+    return Axios.post(this.apiUrl + `/users`, payload, headerConf).pipe(
       catchError(this.handleError)
     );
   }

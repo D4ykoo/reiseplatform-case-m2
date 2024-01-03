@@ -49,3 +49,16 @@ docker run --name usermgm-backend --network usermanagement -p 8082:8082 -d userm
 ```bash
 sudo docker run -p 8082:8082 -d dak4408/travelplatform-case-m2:usermanagement-backend
 ```
+
+## HTTP Routes
+| **Method** 	| **Route**        	|
+|------------	|------------------	|
+| GET        	| /v1/api/users    	|
+| GET        	| /v1/api/users:id 	|
+| POST       	| /v1/api/users    	|
+| PUT        	| /v1/api/users:id 	|
+| DELETE     	| /v1/api/users:id 	|
+| POST       	| /v1/api/login    	|
+| POST       	| /v1/api/register 	|
+| PUT        	| /v1/api/reset    	|
+| GET        	| /v1/api/logout   	|

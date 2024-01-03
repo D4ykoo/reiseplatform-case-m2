@@ -189,7 +189,7 @@ export default {
         if (res.status === 200) {
           console.log(this.$route.query.page);
           if (this.$route.query.name === "travmngt") {
-            window.location.href = "http://localhost:54321/travmngt";
+            window.location.href = import.meta.env.VITE_TRAVELMANAGEMENT_URL;
           } else {
             this.$router.push("/users");
           }
