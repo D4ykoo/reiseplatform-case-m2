@@ -56,7 +56,7 @@ metadata:
                 value: localhost:9092
               - name: TOPIC
                 value: checkout
-              - DATABASE_URL
+              - name: DATABASE_URL
                 value: postgres://checkout:password@checkout-postgres:8094/checkout  
             ports:
               - containerPort: 8084

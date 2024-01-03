@@ -67,6 +67,11 @@ services:
     image: usermanagement-frontend:latest
     container_name: usermanagement-frontend
     restart: always
+    environment:
+      - VITE_API_URL: http://localhost:8082/api/v1
+      - VITE_CHECKOUT_URL: http://localhost:8083/cart
+      - VITE_TRAVELMANAGEMENT_URL: http://localhost:8085/travma
+      - VITE_USERMANAGEMENT_URL: http://localhost:8087/*
     ports:
       - "8081:80"
     volumes:
