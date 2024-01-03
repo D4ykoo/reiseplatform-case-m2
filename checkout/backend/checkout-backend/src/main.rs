@@ -1,5 +1,8 @@
 pub mod dto;
 
+use std::env;
+use dotenvy::dotenv;
+
 use actix_cors::Cors;
 use actix_web::{
     delete, get,
@@ -130,9 +133,12 @@ async fn delete_cart(
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    dotenv().ok();
+    let api_url = env::var("API_URL").expect("API_URL must be set");
+    let api_port: u16 = env::var("API_PORT").expect("API_PORT must be set").parse().unwrap();
     let pool = checkout_db::get_pool();
     let mut producer = MessageProducer { producer: None };
-    producer.init_message_producer();
+    let _ = producer.init_message_producer();
     producer.send_message("Starting checkout webserver").await;
     HttpServer::new(move || {
         let cors = Cors::permissive();
@@ -142,14 +148,20 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(pool.clone()))
             .app_data(web::Data::new(producer.clone()))
             .service(
-                web::scope("/cart")
+                web::scope("/api/v1/cart")
                     .service(get_cart)
                     .service(change_cart)
                     .service(delete_cart)
                     .service(create_cart),
+                // if more versions of the api are needed, they can be added here
+                // web::scope("/api/v2/checkout")
+                //     .service(get_cart)
+                //     .service(change_cart)
+                //     .service(delete_cart)
+                //     .service(create_cart),
             )
     })
-    .bind(("127.0.0.1", 8071))?
+    .bind((api_url, api_port))?
     .run()
     .await
 }

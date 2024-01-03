@@ -12,3 +12,4 @@ checkout-db = {path="../checkout-db"}
 message-service = {path="../message-service"}
 actix-cors = "0.6"
 serde = "1.0"
+dotenvy = "0.15.7"
