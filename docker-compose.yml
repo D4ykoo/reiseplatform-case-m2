@@ -16,7 +16,7 @@ services:
       timeout: 5s
       retries: 10
     volumes:
-      - travelmngt-db:/data/postgres
+      - travelmngt-db:/var/lib/postgresql/data
     restart: always
     networks:
       - dbnettravmgnt
