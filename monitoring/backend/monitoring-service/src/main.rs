@@ -4,10 +4,10 @@ use axum::extract::{Query, State};
 use axum::Json;
 use axum::{http::StatusCode, routing::get, Router};
 use chrono::{DateTime, Utc};
-use kafka_consumer::{create_consumer, start_and_subscribe, sub, subscribe};
+use kafka_consumer::{create_consumer, subscribe, KafkaMsg};
 use model::Period;
-use monitoring_db::model::{CheckoutEvent, HotelEvent, UserEvent};
-use monitoring_db::{get_connection_pool, run_migrations};
+use monitoring_db::model::{CheckoutEvent, HotelEvent, UserEvent, NewUserEvent};
+use monitoring_db::{add_user_event, establish_connection, get_connection_pool, run_migrations};
 
 use jwt_auth::validate_jwt;
 use std::sync::mpsc::channel;
@@ -32,43 +32,31 @@ async fn main() {
             .unwrap()
             .unwrap();
 
-        let dsdf = pool.get().await.unwrap();
+        let dbKafka = pool.get().await.unwrap();
 
         tokio::spawn(async move {
-           /*  for i in 0..10 {
-                if let Err(_) = tx.send(i) {
-                    println!("receiver dropped");
-                    return;
-                }
-                println!("BIN SA");
-                let ten_millis = time::Duration::from_millis(1000);
-                thread::sleep(ten_millis);
-            }*/
-            sub(tx).await
+            let consumer = create_consumer("localhost:9092", "topic123").expect("ERROR");
+            subscribe(tx, consumer).await;
         });
 
         tokio::spawn(async move {
-            println!("got = {}", "dssaf");
+            let conn = &mut establish_connection();
             loop {
-                                let i = rx.recv().unwrap_or(7454) ;
-                println!("got = {}", i);
-            }}
-        );
-
-        /*
-
-        tokio::spawn(async move {
-            let abc = create_consumer("localhost:9092", "topic123");
-            subscribe(abc.unwrap(), "", "").await;
+                let i = rx.recv().unwrap_or(KafkaMsg {
+                    topic: "".to_string(),
+                    payload: "".to_string(),
+                });
+                add_user_event(
+                    conn,
+                    NewUserEvent {
+                        log: None,
+                        type_: i.payload.clone(),
+                        time: chrono::offset::Utc::now(),
+                    },
+                ).expect("msg");
+                println!("got = {:?}", i);
+            }
         });
-        tokio::spawn(async move {
-            let abc = create_consumer("localhost:9092", "topic123");
-            subscribe(abc.unwrap(), "", "").await;
-        });
-        tokio::spawn(async move {
-            let abc = create_consumer("localhost:9092", "topic123");
-            subscribe(abc.unwrap(), "", "").await;
-        });*/
     }
 
     let app = Router::new()
