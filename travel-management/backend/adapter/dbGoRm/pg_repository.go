@@ -27,10 +27,29 @@ func initPGConnection(idle int, max int) pgRepository {
 		os.Getenv("TIMEZONE"),
 	)
 
-	connection, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	var timeToSleep = 2 * time.Second
+	var connection *gorm.DB
+	for {
+		var err error
+		connection, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
-	if err != nil {
-		log.Panic("Failed to connect to database", err.Error())
+		// Exit - Connection established
+		if err == nil {
+			break
+		}
+
+		// Exit - Connection establishment is not possible
+		if timeToSleep.Seconds() >= 10 {
+			log.Panic(err.Error())
+		}
+
+		// Failure - Retry
+		if err != nil && timeToSleep.Seconds() < 10 {
+			log.Println("Failed to connect to database Retry in " + string(timeToSleep.String()))
+			time.Sleep(timeToSleep)
+			timeToSleep = timeToSleep * 2
+		}
+
 	}
 
 	// Connection Pool

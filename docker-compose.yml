@@ -20,7 +20,7 @@ services:
       - dbnettravmgnt
 
   travelmngt-app:
-    image: mig3177/travmngt-backend:latest
+    image: mig3177/travma-travelmanagement-backend:latest
     container_name: travelmngt-app
     restart: always
     depends_on:
@@ -57,12 +57,15 @@ services:
       - dbnettravmgnt
 
   travelmngt-web:
-    image: mig3177/travmngt-frontend:latest
+    image: mig3177/travma-travelmanagement-frontend:latest
     container_name: travelmngt-web
     depends_on: 
       - travelmngt-app
     environment:
       API_URL_FR: "http://localhost:12345/travma/api/v1/"
+      CHECKOUT_URL: ""
+      LOGIN_URL: ""
+      MONITOR_URL: ""
     networks:
       - privatenet
       - publicnet

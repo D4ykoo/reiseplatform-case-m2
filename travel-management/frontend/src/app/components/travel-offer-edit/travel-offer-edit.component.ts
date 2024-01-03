@@ -7,17 +7,20 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { CalendarModule } from 'primeng/calendar';
 import { EditorModule } from 'primeng/editor';
 import { lastValueFrom } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
 import { CreateTravel } from '../../models/requests';
 import { Travel } from '../../models/travel';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-travel-offer-edit',
   standalone: true,
-  imports: [DropdownModule, CommonModule, FormsModule, InputNumberModule, CalendarModule, EditorModule],
+  imports: [DropdownModule, CommonModule, FormsModule, InputNumberModule, CalendarModule, EditorModule, ToastModule],
   templateUrl: './travel-offer-edit.component.html',
-  styleUrl: './travel-offer-edit.component.css'
+  styleUrl: './travel-offer-edit.component.css',
+  providers: [MessageService]
 })
 export class TravelOfferEditComponent implements OnInit, OnChanges {
 
@@ -32,7 +35,7 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
   public rangeDates: Date[] | undefined;
   description: string | undefined;
 
-  constructor(private readonly httpClient: HttpClient) {
+  constructor(private readonly httpClient: HttpClient, private messageService: MessageService) {
   }
 
 
@@ -41,7 +44,7 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
   }
 
   public setup() {
-    lastValueFrom(this.httpClient.get(environment.HotelAPI + "hotels")).then((hotels) => {
+    lastValueFrom(this.httpClient.get(environment.Hotel_API + "hotels")).then((hotels) => {
       if (hotels)
         this.hotels = (hotels as Hotel[])
     })
@@ -61,16 +64,24 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
       let createTravel: CreateTravel = {
         description: this.description as string, from: from.toISOString(), to: to.toISOString(), price: this.price, vendorid: 0, vendorname: ""
       };
-      lastValueFrom(this.httpClient.post(environment.HotelAPI + "hotels/" + this.selectedHotel?.id + "/travels", createTravel)).then((e) => { this.clear(); }).catch((e) => console.log(e))
+      lastValueFrom(this.httpClient.post(environment.Hotel_API + "hotels/" + this.selectedHotel?.id + "/travels", createTravel)).then((res) => {
+        this.clear();
+        if (res) {
+          this.messageService.add({
+            severity: 'success', summary: 'Success', detail: 'The hotel offer has been created (' + (res as Travel).id + ')'
+          })
+        }
+      }).catch((err) => this.handleAuthorizationError(err))
     }
     if (this.editorMode == "Edit") {
       let updateTravel: CreateTravel = {
         description: this.description as string, from: from.toISOString(), to: to.toISOString(), price: this.price, vendorid: 0, vendorname: ""
       };
-      lastValueFrom(this.httpClient.put(environment.HotelAPI + "hotels/" + this.selectedHotel?.id + "/travels/" + this.selectedTravel?.id, updateTravel)).then(
+      lastValueFrom(this.httpClient.put(environment.Hotel_API + "hotels/" + this.selectedHotel?.id + "/travels/" + this.selectedTravel?.id, updateTravel)).then(
         (res) => {
           if (res) {
             let tmp = (res as Travel)
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Hotel offer has been updated' });
             if (this.selectedTravel) {
               this.selectedTravel.id = tmp.id;
               this.selectedTravel.createdat = tmp.createdat;
@@ -86,7 +97,7 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
               this.selectedTravel = tmp;
             }
           }
-        }).catch((e) => console.log(e))
+        }).catch((err) => this.handleAuthorizationError(err))
     }
   }
 
@@ -115,7 +126,7 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
   }
 
   clear() {
-    lastValueFrom(this.httpClient.get(environment.HotelAPI + "hotels")).then(res => {
+    lastValueFrom(this.httpClient.get(environment.Hotel_API + "hotels")).then(res => {
       if (res)
         this.hotels = (res as Hotel[]);
     })
@@ -137,11 +148,29 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
   }
   delete() {
     if (this.selectedHotel && this.selectedTravel) {
-      lastValueFrom(this.httpClient.delete(environment.HotelAPI + "hotels/" + this.selectedHotel?.id + "/travels/" + this.selectedTravel.id)).then(
+      lastValueFrom(this.httpClient.delete(environment.Hotel_API + "hotels/" + this.selectedHotel?.id + "/travels/" + this.selectedTravel.id)).then(
         (e) => {
-          this.clear()
-        }).catch((e) => console.log(e));
+          this.clear();
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Hotel offer has been deleted' });
+        }).catch((err) => this.handleAuthorizationError(err));
     }
+  }
+
+  async handleAuthorizationError(err: HttpErrorResponse) {
+    if (err.status == 401) {
+      console.error("Invalid Authorization: " + err.message);
+      this.messageService.add({ severity: 'error', summary: 'Invalid Authorization', detail: 'Redirect to login page' });
+      await this.delay(3000);
+      let url = environment.Login_URL as unknown as string;
+      url = url + "?name=travmngt";
+      window.open(url, "_self");
+    } else {
+      console.error("ERROR:", err)
+    }
+  }
+
+  delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
 }

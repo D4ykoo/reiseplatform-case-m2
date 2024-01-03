@@ -22,7 +22,7 @@ services:
       - travelmngtnet
 
   travelmngt-app:
-    image: mig3177/travmngt-backend:latest
+    image: mig3177/travma-travelmanagement-backend:latest
     container_name: travelmngt-app
     restart: always
     depends_on:
@@ -59,7 +59,7 @@ services:
       - travelmngtnet
 
   travelmngt-web:
-    image: mig3177/travmngt-frontend:latest
+    image: mig3177/travma-travelmanagement-frontend:latest
     container_name: travelmngt-web
     ports:
       - "8085:8085"
@@ -67,6 +67,10 @@ services:
       - travelmngt-app
     environment:
       API_URL_FR: "http://localhost:8085/api/v1/"
+      CHECKOUT_URL: ""
+      LOGIN_URL: ""
+      MONITOR_URL: ""
+    restart: always
     networks:
       - publicnet
     volumes:

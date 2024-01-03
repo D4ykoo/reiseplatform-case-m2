@@ -2,7 +2,7 @@ import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/cor
 import { MenuItem } from 'primeng/api';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
 import { EditorModule } from 'primeng/editor';
 import { InputMaskModule } from 'primeng/inputmask';
@@ -15,13 +15,16 @@ import { Hotel } from '../../models/hotel';
 import { Tag } from '../../models/tag';
 import { DropdownModule } from 'primeng/dropdown';
 import { Travel } from '../../models/travel';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-hotel-edit',
   standalone: true,
-  imports: [MultiSelectModule, FormsModule, EditorModule, InputMaskModule, FileUploadModule, CommonModule, ContextMenuModule, DropdownModule],
+  imports: [MultiSelectModule, FormsModule, EditorModule, InputMaskModule, FileUploadModule, CommonModule, ContextMenuModule, DropdownModule, ToastModule],
   templateUrl: './hotel-edit.component.html',
-  styleUrl: './hotel-edit.component.css'
+  styleUrl: './hotel-edit.component.css',
+  providers: [MessageService]
 })
 
 export class HotelEditComponent implements OnInit, OnChanges {
@@ -43,7 +46,7 @@ export class HotelEditComponent implements OnInit, OnChanges {
   state!: string;
   land!: string;
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient, private messageService: MessageService) {
 
   }
 
@@ -75,7 +78,14 @@ export class HotelEditComponent implements OnInit, OnChanges {
         land: this.land, pictures: this.pictures, state: this.state, street: this.street,
         tagids: this.selectedTags, vendorid: 0, vendorname: "asdf"
       };
-      lastValueFrom(this.httpClient.post(environment.HotelAPI + "hotels", createHotel)).then((e) => { this.clear(); }).catch((e) => console.log(e))
+      lastValueFrom(this.httpClient.post(environment.Hotel_API + "hotels", createHotel)).then((res) => {
+        this.clear();
+        if (res) {
+          this.messageService.add({
+            severity: 'success', summary: 'Success', detail: 'The hotel offer has been created (' + (res as Hotel).id + ')'
+          })
+        };
+      }).catch((err) => this.handleAuthorizationError(err))
     }
     if (this.editorMode == "Edit") {
       let UpdateHotel: Hotel = {
@@ -83,9 +93,10 @@ export class HotelEditComponent implements OnInit, OnChanges {
         land: this.land, pictures: this.pictures, state: this.state, street: this.street,
         tags: this.selectedTags, vendorid: 0, vendorname: "asdf", id: (this.hotel?.id as number), travels: (this.hotel?.travels as Travel[])
       };
-      lastValueFrom(this.httpClient.put(environment.HotelAPI + "hotels/" + this.hotel?.id, UpdateHotel))
+      lastValueFrom(this.httpClient.put(environment.Hotel_API + "hotels/" + this.hotel?.id, UpdateHotel))
         .then((res) => {
           if (res) {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Hotel offer has been updated' });
             let tmp = (res as Hotel);
             if (this.hotel) {
               this.hotel.description = tmp.description;
@@ -104,13 +115,13 @@ export class HotelEditComponent implements OnInit, OnChanges {
             }
             this.loadSettings();
           }
-        }).catch((e) => console.log(e))
+        }).catch((err) => this.handleAuthorizationError(err))
     }
   }
 
 
   clear() {
-    lastValueFrom(this.httpClient.get(environment.HotelAPI + "tags")).then(res => {
+    lastValueFrom(this.httpClient.get(environment.Hotel_API + "tags")).then(res => {
       if (res)
         this.tags = (res as Tag[]);
     })
@@ -126,12 +137,12 @@ export class HotelEditComponent implements OnInit, OnChanges {
   }
 
   setup() {
-    lastValueFrom(this.httpClient.get(environment.HotelAPI + "tags")).then((res) => {
+    lastValueFrom(this.httpClient.get(environment.Hotel_API + "tags")).then((res) => {
       if (res)
         this.tags = (res as Tag[]);
     })
 
-    lastValueFrom(this.httpClient.get(environment.HotelAPI + "hotels")).then((res) => {
+    lastValueFrom(this.httpClient.get(environment.Hotel_API + "hotels")).then((res) => {
       if (res)
         this.hotels = (res as Hotel[]);
     })
@@ -169,13 +180,30 @@ export class HotelEditComponent implements OnInit, OnChanges {
   }
 
   delete() {
-    lastValueFrom(this.httpClient.delete(environment.HotelAPI + "hotels/" + (this.hotel?.id as number))).then(res => {
-      console.log(res);
+    lastValueFrom(this.httpClient.delete(environment.Hotel_API + "hotels/" + (this.hotel?.id as number))).then(res => {
+      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Hotel offer has been deleted' });
       this.clear();
       this.hotel = undefined;
       this.hotels = new Array<Hotel>()
       this.setup();
-    }).catch((e) => console.log(e));
+    }).catch((err) => { this.handleAuthorizationError(err) });
   }
-}
 
+  async handleAuthorizationError(err: HttpErrorResponse) {
+    if (err.status == 401) {
+      console.error("Invalid Authorization: " + err.message);
+      this.messageService.add({ severity: 'error', summary: 'Invalid Authorization', detail: 'Redirect to login page' });
+      await this.delay(3000);
+      let url = environment.Login_URL as unknown as string;
+      url = url + "?name=travmngt";
+      window.open(url, "_self");
+    } else {
+      console.error("ERROR:", err)
+    }
+  }
+
+  delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+}
