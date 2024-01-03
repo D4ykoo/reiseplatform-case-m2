@@ -29,7 +29,7 @@ export class SearchBarComponent {
   }
 
   ngOnInit() {
-    this.httpClient.get(environment.HotelAPI + "tags").subscribe((fetchedTags) => {
+    this.httpClient.get(environment.Hotel_API + "tags").subscribe((fetchedTags) => {
       this.tags = (fetchedTags as Array<Tag>)
     })
   }

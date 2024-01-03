@@ -46,3 +46,10 @@
     justify-content: flex-end;
     align-items: center;  
 }
+
+.checkout_btn{
+    width: 100%;
+    max-width: 100px;
+    height: 100%;
+    display: grid;
+}
