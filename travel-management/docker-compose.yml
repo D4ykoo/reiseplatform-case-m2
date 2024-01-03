@@ -67,6 +67,10 @@ services:
       - travelmngt-app
     environment:
       API_URL_FR: "http://localhost:8085/api/v1/"
+      CHECKOUT_URL: ""
+      LOGIN_URL: ""
+      MONITOR_URL: ""
+    restart: always
     networks:
       - publicnet
     volumes:

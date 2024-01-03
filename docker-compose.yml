@@ -63,6 +63,9 @@ services:
       - travelmngt-app
     environment:
       API_URL_FR: "http://localhost:12345/travma/api/v1/"
+      CHECKOUT_URL: ""
+      LOGIN_URL: ""
+      MONITOR_URL: ""
     networks:
       - privatenet
       - publicnet
