@@ -192,6 +192,8 @@ async fn add_to_cart(
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
     let api_url = env::var("API_URL").expect("API_URL must be set");
+    let srpai = api_url.as_str();
+
     let api_port: u16 = env::var("API_PORT").expect("API_PORT must be set").parse().unwrap();
     let pool = checkout_db::get_pool();
     // let mut producer = MessageProducer { producer: None };
@@ -224,7 +226,7 @@ async fn main() -> std::io::Result<()> {
                 //     .service(create_cart),
             )
     })
-    .bind(("127.0.0.1", 8084))?
+    .bind((srpai, api_port))?
     .run()
     .await
 }
