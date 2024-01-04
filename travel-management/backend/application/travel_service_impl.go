@@ -27,7 +27,7 @@ func (service TravelServiceImpl) NewHotel(name string, address model.Address, ve
 
 	hotelres, err := service.hotels.Create(hotel)
 	service.events.HotelAdded(hotelres)
-	return hotel, err
+	return hotelres, err
 }
 
 func (service TravelServiceImpl) NewTravel(hotelRef uint, vendor uint, from time.Time, to time.Time, price float32, description string) (*model.Travel, error) {
@@ -108,16 +108,20 @@ func containsTag(s []uint, e []*model.Tag) bool {
 }
 
 func (service TravelServiceImpl) UpdateHotel(hotelUpdate *model.Hotel) (*model.Hotel, error) {
-	return service.hotels.Update(hotelUpdate)
+
+	hotelres, err := service.hotels.Update(hotelUpdate)
+	service.events.HotelUpdated(hotelres)
+	return hotelres, err
 }
 
 func (service TravelServiceImpl) UpdateTravel(offerUpdate *model.Travel, id uint, hotelRef uint) (*model.Travel, error) {
 	return service.travels.Update(offerUpdate, id, hotelRef)
-
 }
 
 func (service TravelServiceImpl) RemoveHotel(id uint) error {
-	return service.hotels.Delete(id)
+	err := service.hotels.Delete(id)
+	service.events.HotelRemoved(&model.Hotel{Id: id})
+	return err
 }
 func (service TravelServiceImpl) RemoveTravel(id uint) error {
 	return service.travels.Delete(id)
