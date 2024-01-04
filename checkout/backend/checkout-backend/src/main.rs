@@ -133,6 +133,43 @@ async fn delete_cart(
     }
 }
 
+#[put("/addtocart/{user_id}/{hotel_id}/{travel_id}")]
+async fn add_to_cart(
+    pool: web::Data<PostgresPool>,
+    producer: web::Data<MessageProducer>,
+    req: HttpRequest,
+) -> HttpResponse {
+    let user_id: i32 = req.match_info().query("user_id").parse().unwrap();
+    let hotel_id: i32 = req.match_info().query("hotel_id").parse().unwrap();
+    let travel_id: i32 = req.match_info().query("travel_id").parse().unwrap();
+    let mut conn = pool.get().expect("Could not connect to db from pool");
+
+    let res = checkout_db::add_to_cart(&mut conn, &user_id, &hotel_id, &travel_id);
+
+    match res {
+        Ok(_) => {
+            producer
+                .send_message(&format!(
+                    "Added hotel {} and travel {} to cart {}",
+                    hotel_id, travel_id, user_id
+                ))
+                .await;
+            return HttpResponse::Ok().status(StatusCode::OK).finish();
+        }
+        Err(e) => {
+            producer
+                .send_message(&format!(
+                    "Could not add hotel {} and travel {} to cart {}",
+                    hotel_id, travel_id, user_id
+                ))
+                .await;
+            return HttpResponse::NotFound()
+                .status(StatusCode::NOT_FOUND)
+                .json(e.to_string());
+        }
+    }
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
