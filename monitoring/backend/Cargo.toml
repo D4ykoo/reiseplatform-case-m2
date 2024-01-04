@@ -1,8 +1,8 @@
 [workspace]
 
 members = [
-    "../../checkout/backend/jwt-auth",
     "monitoring-db",
     "monitoring-service",
     "kafka-consumer"
 ]
+resolver = "2"

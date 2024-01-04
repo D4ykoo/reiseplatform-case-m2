@@ -16,7 +16,7 @@ chrono = { version = "0.4", features = ["serde"] }
 monitoring-db = {path="../monitoring-db"}
 deadpool-diesel = { version = "0.4.1", features = ["postgres"] }
 tower-cookies = "0.10.0"
-jwt-auth = { path="../../../checkout/backend/jwt-auth"}
+jwt-auth = { path="../jwt-auth"}
 kafka-consumer = {path="../kafka-consumer"}
 tracing = "0.1"
 tracing-subscriber = "0.3"
