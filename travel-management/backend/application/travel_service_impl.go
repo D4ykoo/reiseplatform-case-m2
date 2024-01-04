@@ -24,7 +24,10 @@ func (service TravelServiceImpl) NewHotel(name string, address model.Address, ve
 	// TODO check user is valid
 	// TODO check hotel already exist
 	hotel := &model.Hotel{Address: address, Name: name, Description: description, Vendor: vendor, Pictures: pics, Tags: tags}
-	return service.hotels.Create(hotel)
+
+	hotelres, err := service.hotels.Create(hotel)
+	service.events.HotelAdded(hotelres)
+	return hotel, err
 }
 
 func (service TravelServiceImpl) NewTravel(hotelRef uint, vendor uint, from time.Time, to time.Time, price float32, description string) (*model.Travel, error) {

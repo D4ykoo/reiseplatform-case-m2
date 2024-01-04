@@ -9,48 +9,47 @@ import (
 )
 
 type TravelEventImpl struct {
-	msgService MessageService
+	MsgService MessageService
 }
 
 func New() TravelEventImpl {
-
 	service, err := NewMsgService(os.Getenv("BROKERS"), os.Getenv("TOPIC"))
 	log.Default().Print(err)
 	return TravelEventImpl{
-		msgService: service,
+		MsgService: service,
 	}
 }
 
-func (service TravelEventImpl) HotelAdded(obj model.Hotel) {
+func (service TravelEventImpl) HotelAdded(obj *model.Hotel) {
 	event := dto.HotelEvent{
 		ObjId: obj.Id,
 		Type_: "Create",
 		Event: "Create new hotel (" + obj.Name + ")",
 	}
-	service.msgService.PublishAsJSON(event)
+	service.MsgService.PublishAsJSON(event)
 }
 
-func (service TravelEventImpl) HotelRemoved(obj model.Hotel) {
+func (service TravelEventImpl) HotelRemoved(obj *model.Hotel) {
 	event := dto.HotelEvent{
 		ObjId: obj.Id,
 		Type_: "Remove",
 		Event: "Removed hotel (" + obj.Name + ")",
 	}
-	service.msgService.PublishAsJSON(event)
+	service.MsgService.PublishAsJSON(event)
 }
-func (service TravelEventImpl) HotelVisited(obj model.Hotel) {
+func (service TravelEventImpl) HotelVisited(obj *model.Hotel) {
 	event := dto.HotelEvent{
 		ObjId: obj.Id,
 		Type_: "Visit",
 		Event: "Visited offers from hotel (" + obj.Name + ")",
 	}
-	service.msgService.PublishAsJSON(event)
+	service.MsgService.PublishAsJSON(event)
 }
-func (service TravelEventImpl) HotelUpdated(obj model.Hotel) {
+func (service TravelEventImpl) HotelUpdated(obj *model.Hotel) {
 	event := dto.HotelEvent{
 		ObjId: obj.Id,
 		Type_: "Update",
 		Event: "Update offers from hotel (" + obj.Name + ")",
 	}
-	service.msgService.PublishAsJSON(event)
+	service.MsgService.PublishAsJSON(event)
 }

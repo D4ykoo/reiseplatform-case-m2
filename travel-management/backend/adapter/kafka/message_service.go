@@ -9,7 +9,7 @@ import (
 
 type MessageService struct {
 	topic       string
-	kafkaClient sarama.SyncProducer
+	KafkaClient sarama.SyncProducer
 }
 
 func NewMsgService(url, topic string) (MessageService, error) {
@@ -22,11 +22,11 @@ func NewMsgService(url, topic string) (MessageService, error) {
 	config.Producer.Retry.Max = 5
 	config.Producer.Partitioner = sarama.NewRandomPartitioner
 	config.Producer.Return.Successes = true
-	conn, err := sarama.NewSyncProducer([]string{"localhost:9092"}, config)
+	conn, err := sarama.NewSyncProducer([]string{url}, config)
 
 	return MessageService{
 		topic:       topic,
-		kafkaClient: conn,
+		KafkaClient: conn,
 	}, err
 }
 
@@ -44,7 +44,7 @@ func (service MessageService) PublishAsJSON(obj interface{}) error {
 		Timestamp: time.Time{},
 	}
 
-	service.kafkaClient.SendMessage(msg)
+	service.KafkaClient.SendMessage(msg)
 
 	return err
 
