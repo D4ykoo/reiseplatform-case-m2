@@ -36,7 +36,6 @@ func main() {
 	tagRepo := dbgorm.NewTagRepository(10, 100)
 	// Message broker
 	eventService := kafka.New()
-
 	// Application
 	// Service
 	travelService := application.New(hotelRepo, travelRepo, tagRepo, eventService)

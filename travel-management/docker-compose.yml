@@ -7,19 +7,18 @@ services:
       POSTGRES_USER: travelmanagement
       POSTGRES_PASSWORD: password
       POSTGRES_DB: travelmanagement
-      PGDATA: /data/travelmanagement
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U travelmanagement" ]
       interval: 5s
       timeout: 5s
       retries: 10
     volumes:
-      - travelmngt-db:/data/postgres
+      - travelmngt-db:/var/lib/postgresql/data
     restart: always
     ports:
       - "8096:8096"
     networks:
-      - travelmngtnet
+      - privatenet
 
   travelmngt-app:
     image: mig3177/travma-travelmanagement-backend:latest
@@ -40,7 +39,7 @@ services:
       DEBUG: true
 
       # BROKER Settings
-      BROKERS: localhost:9092
+      BROKERS: kafka:9092
       TOPIC: travelmanagement
 
       # DB Settings
@@ -56,7 +55,7 @@ services:
 
     networks:
       - publicnet
-      - travelmngtnet
+      - privatenet
 
   travelmngt-web:
     image: mig3177/travma-travelmanagement-frontend:latest
@@ -80,5 +79,5 @@ volumes:
   travelmngt-db:
 
 networks:
-  travelmngtnet:
+  privatenet:
   publicnet:
