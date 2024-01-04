@@ -24,7 +24,12 @@ const MIGRATIONS: EmbeddedMigrations = embed_migrations!("migrations/");
 
 pub fn get_connection_pool() -> Pool<Manager> {
     dotenv().ok();
-    let db_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let host = env::var("DB_HOST").expect("DATABASE_URL must be set");
+    let user = env::var("DB_USER").expect("DATABASE_URL must be set");
+    let passwd = env::var("DB_PASSWORD").expect("DATABASE_URL must be set");
+    let name = env::var("DB_NAME").expect("DATABASE_URL must be set");
+
+    let db_url = format!("postgres://{}:{}@{}/{}", user, passwd, host, name);
     // set up connection pool
     let manager =
         deadpool_diesel::postgres::Manager::new(&db_url, deadpool_diesel::Runtime::Tokio1);
@@ -36,8 +41,13 @@ pub fn get_connection_pool() -> Pool<Manager> {
 
 pub fn establish_connection() -> PgConnection {
     dotenv().ok();
+    let host = env::var("DB_HOST").expect("DATABASE_URL must be set");
+    let user = env::var("DB_USER").expect("DATABASE_URL must be set");
+    let passwd = env::var("DB_PASSWORD").expect("DATABASE_URL must be set");
+    let name = env::var("DB_NAME").expect("DATABASE_URL must be set");
 
-    let db_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let db_url = format!("postgres://{}:{}@{}/{}", user, passwd, host, name);
+
     PgConnection::establish(&db_url).unwrap_or_else(|_| panic!("Error connecting to {db_url}"))
 }
 

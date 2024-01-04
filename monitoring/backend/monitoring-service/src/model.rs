@@ -8,21 +8,22 @@ pub struct Period {
     pub to: Option<String>,
 }
 
-
 #[derive(Debug)]
 pub struct TokenError {
-    details: String
+    details: String,
 }
 
 impl TokenError {
-   pub fn new(msg: &str) -> TokenError {
-        TokenError{details: msg.to_string()}
+    pub fn new(msg: &str) -> TokenError {
+        TokenError {
+            details: msg.to_string(),
+        }
     }
 }
 
 impl fmt::Display for TokenError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f,"{}",self.details)
+        write!(f, "{}", self.details)
     }
 }
 

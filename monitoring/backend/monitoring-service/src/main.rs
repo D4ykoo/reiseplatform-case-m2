@@ -40,7 +40,7 @@ async fn main() {
             .unwrap();
 
         dotenv().ok();
-        let server = env::var("BROKER").unwrap_or("".into());
+        let server = env::var("BROKERS").unwrap_or("".into());
 
         tokio::spawn(async move {
             let topics = ["usermanagement", "travelmanagement", "checkout"];

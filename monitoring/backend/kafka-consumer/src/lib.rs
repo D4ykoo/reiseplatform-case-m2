@@ -13,7 +13,6 @@ pub struct KafkaMsg {
     pub payload: String,
 }
 
-
 pub async fn subscribe(s: Sender<KafkaMsg>, consumer: StreamConsumer) {
     loop {
         match consumer.recv().await {
@@ -49,10 +48,10 @@ pub fn create_consumer(server: &str, topic: &[&str]) -> Result<StreamConsumer, K
         //  .set("auto.offset.reset", "earliest")
         .set_log_level(RDKafkaLogLevel::Debug)
         .create()?;
-
     consumer.subscribe(topic)?;
     Ok(consumer)
 }
+
 
 #[cfg(test)]
 mod tests {
