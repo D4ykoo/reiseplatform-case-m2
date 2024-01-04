@@ -1,7 +1,13 @@
 use checkout_db::models::Cart;
 use serde::{Serialize, Deserialize};
 
-// create cart response from combinedcart model in db
+pub struct CartRequest {
+    pub user_id: i32,
+    pub hotel_id: i32,
+    pub travel_id: i32,
+}
+
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CombinedCartResponse {
     pub cart: Cart,

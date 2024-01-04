@@ -31,31 +31,33 @@ pub fn connect_db() -> PgConnection {
     PgConnection::establish(&url).unwrap_or_else(|e| panic!("Error connecting to {} \n{e}", url))
 }
 
-fn create_hotel(conn: &mut PgConnection, hotel: &Hotel) -> Result<usize, diesel::result::Error> {
+fn create_hotel(conn: &mut PgConnection, new_hotel: &NewHotel) -> Result<i32, diesel::result::Error> {
     use self::schema::checkouthotel;
 
     // check if cart is in db
-    let cart = get_cart(conn, &hotel.fk_checkout_cart.unwrap());
+    let cart = get_cart(conn, &new_hotel.fk_checkout_cart.unwrap());
 
     if cart.is_none() {
         return Err(diesel::result::Error::NotFound);
     }
 
-    let new_hotel = NewHotel::create(
-        hotel.hotelname.as_deref(),
-        hotel.land.as_deref(),
-        hotel.vendor_name.as_deref(),
-        hotel.hotel_description.as_deref(),
-        hotel.hotel_image.as_deref(),
-        hotel.fk_checkout_cart,
-    );
+    // let new_hotel = NewHotel::create(
+    //     hotel.hotelname.as_deref(),
+    //     hotel.land.as_deref(),
+    //     hotel.vendor_name.as_deref(),
+    //     hotel.hotel_description.as_deref(),
+    //     hotel.hotel_image.as_deref(),
+    //     hotel.fk_checkout_cart,
+    // );
 
     let inserted_rows = diesel::insert_into(checkouthotel::table)
-        .values(&new_hotel)
-        .execute(conn)
-        .expect("Error can not create a new hotel");
+        .values(new_hotel)
+        .returning(checkouthotel::id)
+        // .execute(conn)
+        // .expect("Error can not create a new hotel");
+        .get_result::<i32>(conn);
 
-    Ok(inserted_rows)
+    Ok(inserted_rows.unwrap())
 }
 
 fn get_all_hotels(conn: &mut PgConnection, cart_id: &i32) -> Option<Vec<Hotel>> {
@@ -70,7 +72,7 @@ fn get_all_hotels(conn: &mut PgConnection, cart_id: &i32) -> Option<Vec<Hotel>> 
     Some(res)
 }
 
-fn get_single_hotel(conn: &mut PgConnection, hote_id: &i32) -> Option<Hotel> {
+pub fn get_single_hotel(conn: &mut PgConnection, hote_id: &i32) -> Option<Hotel> {
     use self::schema::checkouthotel::dsl::*;
 
     let res = checkouthotel
@@ -94,7 +96,7 @@ fn delete_hotel(conn: &mut PgConnection, hotel_id: &i32) -> Result<usize, diesel
 
 fn create_travel_slice(
     conn: &mut PgConnection,
-    travel_slice: &TravelSlice,
+    travel_slice: &NewTravelSlice,
 ) -> Result<usize, diesel::result::Error> {
     use self::schema::checkouttravelslice;
 
@@ -170,11 +172,21 @@ fn delete_travel_slice(
     Ok(deleted_rows)
 }
 
+pub fn get_cart_id(conn: &mut PgConnection, userid: &i32) -> Result<i32, diesel::result::Error>{
+    use self::schema::checkoutcart::dsl::*;
+    let res = checkoutcart
+        .filter(user_id.eq(userid))
+        .select(id)
+        .first(conn);
+
+    res
+}
+
 pub fn add_to_cart(
     conn: &mut PgConnection,
     cart_id: &i32,
-    hotel: &Hotel,
-    travel_sclice: &TravelSlice,
+    hotel: &NewHotel,
+    travel_sclice: &NewTravelSlice,
 ) -> Result<(), diesel::result::Error>{
     let cart = get_cart(conn, cart_id);
 
@@ -183,10 +195,7 @@ pub fn add_to_cart(
         let _ = create_cart(conn, new_cart)?;
     }
 
-    let _ = create_hotel(conn, hotel)?;
-    
-    let hotel = get_single_hotel(conn, &hotel.id);
-    let hotel_id = hotel.unwrap().id;
+    let hotel_id = create_hotel(conn, hotel)?;
 
     let mut travel_sclice = travel_sclice.clone();
     travel_sclice.fk_checkout_hotel = Some(hotel_id);
