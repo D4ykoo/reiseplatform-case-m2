@@ -13,7 +13,7 @@ pub struct KafkaMsg {
     pub payload: String,
 }
 
-//
+
 pub async fn subscribe(s: Sender<KafkaMsg>, consumer: StreamConsumer) {
     loop {
         match consumer.recv().await {
@@ -37,7 +37,7 @@ pub async fn subscribe(s: Sender<KafkaMsg>, consumer: StreamConsumer) {
     }
 }
 
-pub fn create_consumer(server: &str, topic: &str) -> Result<StreamConsumer, KafkaError> {
+pub fn create_consumer(server: &str, topic: &[&str]) -> Result<StreamConsumer, KafkaError> {
     let consumer: StreamConsumer = ClientConfig::new()
         .set("group.id", "123")
         .set("bootstrap.servers", server)
@@ -50,13 +50,12 @@ pub fn create_consumer(server: &str, topic: &str) -> Result<StreamConsumer, Kafk
         .set_log_level(RDKafkaLogLevel::Debug)
         .create()?;
 
-    consumer.subscribe(&[topic])?;
+    consumer.subscribe(topic)?;
     Ok(consumer)
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
 
     #[test]
     fn it_works() {

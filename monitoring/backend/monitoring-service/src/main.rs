@@ -4,18 +4,25 @@ use axum::extract::{Query, State};
 use axum::Json;
 use axum::{http::StatusCode, routing::get, Router};
 use chrono::{DateTime, Utc};
+use dotenvy::dotenv;
 use kafka_consumer::{create_consumer, subscribe, KafkaMsg};
 use model::Period;
-use monitoring_db::model::{CheckoutEvent, HotelEvent, UserEvent, NewUserEvent};
-use monitoring_db::{add_user_event, establish_connection, get_connection_pool, run_migrations};
+use monitoring_db::model::{
+    CheckoutEvent, HotelEvent, NewCheckoutEvent, NewHotelEvent, NewUserEvent, UserEvent,
+};
+use monitoring_db::{
+    add_checkout_event, add_hotel_event, add_user_event, establish_connection, get_connection_pool,
+    run_migrations,
+};
 
 use jwt_auth::validate_jwt;
+use std::env;
 use std::sync::mpsc::channel;
 use tower_cookies::{CookieManagerLayer, Cookies};
 use tower_http::services::ServeDir;
+use tracing::warn;
 
 use crate::model::TokenError;
-use std::{thread, time};
 
 #[tokio::main]
 async fn main() {
@@ -32,29 +39,38 @@ async fn main() {
             .unwrap()
             .unwrap();
 
-        let dbKafka = pool.get().await.unwrap();
+        dotenv().ok();
+        let server = env::var("BROKER").unwrap_or("".into());
 
         tokio::spawn(async move {
-            let consumer = create_consumer("localhost:9092", "topic123").expect("ERROR");
+            let topics = ["usermanagement", "travelmanagement", "checkout"];
+            let consumer =
+                create_consumer(server.as_str(), &topics).expect("Canot create Consumer");
             subscribe(tx, consumer).await;
         });
 
         tokio::spawn(async move {
             let conn = &mut establish_connection();
             loop {
-                let i = rx.recv().unwrap_or(KafkaMsg {
+                let event = rx.recv().unwrap_or(KafkaMsg {
                     topic: "".to_string(),
                     payload: "".to_string(),
                 });
-                add_user_event(
-                    conn,
-                    NewUserEvent {
-                        log: None,
-                        type_: i.payload.clone(),
-                        time: chrono::offset::Utc::now(),
-                    },
-                ).expect("msg");
-                println!("got = {:?}", i);
+                match event.topic.as_str() {
+                    "usermanagement" => {
+                        let event: NewUserEvent = serde_json::from_str(&event.payload).unwrap();
+                        add_user_event(conn, event).expect("Error");
+                    }
+                    "travelmanagement" => {
+                        let event: NewHotelEvent = serde_json::from_str(&event.payload).unwrap();
+                        add_hotel_event(conn, event).expect("Error");
+                    }
+                    "checkout" => {
+                        let event: NewCheckoutEvent = serde_json::from_str(&event.payload).unwrap();
+                        add_checkout_event(conn, event).expect("Error");
+                    }
+                    &_ => warn!("Received not supported Topic {:?}", event),
+                }
             }
         });
     }

@@ -17,7 +17,7 @@ pub struct UserEvent {
     pub time: DateTime<Utc>,
 }
 
-#[derive(Debug, Insertable)]
+#[derive(Debug, Insertable, Deserialize, Serialize)]
 #[diesel(table_name=user_event)]
 pub struct NewUserEvent {
     pub type_: String,
@@ -41,20 +41,16 @@ pub struct CheckoutEvent {
     pub time: DateTime<Utc>,
 }
 
-#[derive(Debug, Insertable)]
+#[derive(Debug, Insertable, Deserialize, Serialize)]
 #[diesel(table_name=checkout_event)]
-pub struct NewCheckoutEvent<'a> {
-    pub type_: &'a str,
-    pub log: Option<&'a str>,
-    pub time: &'a DateTime<Utc>,
+pub struct NewCheckoutEvent {
+    pub type_: String,
+    pub log: Option<String>,
+    pub time: DateTime<Utc>,
 }
 
-impl<'a> NewCheckoutEvent<'a> {
-    pub fn new(
-        type_: &'a str,
-        log: Option<&'a str>,
-        time: &'a DateTime<Utc>,
-    ) -> NewCheckoutEvent<'a> {
+impl NewCheckoutEvent {
+    pub fn new(type_: String, log: Option<String>, time: DateTime<Utc>) -> NewCheckoutEvent {
         NewCheckoutEvent { type_, log, time }
     }
 }
@@ -69,16 +65,16 @@ pub struct HotelEvent {
     pub time: DateTime<Utc>,
 }
 
-#[derive(Debug, Insertable)]
+#[derive(Debug, Insertable, Deserialize, Serialize)]
 #[diesel(table_name=hotel_event)]
-pub struct NewHotelEvent<'a> {
-    pub type_: &'a str,
-    pub log: Option<&'a str>,
-    pub time: &'a DateTime<Utc>,
+pub struct NewHotelEvent {
+    pub type_: String,
+    pub log: Option<String>,
+    pub time: DateTime<Utc>,
 }
 
-impl<'a> NewHotelEvent<'a> {
-    pub fn new(type_: &'a str, log: Option<&'a str>, time: &'a DateTime<Utc>) -> NewHotelEvent<'a> {
+impl NewHotelEvent {
+    pub fn new(type_: String, log: Option<String>, time: DateTime<Utc>) -> NewHotelEvent {
         NewHotelEvent { type_, log, time }
     }
 }
