@@ -65,9 +65,9 @@ fn get_all_hotels(conn: &mut PgConnection, cart_id: &i32) -> Option<Vec<Hotel>> 
         .filter(fk_checkout_cart.eq(cart_id))
         .select(Hotel::as_select())
         .load::<Hotel>(conn)
-        .expect(&format!("Error receiving hotels with cart id {}", cart_id));
+        .unwrap_or_else(|_| panic!("Error receiving hotels with cart id {}", cart_id));
 
-    return Some(res);
+    Some(res)
 }
 
 fn get_single_hotel(conn: &mut PgConnection, hote_id: &i32) -> Option<Hotel> {
@@ -77,9 +77,9 @@ fn get_single_hotel(conn: &mut PgConnection, hote_id: &i32) -> Option<Hotel> {
         .filter(id.eq(hote_id))
         .select(Hotel::as_select())
         .first(conn)
-        .expect(&format!("Error receiving hotel with id {}", hote_id));
+        .unwrap_or_else(|_| panic!("Error receiving hotel with id {}", hote_id));
 
-    return Some(res);
+    Some(res)
 }
 
 fn delete_hotel(conn: &mut PgConnection, hotel_id: &i32) -> Result<usize, diesel::result::Error> {
@@ -87,7 +87,7 @@ fn delete_hotel(conn: &mut PgConnection, hotel_id: &i32) -> Result<usize, diesel
 
     let deleted_rows = diesel::delete(checkouthotel.filter(id.eq(hotel_id)))
         .execute(conn)
-        .expect(&format!("Error deleting hotel with id {}", hotel_id));
+        .unwrap_or_else(|_| panic!("Error deleting hotel with id {}", hotel_id));
 
     Ok(deleted_rows)
 }
@@ -132,12 +132,10 @@ fn get_all_travel_slices(
         .filter(fk_checkout_hotel.eq(hotel_id))
         .select(TravelSlice::as_select())
         .load::<TravelSlice>(conn)
-        .expect(&format!(
-            "Error receiving travel slices with hotel id {}",
-            hotel_id
-        ));
+        .unwrap_or_else(|_| panic!("Error receiving travel slices with hotel id {}",
+            hotel_id));
 
-    return Some(res);
+    Some(res)
 }
 
 
@@ -152,12 +150,10 @@ fn get_single_travel_slice(
         .filter(id.eq(travel_slice_id))
         .select(TravelSlice::as_select())
         .first(conn)
-        .expect(&format!(
-            "Error receiving travel slice with id {}",
-            travel_slice_id
-        ));
+        .unwrap_or_else(|_| panic!("Error receiving travel slice with id {}",
+            travel_slice_id));
 
-    return Some(res);
+    Some(res)
 }
 
 fn delete_travel_slice(
@@ -168,10 +164,8 @@ fn delete_travel_slice(
 
     let deleted_rows = diesel::delete(checkouttravelslice.filter(id.eq(travel_slice_id)))
         .execute(conn)
-        .expect(&format!(
-            "Error deleting travel slice with id {}",
-            travel_slice_id
-        ));
+        .unwrap_or_else(|_| panic!("Error deleting travel slice with id {}",
+            travel_slice_id));
 
     Ok(deleted_rows)
 }
@@ -207,9 +201,7 @@ pub fn add_to_cart(
 pub fn get_cart_content(conn: &mut PgConnection, cart_id: &i32) -> Option<CombinedCart> {
     let hotels = get_all_hotels(conn, cart_id);
 
-    if hotels.is_none() {
-        return None;
-    }
+    hotels.as_ref()?;
 
     let mut hotels = hotels.unwrap();
 
@@ -218,9 +210,7 @@ pub fn get_cart_content(conn: &mut PgConnection, cart_id: &i32) -> Option<Combin
     for hotel in hotels.iter_mut() {
         let travel_slices = get_all_travel_slices(conn, &hotel.id);
 
-        if travel_slices.is_none() {
-            return None;
-        }
+        travel_slices.as_ref()?;
 
         travels.append(&mut travel_slices.unwrap());
     }
@@ -232,7 +222,7 @@ pub fn get_cart_content(conn: &mut PgConnection, cart_id: &i32) -> Option<Combin
         travel_slice: Some(travels),
     };
 
-    return Some(combined_cart);
+    Some(combined_cart)
 
 }
 
@@ -253,9 +243,7 @@ pub fn create_cart(
 pub fn remove_cart(conn: &mut PgConnection, cart_id: &i32) -> Result<usize, diesel::result::Error> {
     use self::schema::checkoutcart::dsl::*;
 
-    let res = diesel::delete(checkoutcart.filter(id.eq(cart_id))).execute(conn);
-
-    res
+    diesel::delete(checkoutcart.filter(id.eq(cart_id))).execute(conn)
 }
 
 pub fn get_cart(conn: &mut PgConnection, cart_id: &i32) -> Option<Cart> {
@@ -265,9 +253,9 @@ pub fn get_cart(conn: &mut PgConnection, cart_id: &i32) -> Option<Cart> {
         .filter(id.eq(cart_id))
         .select(Cart::as_select())
         .first(conn)
-        .expect(&format!("Error receiving cart with id {}", cart_id));
+        .unwrap_or_else(|_| panic!("Error receiving cart with id {}", cart_id));
 
-    return Some(res);
+    Some(res)
 }
 
 pub fn remove_hotel_and_travel_slice(
