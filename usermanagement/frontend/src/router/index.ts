@@ -1,4 +1,8 @@
-import { createRouter, createWebHashHistory, createWebHistory } from "vue-router";
+import {
+  createRouter,
+  createWebHashHistory,
+  createWebHistory,
+} from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import UserManagementViewVue from "@/views/UserManagementView.vue";
 
@@ -36,6 +40,5 @@ const router = createRouter({
 
 // make router usable via nginx
 // https://router.vuejs.org/guide/essentials/history-mode.html#example-server-configurations
-
 
 export default router;
