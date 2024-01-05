@@ -17,7 +17,7 @@ type UserEntity struct {
 
 func (ue UserEntity) ToUser() model.User {
 	return model.User{
-		Id:        ue.ID,
+		Id:        ue.Model.ID,
 		Username:  ue.Username,
 		Firstname: ue.Firstname,
 		Lastname:  ue.Lastname,

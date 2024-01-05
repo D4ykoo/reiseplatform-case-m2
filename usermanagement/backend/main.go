@@ -14,6 +14,7 @@ import (
 func RunWebServer() {
 	utils.LoadFile()
 	isDebug, errBool := strconv.ParseBool(os.Getenv("DEBUG"))
+	//isDemo, errBoolDemo := strconv.ParseBool(os.Getenv("DEMO"))
 
 	if errBool != nil {
 		log.Fatal(errBool, "Try to change the DEBUG field in the .env file")
@@ -23,6 +24,21 @@ func RunWebServer() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
+	//if errBoolDemo != nil {
+	//	log.Fatal(errBool, "Try to change the DEMO field in the .env file")
+	//}
+	// add user -> find a place were to include this, since it is a hexagonal architecture
+	//user := domain.User{
+	//	Username:  "demoUser",
+	//	Firstname: "demo",
+	//	Lastname:  "user",
+	//	Email:     "user@demo.demo",
+	//	Password:  "demo",
+	//}
+	//user.Password = HashPassword(user.Password, []byte(os.Getenv("SALT")))
+	//
+	//_ = dbGorm.Save(user)
+
 	router := gin.Default()
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{os.Getenv("DOMAIN")}
@@ -31,18 +47,20 @@ func RunWebServer() {
 	config.AllowHeaders = []string{"Authorization", "Origin", "Content-Type", "Accept"}
 	router.Use(cors.New(config))
 
-	router.GET("/api/users", api.ListUserRequest)
-	router.GET("/api/users/:id", api.GetUserRequest)
-	router.POST("/api/users", api.CreateUserRequest)
-	router.PUT("/api/users/:id", api.UpdateUserRequest)
-	router.DELETE("/api/users/:id", api.DeleteUserRequest)
+	v1 := router.Group("/api/v1")
+	{
+		v1.GET("/users", api.ListUserRequest)
+		v1.GET("/users/:id", api.GetUserRequest)
+		v1.POST("/users", api.CreateUserRequest)
+		v1.PUT("/users/:id", api.UpdateUserRequest)
+		v1.DELETE("/users/:id", api.DeleteUserRequest)
 
-	router.POST("/api/login", api.LoginRequest)
-	router.POST("/api/register", api.RegisterRequest)
+		v1.POST("/login", api.LoginRequest)
+		v1.POST("/register", api.RegisterRequest)
 
-	router.PUT("/api/reset", api.ResetPasswordRequest)
-	router.GET("/api/logout", api.LogoutRequest)
-
+		v1.PUT("/reset", api.ResetPasswordRequest)
+		v1.GET("/logout", api.LogoutRequest)
+	}
 	// start server
 	err := router.Run(os.Getenv("API_URL"))
 	if err != nil {

@@ -1,7 +1,7 @@
 export const environment = {
-    production: false,
-    api: 'http://localhost:8080',
-    usermanagement_url: 'http://localhost:8081',
-    checkout_url: 'http://localhost:8083',
-    hotelmanagement_url: 'http://localhost:8085',
+  production: false,
+  api: 'http://localhost:8084/api/v1',
+  usermanagement_url: 'http://localhost:8081/users',
+  hotelmanagement_url: 'http://localhost:8085/travma',
+  monitoring_url: 'http://localhost:8087/*',
 };

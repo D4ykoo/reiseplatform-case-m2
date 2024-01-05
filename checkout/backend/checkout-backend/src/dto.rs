@@ -1,41 +1,76 @@
-//! Data transfer objects for responses and requests
-//!
-//! Even though there is not a lot of difference to the entity model
-//! for a better extensablity this dtos will be used.
+use checkout_db::models::Cart;
+use serde::{Serialize, Deserialize};
 
-use checkout_db::models::NewCart;
-use serde::{Deserialize, Serialize};
-
-#[derive(Serialize)]
-pub struct CartResponse {
-    pub paid: Option<bool>,
-    pub payment_method: Option<String>,
-    pub offers: Option<Vec<Option<i32>>>,
+pub struct CartRequest {
+    pub user_id: i32,
+    pub hotel_id: i32,
+    pub travel_id: i32,
 }
 
-impl CartResponse {
-    pub fn from_db_cart(cart: checkout_db::models::Cart) -> Self {
-        CartResponse {
-            paid: cart.paid,
-            payment_method: cart.payment_method,
-            offers: cart.offers,
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct CombinedCartResponse {
+    pub cart: Cart,
+    pub hotel: Option<Vec<HotelResponse>>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct HotelResponse {
+    pub hotelname: String,
+    pub land: String,
+    pub vendorname: String,
+    pub description: String,
+    pub pictures: String,
+    pub travels: Vec<TravelSliceResponse>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct TravelSliceResponse {
+    pub vendorname: String,
+    pub from: String,
+    pub to: String,
+    pub price: i64,
+}
+
+impl CombinedCartResponse {
+    pub fn from_db_combined_cart(cart: checkout_db::models::CombinedCart) -> Self {
+        CombinedCartResponse {
+            cart: cart.cart,
+            hotel: cart.hotel.map(|hotels| {
+                hotels.into_iter().map(|hotel| {
+                    HotelResponse::from_db_hotel(hotel)
+                }).collect()
+            }),
         }
     }
 }
 
-#[derive(Deserialize, Debug)]
-pub struct CartRequest {
-    pub paid: Option<bool>,
-    pub payment_method: Option<String>,
-    pub offers: Option<Vec<Option<i32>>>,
+impl TravelSliceResponse {
+    pub fn from_db_travel_slice(travel_slice: checkout_db::models::TravelSlice) -> Self {
+        TravelSliceResponse {
+            vendorname: travel_slice.vendor_name.unwrap(),
+            from: travel_slice.from_date.unwrap(),
+            to: travel_slice.to_date.unwrap(),
+            price: travel_slice.price.unwrap() as i64,
+        }
+    }
 }
 
-impl CartRequest {
-    pub fn into_new_cart(&self) -> checkout_db::models::NewCart {
-        NewCart {
-            paid: self.paid,
-            payment_method: self.payment_method.as_deref(),
-            offers: self.offers.as_ref(),
+impl HotelResponse {
+    pub fn from_db_hotel(hotel: checkout_db::models::Hotel) -> Self {
+        HotelResponse {
+            hotelname: hotel.hotelname.unwrap(),
+            land: hotel.land.unwrap(),
+            vendorname: hotel.vendor_name.unwrap(),
+            description: hotel.hotel_description.unwrap(),
+            pictures: hotel.hotel_image.unwrap(),
+            travels: Vec::new(),
+        }
+    }
+
+    pub fn add_travel_slice(&mut self, travel_slices: Vec<checkout_db::models::TravelSlice>) {
+        for travel_slice in travel_slices {
+            self.travels.push(TravelSliceResponse::from_db_travel_slice(travel_slice));
         }
     }
 }

@@ -22,7 +22,8 @@
           tabindex="0"
           class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
         >
-          <li><a>Login/ Register</a></li>
+          <li><a href="{{  }}">Travelmangement</a></li>
+          <li><a >Login/ Register</a></li>
           <li><a>Usermanagement</a></li>
         </ul>
       </div>
@@ -30,13 +31,17 @@
     </div>
     <div class="navbar-center hidden lg:flex">
       <ul class="menu menu-horizontal px-1">
+        <li><a :href="travelmanagementUrl">Travelmangement</a></li>
         <li><a href="/">Login/ Register</a></li>
         <li><router-link :to="{name: 'usermanagement'}"><a>Usermanagement</a></router-link></li>
+        <li><a :href="monitoringUrl">Logging</a></li>
       </ul>
     </div>
     <div class="navbar-end">
       <div class="mr-4">
-        <a class="btn">Overview</a>
+        <a :href="checkoutUrl">
+        <button><i class="fi fi-sr-shopping-cart"></i></button>
+      </a>
       </div>
       <div>
         <a class="btn" @click="logout">Logout</a>
@@ -52,6 +57,17 @@ let loginRegisterService = new LoginRegisterService();
 
 export default {
   name: "NavBar",
+  data() {
+    let checkoutUrl = import.meta.env.VITE_CHECKOUT_URL;
+    let travelmanagementUrl = import.meta.env.VITE_TRAVELMANAGEMENT_URL;
+    let monitoringUrl = import.meta.env.VITE_MONITORING_URL;
+
+    return {
+      checkoutUrl,
+      travelmanagementUrl,
+      monitoringUrl
+    };
+  },
   methods: {
     logout(){
       loginRegisterService.LogoutRequest().subscribe((res: any) => {

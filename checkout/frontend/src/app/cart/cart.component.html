@@ -5,40 +5,57 @@
     <div class="mt-8 mb-6">
       <div class="flow-root">
         <ul role="list" class="-my-6 divide-y divide-gray-400">
-          <li *ngFor="let cart of cart; index as i" class="flex py-6 md:w-[35rem] ">
-            <div
-              class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200"
-            >
-              <img
-                src="https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg"
-                alt="Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt."
-                class="h-full w-full object-cover object-center"
-              />
-            </div>
-
-            <div class="ml-4 flex flex-1 flex-col">
-              <div>
+          <!-- iterate over every travel of a hotel and show information -->
+          <li
+            *ngFor="let hotel of cart.hotel; index as hi"
+            class="flex py-6 md:w-[35rem]"
+          >
+            <div class="flex flex-col">
+              <div
+                *ngFor="let travel of hotel.travels; index as ti"
+                class="flex py-6 md:w-[35rem]"
+              >
                 <div
-                  class="flex justify-between text-base font-medium text-white"
+                  class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200"
                 >
-                  <h3>
-                    <span>{{ cart.name }}</span>
-                  </h3>
-                  <p class="ml-4">{{ cart.price }} €</p>
+                  <img
+                    src="{{ hotel.pictures }}"
+                    alt="Hotel"
+                    class="h-full w-full object-cover object-center"
+                  />
                 </div>
-                <p class="mt-1 text-sm text-gray-300">vendor</p>
-              </div>
-              <div class="flex flex-1 items-end justify-between text-sm">
-                <p class="text-gray-500"></p>
 
-                <div class="flex">
-                  <button
-                    (click)="removeFromCart(i)"
-                    type="button"
-                    class="font-medium text-primary hover:text-indigo-500"
-                  >
-                    Remove
-                  </button>
+                <div class="ml-4 flex flex-1 flex-col">
+                  <div>
+                    <div
+                      class="flex justify-between text-base font-medium text-white"
+                    >
+                      <h3>
+                        <span>{{ hotel.hotelname }}</span>
+                      </h3>
+                      <p class="ml-4">{{ travel.price }} €</p>
+                    </div>
+                    <p class="mt-1 text-sm text-gray-300">
+                      {{ hotel.vendorname }}
+                    </p>
+                  </div>
+                  <div class="flex flex-1 items-end justify-between text-sm">
+                    <p class="text-gray-500">
+                      {{ travel.from | date: "dd.MM.yyyy" }}
+                      -
+                      {{ travel.to | date: "dd.MM.yyyy" }}
+                    </p>
+
+                    <div class="flex">
+                      <button
+                        (click)="removeFromCart(hi, ti)"
+                        type="button"
+                        class="font-medium text-primary hover:text-indigo-500"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -62,7 +79,7 @@
       <div class="mt-6 flex justify-center text-center text-sm text-gray-500">
         <p>
           or
-          <a href="{{hotelmanagementUrl}}">
+          <a href="{{ hotelmanagementUrl }}">
             <button
               type="button"
               class="font-medium text-primary hover:text-indigo-500"

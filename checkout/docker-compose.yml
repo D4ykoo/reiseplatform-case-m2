@@ -48,10 +48,10 @@ services:
     container_name: usermanagement-frontend
     restart: always
     environment:
-      API_URL: "http://localhost:8084"
-      USERMANAGEMENT_URL: "http://localhost:8081"
-      HOTELMANAGEMENT_URL: "http://localhost:8085"
-      MONITORING_URL: "http://localhost:8087"    
+      API_URL: "http://localhost:8084/api/v1"
+      USERMANAGEMENT_URL: "http://localhost:8081/users"
+      HOTELMANAGEMENT_URL: "http://localhost:8085/travma"
+      MONITORING_URL: "http://localhost:8087/*"    
     depends_on:
       - backend
     ports:

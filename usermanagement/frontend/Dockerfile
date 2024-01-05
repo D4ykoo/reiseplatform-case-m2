@@ -2,6 +2,9 @@ FROM node:latest as builder
 WORKDIR /app
 ARG frontend_path=./
 
+ARG env_file=.env
+ENV ENV_FILE=${env_file}
+
 FROM builder AS install
 RUN mkdir -p /tmp/dev
 COPY ${frontend_path}package.json ${frontend_path}package-lock.json /tmp/dev/
