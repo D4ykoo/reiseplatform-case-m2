@@ -51,6 +51,7 @@ jobs:
           npm i eslint
           npm i prettier
           npm i eslint-plugin-prettier
+          npm i eslint-config-prettier
           
       - name: Run linters
         uses: wearerequired/lint-action@v2
@@ -58,7 +59,7 @@ jobs:
           auto_fix: true
           eslint: true
           prettier: true
-          eslint_extensions: js,ts
+          eslint_extensions: js,ts, html
 
   release-build:
     name: Build an
