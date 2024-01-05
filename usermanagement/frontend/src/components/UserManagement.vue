@@ -1,8 +1,6 @@
 <template>
-  <div
-    class="top-0 flex flex-col place-items-start h-[calc(100vh-25vh)]"
-  >
-    <div class="flex justify-end w-full ">
+  <div class="top-0 flex flex-col place-items-start h-[calc(100vh-25vh)]">
+    <div class="flex justify-end w-full">
       <button
         onclick="create_user_modal.showModal()"
         class="btn btn-primary btn-sm mr-2 hover:scale-105 ease-in-out"
@@ -12,58 +10,61 @@
       <CreateUserModal @eventCreateUser="reloadList()" />
     </div>
     <div class="overflow-hidden overflow-y-auto max-h-full w-full">
-    <table class="table table-zebra">
-      <!-- head -->
-      <thead class="">
-        <tr>
-          <th></th>
-          <th>Username</th>
-          <th>Firstname</th>
-          <th>Lastname</th>
-          <th>E-Mail</th>
-          <th></th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="user of users" :key="user.id">
-          <td>{{ user.id }}</td>
-          <td>{{ user.username }}</td>
-          <td>{{ user.firstname }}</td>
-          <td>{{ user.lastname }}</td>
-          <td>{{ user.email }}</td>
-          <td class="w-3 h-3">
-            <button @click="deleteUser(user.id)" class="hover:scale-105">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+      <table class="table table-zebra">
+        <!-- head -->
+        <thead class="">
+          <tr>
+            <th></th>
+            <th>Username</th>
+            <th>Firstname</th>
+            <th>Lastname</th>
+            <th>E-Mail</th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="user of users" :key="user.id">
+            <td>{{ user.id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.firstname }}</td>
+            <td>{{ user.lastname }}</td>
+            <td>{{ user.email }}</td>
+            <td class="w-3 h-3">
+              <button @click="deleteUser(user.id)" class="hover:scale-105">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </td>
+            <td class="w-3 h-3">
+              <button
+                @click="updateStore(user)"
+                onclick="edit_user_modal.showModal()"
+                class="hover:scale-105"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </td>
-          <td class="w-3 h-3">
-            <button
-              @click="updateStore(user)"
-              onclick="edit_user_modal.showModal()"
-              class="hover:scale-105"
-            >
-              <i class="fi fi-sr-pencil"></i>
-            </button>
-            <EditUserModal @eventUpdateUser="reloadList(), toastVisible, toastText" :userr="user" />
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+                <i class="fi fi-sr-pencil"></i>
+              </button>
+              <EditUserModal
+                @eventUpdateUser="reloadList(), toastVisible, toastText"
+                :userr="user"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
   <!-- <AlertToast :visible="toastVisible" :info-text="toastText"/> -->
 </template>

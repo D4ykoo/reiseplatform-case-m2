@@ -59,8 +59,8 @@
           ></path>
         </svg>
         <span>
-          <b>Info:</b> Since the email reset is just mocked simply put the password in
-          the input above!</span
+          <b>Info:</b> Since the email reset is just mocked simply put the
+          password in the input above!</span
         >
       </div>
     </div>
@@ -98,7 +98,7 @@ export default {
       loginRegisterService
         .ResetPasswordRequest(resetUser)
         .subscribe((res: any) => {
-          if (res.status === 200){
+          if (res.status === 200) {
             this.$router.push("/users");
           }
         });

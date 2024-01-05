@@ -23,7 +23,7 @@ export type UpdateUser = {
   firstname: string;
   lastname: string;
   email: string;
-  newPassword: string
+  newPassword: string;
   oldPassword: string;
 };
 
