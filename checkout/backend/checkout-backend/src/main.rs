@@ -9,9 +9,8 @@ use actix_cors::Cors;
 use actix_web::{
     delete, get,
     http::StatusCode,
-    post, put,
     web::{self, Data},
-    App, HttpRequest, HttpResponse, HttpServer,
+    App, HttpRequest, HttpResponse, HttpServer, put,
 };
 use checkout_db::PostgresPool;
 use message_service::MessageProducer;
@@ -138,28 +137,27 @@ async fn add_to_cart(pool: web::Data<PostgresPool>, req: HttpRequest) -> HttpRes
     }
 }
 
-// TODO: delete cart entry 
-// #[delete("/deletecartentry/{cart_id}/{hotel_id}/{travel_id}")]
-// async fn delete_cart_entry(pool: web::Data<PostgresPool>, req: HttpRequest) -> HttpResponse {
-//     let cart_id: i32 = req.match_info().query("cart_id").parse().unwrap();
-//     let hotel_id: i32 = req.match_info().query("hotel_id").parse().unwrap();
-//     let travel_id: i32 = req.match_info().query("travel_id").parse().unwrap();
+#[delete("/entry/{cart_id}/{hotel_id}/{travel_id}")]
+async fn delete_cart_entry(pool: web::Data<PostgresPool>, req: HttpRequest) -> HttpResponse {
+    let cart_id: i32 = req.match_info().query("cart_id").parse().unwrap();
+    let hotel_id: i32 = req.match_info().query("hotel_id").parse().unwrap();
+    let travel_id: i32 = req.match_info().query("travel_id").parse().unwrap();
 
-//     let mut conn = pool.get().expect("Could not connect to db from pool");
+    let mut conn = pool.get().expect("Could not connect to db from pool");
 
-//     let res = checkout_db::delete_cart_entry(&mut conn, &cart_id, &hotel_id, &travel_id);
+    let res = checkout_db::remove_hotel_and_travel_slice(&mut conn, &cart_id, &hotel_id, &travel_id);
 
-//     match res {
-//         Ok(_) => {
-//             return HttpResponse::Ok().status(StatusCode::OK).finish();
-//         }
-//         Err(e) => {
-//             return HttpResponse::NotFound()
-//                 .status(StatusCode::INTERNAL_SERVER_ERROR)
-//                 .json(e.to_string());
-//         }
-//     }
-// }
+    match res {
+        Ok(_) => {
+            return HttpResponse::Ok().status(StatusCode::OK).finish();
+        }
+        Err(e) => {
+            return HttpResponse::NotFound()
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .json(e.to_string());
+        }
+    }
+}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -171,7 +169,14 @@ async fn main() -> std::io::Result<()> {
         .expect("API_PORT must be set")
         .parse()
         .unwrap();
+    
     let pool = checkout_db::get_pool();
+    let migrations_res = checkout_db::init_migrations(&mut pool.get().unwrap());
+
+    if migrations_res.is_err() {
+        panic!("Could not run migrations");
+    }
+
     // let mut producer = MessageProducer { producer: None };
     // let _ = producer.init_message_producer();
     // async send message thath is not blocking  using producer
@@ -191,7 +196,7 @@ async fn main() -> std::io::Result<()> {
                     .service(get_cart)
                     .service(delete_cart)
                     .service(add_to_cart)
-                    // .service(delete_cart_entry)
+                    .service(delete_cart_entry)
                     ,
                 // if more versions of the api are needed, they can be added here
                 // web::scope("/api/v2/checkout")

@@ -3,64 +3,61 @@ import { CommonModule } from '@angular/common';
 import { environment } from '../../environments/environment';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { CartService } from '../../services/cart.service';
+import { CombinedCart } from '../../models/cart.models';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule,RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.css',
 })
 export class CartComponent {
-  constructor(
-    private cartService: CartService,
-  ) {}
+  constructor(private cartService: CartService) {}
 
   hotelmanagementUrl = environment.hotelmanagement_url;
 
   cartId = 1;
 
-  cart = [
-    { name: 'Hotel 1', price: 100 },
-    { name: 'Hotel 2', price: 200 },
-  ];
 
+
+  cart: CombinedCart = {
+    cart: undefined,
+    hotel: []
+  }
 
   ngOnInit() {
     this.getCart();
-    this.cart = [
-      { name: 'Hotel 1', price: 100 },
-      { name: 'Hotel 2', price: 200 },
-    ];
   }
 
   public getCart() {
     this.cartService.getCart(this.cartId).subscribe((res: any) => {
-      for (const item of res) {
-        this.cart.push(item);
-      }
+      this.cart = res;
+      console.log("res: "+ res);
+      console.log("cart: ", this.cart);
     });
   }
 
-  public removeFromCart(id: number): void {
-    this.cartService.removeFromCart(id).subscribe((res: any) => {
+  public removeFromCart(hotelId: number, travelId: number): void {
+    this.cart.hotel![hotelId].travels.splice(travelId, 1);
+
+    this.cartService.removeFromCart(this.cart.cart!.id, hotelId, travelId).subscribe((res: any) => {
       console.log(res);
-      this.cart.splice(id, 1);
+      // this.cart.splice(id, 1);
     });
   }
 
-  public addToCart(id: any) {
-    this.cartService.addToCart(id);
+  public getTotal() {
+    let total = 0;
+    this.cart.hotel!.forEach((hotel) => {
+      hotel.travels.forEach((travel) => {
+        total += travel.price;
+      });
+    });
+    return total;
   }
-
-
-  public getTotal(): number {
-    return this.cart.reduce((sum, item) => sum + item.price, 0);
-  }
-
-
 
   public clearCart(): void {
-    this.cart = [];
+    // this.cart = [];
   }
 }

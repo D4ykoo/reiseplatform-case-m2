@@ -1,16 +1,24 @@
 use diesel::r2d2::ConnectionManager;
 use diesel::{prelude::*, PgConnection};
+use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
+
 use dotenvy::dotenv;
 use models::{Hotel, NewHotel, NewTravelSlice, TravelSlice, CombinedCart};
 use r2d2::Pool;
 use std::env;
-
+use std::error::Error;
 use crate::models::{Cart, NewCart};
 
 pub mod models;
 mod schema;
 
 pub type PostgresPool = Pool<ConnectionManager<PgConnection>>;
+const MIGRATIONS: EmbeddedMigrations = embed_migrations!("migrations/");
+
+pub fn init_migrations(conn: &mut PgConnection) ->  Result<(), Box<dyn Error + Send + Sync + 'static>> {
+    conn.run_pending_migrations(MIGRATIONS)?;
+    Ok(())
+}
 
 pub fn get_pool() -> PostgresPool {
     dotenv().ok();
@@ -182,10 +190,29 @@ pub fn get_cart_id(conn: &mut PgConnection, userid: &i32) -> Result<i32, diesel:
     res
 }
 
+// find hotel by cart id and hotel name
+pub fn find_hotel_by_cart_id_and_hotel_name(
+    conn: &mut PgConnection,
+    cart_id: &i32,
+    hotel_name: &str,
+) -> Option<Hotel> {
+    use self::schema::checkouthotel::dsl::*;
+
+    let res = checkouthotel
+        .filter(fk_checkout_cart.eq(cart_id))
+        .filter(hotelname.eq(hotel_name))
+        .select(Hotel::as_select())
+        .first(conn)
+        .unwrap_or_else(|_| panic!("Error receiving hotel with cart id {} and hotel name {}",
+            cart_id, hotel_name));
+
+    Some(res)
+}
+
 pub fn add_to_cart(
     conn: &mut PgConnection,
     cart_id: &i32,
-    hotel: &NewHotel,
+    new_hotel: &NewHotel,
     travel_sclice: &NewTravelSlice,
 ) -> Result<(), diesel::result::Error>{
     let cart = get_cart(conn, cart_id);
@@ -195,7 +222,16 @@ pub fn add_to_cart(
         let _ = create_cart(conn, new_cart)?;
     }
 
-    let hotel_id = create_hotel(conn, hotel)?;
+    let hotel_id: i32;
+
+    // check if hotel is in db otherwise create it
+    let hotel = find_hotel_by_cart_id_and_hotel_name(conn, cart_id, new_hotel.hotelname.unwrap());
+
+    if hotel.is_none() {
+        hotel_id = create_hotel(conn, new_hotel)?;
+    } else {
+        hotel_id = hotel.unwrap().id;
+    }
 
     let mut travel_sclice = travel_sclice.clone();
     travel_sclice.fk_checkout_hotel = Some(hotel_id);
@@ -267,13 +303,33 @@ pub fn get_cart(conn: &mut PgConnection, cart_id: &i32) -> Option<Cart> {
     Some(res)
 }
 
+
+// since the ids of the hotels and travel slices are not constant and increment 
+// automatically get the ids from the db and then delete them,
+// since the array like structure can be assumed when extracting the data from the db
 pub fn remove_hotel_and_travel_slice(
     conn: &mut PgConnection,
+    cart_id: &i32,
     hotel_id: &i32,
     travel_slice_id: &i32,
 ) -> Result<(), diesel::result::Error> {
-    let _ = delete_travel_slice(conn, travel_slice_id)?;
-    let _ = delete_hotel(conn, hotel_id)?;
+    let hotels = get_all_hotels(conn, cart_id);
+     
+
+    let hotel = &hotels
+        .as_ref()
+        .unwrap()[*hotel_id as usize];
+        
+
+    let travel_slices = get_all_travel_slices(conn, &hotel.id);
+
+    let travel_slice = &travel_slices
+        .as_ref()
+        .unwrap()[*travel_slice_id as usize];
+
+
+    let _ = delete_travel_slice(conn, &travel_slice.id)?;
+    let _ = delete_hotel(conn, &hotel.id);
 
     Ok(())
 }

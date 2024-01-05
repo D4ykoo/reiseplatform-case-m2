@@ -13,6 +13,6 @@ import { environment } from '../environments/environment';
 export class AppComponent {
   title = 'frontend';
   usermanagement_url = environment.usermanagement_url;
-  checkout_url = environment.checkout_url;
+  monitoring_url = environment.monitoring_url;
   hotelmanagement_url = environment.hotelmanagement_url;
 }
