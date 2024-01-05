@@ -6,7 +6,7 @@ export const environment = {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   usermanagementUrl:
-    window['env']['usermanagementUrl'] || 'http://localhost:8081/users',
+    window['env']['usermanagementUrl'] || 'http://localhost:8081/#',
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   hotelmanagementUrl:

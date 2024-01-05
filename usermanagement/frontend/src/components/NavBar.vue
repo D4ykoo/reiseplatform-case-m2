@@ -22,9 +22,13 @@
           tabindex="0"
           class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
         >
-          <li><a href="{{  }}">Travelmangement</a></li>
+          <li><a :href="travelmanagementUrl">Travelmangement</a></li>
           <li><a>Login/ Register</a></li>
-          <li><a>Usermanagement</a></li>
+          <li>
+            <router-link :to="{ name: 'usermanagement' }">
+            <a>Usermanagement</a>
+            </router-link>
+          </li>
         </ul>
       </div>
       <a class="btn btn-ghost text-xl" href="/">travMa</a>
