@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import UserManagement from '../components/UserManagement.vue'
-import FooterContent from '@/components/FooterContent.vue';
+import UserManagement from "../components/UserManagement.vue";
+import FooterContent from "@/components/FooterContent.vue";
 </script>
 
 <template>

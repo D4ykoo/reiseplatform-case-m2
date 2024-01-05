@@ -1,4 +1,4 @@
-@import './base.css';
+@import "./base.css";
 @import "@flaticon/flaticon-uicons/css/solid/all";
 @import "@flaticon/flaticon-uicons/css/brands/all";
 
@@ -6,11 +6,11 @@
 @tailwind components;
 @tailwind utilities;
 
-body{
+body {
   overflow: hidden;
 }
 
-#app body  {
+#app body {
   max-width: 1280px;
   margin: 0 auto;
   padding: 0 0rem 2rem 0rem;
@@ -24,7 +24,7 @@ body{
   }
 }
 
-.fix-width{
+.fix-width {
   width: 35rem;
 }
 th {

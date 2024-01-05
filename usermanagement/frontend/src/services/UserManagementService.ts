@@ -6,8 +6,7 @@ import type { AxiosError, AxiosResponse } from "axios";
 import { UtilService } from "./UtilService";
 
 export class UserManagementService {
-
-  utils = new UtilService(); 
+  utils = new UtilService();
 
   apiUrl = import.meta.env.VITE_API_URL;
 
@@ -25,25 +24,25 @@ export class UserManagementService {
 
   public getAllUserRequests(): Observable<AxiosResponse<any>> {
     return Axios.get(this.apiUrl + `/users`, headerConf).pipe(
-      catchError(this.handleError)
+      catchError(this.handleError),
     );
   }
 
   public updateUser(id: number, payload: UpdateUser) {
     return Axios.put(this.apiUrl + `/users/${id}`, payload, headerConf).pipe(
-      catchError(this.handleError)
+      catchError(this.handleError),
     );
   }
 
   public deleteUser(id: number) {
     return Axios.delete(this.apiUrl + `/users/${id}`, headerConf).pipe(
-      catchError(this.handleError)
+      catchError(this.handleError),
     );
   }
 
   public createUser(payload: any) {
     return Axios.post(this.apiUrl + `/users`, payload, headerConf).pipe(
-      catchError(this.handleError)
+      catchError(this.handleError),
     );
   }
 
@@ -56,7 +55,7 @@ export class UserManagementService {
       // The response body may contain clues as to what went wrong.
       console.error(
         `Backend returned code ${error.status}, body was: `,
-        error.message
+        error.message,
       );
     }
     // Return an observable with a user-facing error message.

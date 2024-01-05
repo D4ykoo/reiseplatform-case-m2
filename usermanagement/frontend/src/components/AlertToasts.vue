@@ -23,12 +23,12 @@
 import { ref } from "vue";
 
 export default {
-    name: "AlertToast",
+  name: "AlertToast",
   props: {
     infoText: String,
     visible: Boolean,
   },
-  
+
   setup(props: any) {
     const message = ref(props.infoText);
     const isVisible = ref(props.visible);

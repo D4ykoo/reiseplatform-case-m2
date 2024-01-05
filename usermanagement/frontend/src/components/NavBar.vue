@@ -22,9 +22,13 @@
           tabindex="0"
           class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
         >
-          <li><a href="{{  }}">Travelmangement</a></li>
-          <li><a >Login/ Register</a></li>
-          <li><a>Usermanagement</a></li>
+          <li><a :href="travelmanagementUrl">Travelmangement</a></li>
+          <li><a>Login/ Register</a></li>
+          <li>
+            <router-link :to="{ name: 'usermanagement' }">
+              <a>Usermanagement</a>
+            </router-link>
+          </li>
         </ul>
       </div>
       <a class="btn btn-ghost text-xl" href="/">travMa</a>
@@ -33,15 +37,19 @@
       <ul class="menu menu-horizontal px-1">
         <li><a :href="travelmanagementUrl">Travelmangement</a></li>
         <li><a href="/">Login/ Register</a></li>
-        <li><router-link :to="{name: 'usermanagement'}"><a>Usermanagement</a></router-link></li>
+        <li>
+          <router-link :to="{ name: 'usermanagement' }"
+            ><a>Usermanagement</a></router-link
+          >
+        </li>
         <li><a :href="monitoringUrl">Logging</a></li>
       </ul>
     </div>
     <div class="navbar-end">
       <div class="mr-4">
         <a :href="checkoutUrl">
-        <button><i class="fi fi-sr-shopping-cart"></i></button>
-      </a>
+          <button><i class="fi fi-sr-shopping-cart"></i></button>
+        </a>
       </div>
       <div>
         <a class="btn" @click="logout">Logout</a>
@@ -51,7 +59,7 @@
 </template>
 
 <script lang="ts">
-import { LoginRegisterService } from '@/services/LoginRegisterService';
+import { LoginRegisterService } from "@/services/LoginRegisterService";
 
 let loginRegisterService = new LoginRegisterService();
 
@@ -65,17 +73,17 @@ export default {
     return {
       checkoutUrl,
       travelmanagementUrl,
-      monitoringUrl
+      monitoringUrl,
     };
   },
   methods: {
-    logout(){
+    logout() {
       loginRegisterService.LogoutRequest().subscribe((res: any) => {
         if (res.status === 200) {
           this.$router.push("/");
         }
       });
-    }
-  }
+    },
+  },
 };
 </script>

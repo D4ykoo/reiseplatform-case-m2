@@ -130,7 +130,7 @@ export default {
         newEmail.value = store.receiveUser.email;
         userID.value = store.receiveUser.id;
       },
-      { detached: true }
+      { detached: true },
     );
 
     return {
