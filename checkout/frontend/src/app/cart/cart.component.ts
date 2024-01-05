@@ -19,32 +19,27 @@ export class CartComponent {
 
   cartId = 1;
 
-
-
   cart: CombinedCart = {
     cart: undefined,
-    hotel: []
-  }
+    hotel: [],
+  };
 
   ngOnInit() {
     this.getCart();
   }
 
   public getCart() {
-    this.cartService.getCart(this.cartId).subscribe((res: any) => {
-      this.cart = res;
-      console.log("res: "+ res);
-      console.log("cart: ", this.cart);
+    this.cartService.getCart(this.cartId).subscribe((res) => {
+      this.cart = res as CombinedCart;
     });
   }
 
   public removeFromCart(hotelId: number, travelId: number): void {
-    this.cart.hotel![hotelId].travels.splice(travelId, 1);
-
-    this.cartService.removeFromCart(this.cart.cart!.id, hotelId, travelId).subscribe((res: any) => {
-      console.log(res);
-      // this.cart.splice(id, 1);
-    });
+    this.cartService
+      .removeFromCart(this.cart.cart!.id, hotelId, travelId)
+      .subscribe(() => {
+        this.cart.hotel![hotelId].travels.splice(travelId, 1);
+      });
   }
 
   public getTotal() {

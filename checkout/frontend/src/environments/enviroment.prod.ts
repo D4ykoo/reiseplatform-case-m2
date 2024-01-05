@@ -5,10 +5,12 @@ export const environment = {
   apiUrl: window['env']['apiUrl'] || 'http://localhost:8084/api/v1',
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  usermanagementUrl: window['env']['usermanagementUrl'] || 'http://localhost:8081/users',
+  usermanagementUrl:
+    window['env']['usermanagementUrl'] || 'http://localhost:8081/users',
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  hotelmanagementUrl: window['env']['hotelmanagementUrl'] || 'http://localhost:8085/travma',
+  hotelmanagementUrl:
+    window['env']['hotelmanagementUrl'] || 'http://localhost:8085/travma',
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error
   monitoringUrl: window['env']['monitoringUrl'] || 'http://localhost:8087/*',
