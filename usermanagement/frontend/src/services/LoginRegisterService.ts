@@ -1,5 +1,5 @@
 import Axios from "axios-observable";
-import { headerConf } from "@/assets/config";
+import APP_CONFIG, { headerConf } from "@/assets/config";
 import type { LoginUser, RegisterUser, ResetUser } from "@/models/UserModel";
 import { throwError, type Observable, catchError } from "rxjs";
 import type { AxiosError, AxiosResponse } from "axios";
@@ -8,7 +8,7 @@ import { UtilService } from "./UtilService";
 export class LoginRegisterService {
   utils = new UtilService();
 
-  apiUrl = import.meta.env.VITE_API_URL;
+  apiUrl = APP_CONFIG.apiUrl;
 
   public LoginRequest(payload: LoginUser): Observable<AxiosResponse<any>> {
     return Axios.post(this.apiUrl + "/login", payload, headerConf).pipe(

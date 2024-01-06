@@ -1,4 +1,11 @@
 # How to run
+https://github.com/runtime-env/import-meta-env/blob/main/packages/examples/vite-alpine-example/src/main.js
+
+https://medium.com/rockedscience/how-import-meta-env-saved-us-hours-of-deployment-21c7548c3cf4
+
+https://import-meta-env.org/guide/getting-started/runtime-transform.html
+
+https://github.com/runtime-env/import-meta-env/blob/main/packages/examples/docker-starter-example/start.sh
 
 ### Configuration
 

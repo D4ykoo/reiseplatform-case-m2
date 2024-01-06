@@ -1,31 +1,24 @@
-FROM node:latest as builder
+FROM node:18.10.0-alpine3.15 as build-stage
 WORKDIR /app
-ARG frontend_path=./
 
-ARG env_file=.env
-ENV ENV_FILE=${env_file}
+COPY ./ .
 
-FROM builder AS install
-RUN mkdir -p /tmp/dev
-COPY ${frontend_path}package.json ${frontend_path}package-lock.json /tmp/dev/
-RUN cd /tmp/dev && npm install --frozen-lockfile
+RUN npm i
+RUN npm i -D @import-meta-env/cli
+RUN npm i -D @import-meta-env/unplugin
+RUN npm run build
+RUN npx pkg ./node_modules/@import-meta-env/cli/bin/import-meta-env.js -t node18-alpine-x64 -o import-meta-env
 
-RUN mkdir -p /tmp/prod
-COPY ${frontend_path}package.json ${frontend_path}package-lock.json /tmp/prod/
-RUN cd /tmp/prod && npm install --frozen-lockfile --production
+###############################################################################
 
-FROM builder AS prerelease
-COPY --from=install /tmp/dev/node_modules node_modules
-COPY . .
+FROM nginx:1.22.0-alpine as production-stage
+RUN mkdir /app
 
-ENV NODE_ENV=production
-RUN cd ${frontend_path} && npm run build
-COPY ${frontend_path}dist .
+COPY --from=build-stage /app/dist /app/dist
+COPY --from=build-stage /app/import-meta-env /app/import-meta-env
 
-FROM nginx:alpine 
-COPY --from=prerelease /app/dist/ /usr/share/nginx/html
+COPY .env /app/.env
+COPY start.sh /app/start.sh
+COPY ./nginx.conf /etc/nginx/nginx.conf
 
-COPY nginx.conf /etc/nginx/nignx.conf
-
-EXPOSE 8081
-CMD ["nginx", "-g", "daemon off;"]
+ENTRYPOINT ["sh","/app/start.sh"]

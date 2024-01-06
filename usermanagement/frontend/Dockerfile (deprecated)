@@ -1,0 +1,45 @@
+FROM node:alpine as builder
+
+WORKDIR /app
+ARG frontend_path=./
+
+ARG env_file=./.env.example.public
+ENV ENV_FILE=${env_file}
+
+
+
+FROM builder AS install
+RUN mkdir -p /tmp/dev
+COPY ${frontend_path}package.json ${frontend_path}package-lock.json /tmp/dev/
+RUN cd /tmp/dev && npm install --frozen-lockfile
+
+RUN mkdir -p /tmp/prod
+COPY ${frontend_path}package.json ${frontend_path}package-lock.json /tmp/prod/
+RUN cd /tmp/prod && npm install --frozen-lockfile --production
+
+FROM builder AS prerelease
+COPY --from=install /tmp/dev/node_modules node_modules
+RUN npx pkg ./node_modules/@import-meta-env/cli/bin/import-meta-env.js \
+  --target node18-alpine-x64 \
+  --output import-meta-env
+
+COPY . .
+
+
+ENV NODE_ENV=production
+RUN cd ${frontend_path} && npm run build
+COPY ${frontend_path}dist .
+
+
+FROM nginx:alpine 
+RUN mkdir /app
+COPY --from=prerelease /app/dist/ /usr/share/nginx/html
+COPY --from=prerelease /app/import-meta-env /usr/share/nginx/import-meta-env 
+
+COPY ${env_file} /app/.env.example
+COPY start.sh /app/start.sh
+COPY nginx.conf /etc/nginx/nignx.conf
+
+EXPOSE 8081
+ENTRYPOINT ["sh", "/app/start.sh"]
+# CMD ["nginx", "-g", "daemon off;"]
