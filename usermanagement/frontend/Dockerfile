@@ -13,7 +13,6 @@ RUN npx pkg ./node_modules/@import-meta-env/cli/bin/import-meta-env.js -t node18
 
 FROM nginx:1.22.0-alpine as production-stage
 RUN mkdir /app
-
 COPY --from=build-stage /app/dist /app/dist
 COPY --from=build-stage /app/import-meta-env /app/import-meta-env
 
@@ -21,4 +20,5 @@ COPY .env /app/.env
 COPY start.sh /app/start.sh
 COPY ./nginx.conf /etc/nginx/nginx.conf
 
+EXPOSE 8081
 ENTRYPOINT ["sh","/app/start.sh"]

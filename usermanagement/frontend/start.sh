@@ -6,4 +6,5 @@ cd /app
 ./import-meta-env -x .env
 
 cd /app/dist/
+cp -r * /usr/share/nginx/html/
 nginx -g "daemon off;"

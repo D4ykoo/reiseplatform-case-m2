@@ -6,7 +6,7 @@ services:
     image: postgres
     container_name: usermanagement-db
     restart: always
-
+    
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: usermanagement
@@ -26,7 +26,7 @@ services:
       - dbnet
 
   usermanagement-backend:
-    image: dak4408/travma-usermanagement-backend:latest
+    image: usermanagement-backend:latest
     container_name: usermanagement-backend
     restart: always
     depends_on:
@@ -65,7 +65,7 @@ services:
       - dbnet
   
   frontend:
-    image: dak4408/travma-usermanagement-frontend:latest
+    image: usermanagement-frontend:latest
     container_name: usermanagement-frontend
     restart: always
     environment:

@@ -1,15 +1,10 @@
 # How to run
-https://github.com/runtime-env/import-meta-env/blob/main/packages/examples/vite-alpine-example/src/main.js
-
-https://medium.com/rockedscience/how-import-meta-env-saved-us-hours-of-deployment-21c7548c3cf4
-
-https://import-meta-env.org/guide/getting-started/runtime-transform.html
-
-https://github.com/runtime-env/import-meta-env/blob/main/packages/examples/docker-starter-example/start.sh
 
 ### Configuration
 
 In the [.env](.env) file of the this frontend directory. It will also affect the docker environments.
+
+**IMPORTANT** When running *not* in AIO mode (docker compose in the repository root), change the base in [vite.config.ts](vite.config.ts) to something like `/`. The base property represents the `base href="/users/` tag in html.
 
 ## Bare Metal
 
