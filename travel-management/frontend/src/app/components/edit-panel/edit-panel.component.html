@@ -1,13 +1,24 @@
 <div class="card">
-    <p-tabMenu [model]="items" [(activeItem)]="activeItem"></p-tabMenu>
+  <p-tabMenu [model]="items" [(activeItem)]="activeItem"></p-tabMenu>
 </div>
 
 <div class="formgrid grid">
-    <div class="field col-12 md:col-12" style="margin-top: 1%;">
-        <label for="hotel">Seclet Type to edit:</label>
-        <p-dropdown id="hotel" [options]="editType" [(ngModel)]="selectedType" optionLabel="name"
-            [style]="{'width':'100%'}"></p-dropdown>
-    </div>
+  <div class="field col-12 md:col-12" style="margin-top: 1%">
+    <label for="hotel">Seclet Type to edit:</label>
+    <p-dropdown
+      id="hotel"
+      [options]="editType"
+      [(ngModel)]="selectedType"
+      optionLabel="name"
+      [style]="{ width: '100%' }"
+    ></p-dropdown>
+  </div>
 </div>
-<app-hotel-edit *ngIf="selectedType.id===1" [editorMode]="activeItem.label"></app-hotel-edit>
-<app-travel-offer-edit *ngIf="selectedType.id===2"[editorMode]="activeItem.label"></app-travel-offer-edit>
+<app-hotel-edit
+  *ngIf="selectedType.id === 1"
+  [editorMode]="activeItem.label"
+></app-hotel-edit>
+<app-travel-offer-edit
+  *ngIf="selectedType.id === 2"
+  [editorMode]="activeItem.label"
+></app-travel-offer-edit>
