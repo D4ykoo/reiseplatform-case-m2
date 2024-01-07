@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: travelmngt-web-config
+data:
+  API_URL_FR: "http://localhost:8086/api/v1/"
+  CHECKOUT_URL: "http://localhost:8083/cart"
+  LOGIN_URL: "http://localhost:8081/login"
+  MONITOR_URL: "http://localhost:8087/"

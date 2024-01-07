@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: travelmngt-web
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: traefik
+  rules:
+      http:
+        paths:
+          - pathType: Prefix
+            path: /(/|$)(.*)
+            backend:
+              service:
+                name: travelmngt-web-service
+                port:
+                  number: 8085
