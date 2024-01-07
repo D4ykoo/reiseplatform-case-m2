@@ -9,8 +9,9 @@ use actix_cors::Cors;
 use actix_web::{
     delete, get,
     http::StatusCode,
+    put,
     web::{self, Data},
-    App, HttpRequest, HttpResponse, HttpServer, put,
+    App, HttpRequest, HttpResponse, HttpServer,
 };
 use checkout_db::PostgresPool;
 use message_service::MessageProducer;
@@ -35,24 +36,35 @@ async fn get_cart(
                 CombinedCartResponse::from_db_combined_cart(result);
 
             // may need the index in the future
-            for (_, hotel) in combined_cart_response.hotel.as_mut().unwrap().iter_mut().enumerate() {
+            for (_, hotel) in combined_cart_response
+                .hotel
+                .as_mut()
+                .unwrap()
+                .iter_mut()
+                .enumerate()
+            {
                 hotel.add_travel_slice(travel_slice.clone().unwrap());
             }
 
+            producer
+                .send_message(&format!("Get cart {}", cart_id))
+                .await;
 
             return HttpResponse::Ok()
                 .status(StatusCode::OK)
                 .json(combined_cart_response);
         }
         None => {
+            producer
+                .send_message(&format!("Could not find cart {}", cart_id))
+                .await;
+
             return HttpResponse::NotFound()
                 .status(StatusCode::NOT_FOUND)
                 .json("Could not find cart");
         }
-
     }
 }
-
 
 #[delete("/cart/{cart_id}")]
 async fn delete_cart(
@@ -84,7 +96,11 @@ async fn delete_cart(
 }
 
 #[put("/addtocart/{user_id}/{hotel_id}/{travel_id}")]
-async fn add_to_cart(pool: web::Data<PostgresPool>, req: HttpRequest) -> HttpResponse {
+async fn add_to_cart(
+    pool: web::Data<PostgresPool>,
+    producer: web::Data<MessageProducer>,
+    req: HttpRequest,
+) -> HttpResponse {
     let user_id: i32 = req.match_info().query("user_id").parse().unwrap();
     let hotel_id: i32 = req.match_info().query("hotel_id").parse().unwrap();
     let travel_id: i32 = req.match_info().query("travel_id").parse().unwrap();
@@ -93,6 +109,14 @@ async fn add_to_cart(pool: web::Data<PostgresPool>, req: HttpRequest) -> HttpRes
     let cookie = req.cookie("authTravel");
 
     if cookie.is_none() {
+        producer
+            .send_message(&format!(
+                "Unauthorized user {} with cookie {}",
+                user_id,
+                &cookie.unwrap()
+            ))
+            .await;
+
         return HttpResponse::Unauthorized()
             .status(StatusCode::UNAUTHORIZED)
             .finish();
@@ -110,6 +134,14 @@ async fn add_to_cart(pool: web::Data<PostgresPool>, req: HttpRequest) -> HttpRes
             checkout_db::models::NewCart::create(Some(user_id), None, None),
         );
         cart_id = checkout_db::get_cart_id(&mut conn, &user_id);
+
+        producer
+            .send_message(&format!(
+                "Created cart for user {} with cart id {}",
+                user_id,
+                &cart_id.as_ref().unwrap()
+            ))
+            .await;
     }
 
     let cart_id = cart_id.unwrap();
@@ -127,9 +159,22 @@ async fn add_to_cart(pool: web::Data<PostgresPool>, req: HttpRequest) -> HttpRes
 
     match res {
         Ok(_) => {
+            producer
+                .send_message(&format!(
+                    "Added hotel {} and travel slice {} to cart {}",
+                    hotel_id, travel_id, cart_id
+                ))
+                .await;
             return HttpResponse::Ok().status(StatusCode::OK).finish();
         }
         Err(e) => {
+            producer
+                .send_message(&format!(
+                    "Could not add hotel {} and travel slice {} to cart {}",
+                    hotel_id, travel_id, cart_id
+                ))
+                .await;
+
             return HttpResponse::NotFound()
                 .status(StatusCode::INTERNAL_SERVER_ERROR)
                 .json(e.to_string());
@@ -138,20 +183,37 @@ async fn add_to_cart(pool: web::Data<PostgresPool>, req: HttpRequest) -> HttpRes
 }
 
 #[delete("/entry/{cart_id}/{hotel_id}/{travel_id}")]
-async fn delete_cart_entry(pool: web::Data<PostgresPool>, req: HttpRequest) -> HttpResponse {
+async fn delete_cart_entry(
+    pool: web::Data<PostgresPool>,
+    producer: web::Data<MessageProducer>,
+    req: HttpRequest,
+) -> HttpResponse {
     let cart_id: i32 = req.match_info().query("cart_id").parse().unwrap();
     let hotel_id: i32 = req.match_info().query("hotel_id").parse().unwrap();
     let travel_id: i32 = req.match_info().query("travel_id").parse().unwrap();
 
     let mut conn = pool.get().expect("Could not connect to db from pool");
 
-    let res = checkout_db::remove_hotel_and_travel_slice(&mut conn, &cart_id, &hotel_id, &travel_id);
+    let res =
+        checkout_db::remove_hotel_and_travel_slice(&mut conn, &cart_id, &hotel_id, &travel_id);
 
     match res {
         Ok(_) => {
+            producer
+                .send_message(&format!(
+                    "Deleted hotel {} and travel slice {} from cart {}",
+                    hotel_id, travel_id, cart_id
+                ))
+                .await;
             return HttpResponse::Ok().status(StatusCode::OK).finish();
         }
         Err(e) => {
+            producer
+                .send_message(&format!(
+                    "Could not delete hotel {} and travel slice {} from cart {}",
+                    hotel_id, travel_id, cart_id
+                ))
+                .await;
             return HttpResponse::NotFound()
                 .status(StatusCode::INTERNAL_SERVER_ERROR)
                 .json(e.to_string());
@@ -171,7 +233,7 @@ async fn main() -> std::io::Result<()> {
         .expect("API_PORT must be set")
         .parse()
         .unwrap();
-    
+
     let pool = checkout_db::get_pool();
     let migrations_res = checkout_db::init_migrations(&mut pool.get().unwrap());
 
@@ -179,15 +241,11 @@ async fn main() -> std::io::Result<()> {
         panic!("Could not run migrations");
     }
 
-
-
-
     let mut producer = MessageProducer { producer: None };
     let _ = producer.init_message_producer();
 
     producer.send_message("Starting checkout webserver").await;
-    
-    
+
     HttpServer::new(move || {
         let cors = Cors::permissive();
 
@@ -201,8 +259,7 @@ async fn main() -> std::io::Result<()> {
                     .service(get_cart)
                     .service(delete_cart)
                     .service(add_to_cart)
-                    .service(delete_cart_entry)
-                    ,
+                    .service(delete_cart_entry),
                 // if more versions of the api are needed, they can be added here
                 // web::scope("/api/v2/checkout")
                 //     .service(get_cart)
