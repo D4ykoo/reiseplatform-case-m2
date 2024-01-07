@@ -128,7 +128,7 @@ async fn add_to_cart(
 
     let mut cart_id = checkout_db::get_cart_id(&mut conn, &user_id);
 
-    if !cart_id.is_ok() {
+    if cart_id.is_err() {
         let _ = checkout_db::create_cart(
             &mut conn,
             checkout_db::models::NewCart::create(Some(user_id), None, None),
@@ -242,7 +242,7 @@ async fn main() -> std::io::Result<()> {
     }
 
     let mut producer = MessageProducer { producer: None };
-    let _ = producer.init_message_producer();
+    producer.init_message_producer();
 
     producer.send_message("Starting checkout webserver").await;
 
