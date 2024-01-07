@@ -7,4 +7,4 @@ spec:
     app: usermanagement-backend-service
     tier: backend
   ports:
-  - port: 8084
+  - port: 8082

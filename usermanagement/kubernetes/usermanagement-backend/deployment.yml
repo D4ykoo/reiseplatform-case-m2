@@ -52,5 +52,5 @@ metadata:
               - name: PRODUCTION
                 value: "false"
             ports:
-              - name: http-usermangement-backend
-                containerPort: 8084
+              - name: http-usermanagement-backend
+                containerPort: 8082
