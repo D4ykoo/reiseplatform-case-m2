@@ -18,16 +18,32 @@ use message_service::MessageProducer;
 
 use crate::dto::CombinedCartResponse;
 
-#[get("/{cart_id}")]
+#[get("/{user_id}")]
 async fn get_cart(
     pool: Data<PostgresPool>,
     producer: web::Data<MessageProducer>,
     req: HttpRequest,
 ) -> HttpResponse {
-    let cart_id: i32 = req.match_info().query("cart_id").parse().unwrap();
+    let user_id: i32 = req.match_info().query("user_id").parse().unwrap();
 
     let mut conn = pool.get().expect("Could not connect to db from pool");
-    let res = checkout_db::get_cart_content(&mut conn, &cart_id);
+
+    let cart_id = checkout_db::get_cart_id(&mut conn, &user_id);
+
+    if cart_id.is_err() {
+        producer
+            .send_message(&format!(
+                "Could not find cart for user {}",
+                user_id
+            ))
+            .await;
+
+        return HttpResponse::NotFound()
+            .status(StatusCode::NOT_FOUND)
+            .json("Could not find cart");
+    }
+
+    let res = checkout_db::get_cart_content(&mut conn, &cart_id.as_ref().unwrap());
 
     match res {
         Some(result) => {
@@ -47,7 +63,7 @@ async fn get_cart(
             }
 
             producer
-                .send_message(&format!("Get cart {}", cart_id))
+                .send_message(&format!("Get cart {}", cart_id.unwrap()))
                 .await;
 
             return HttpResponse::Ok()
@@ -56,7 +72,7 @@ async fn get_cart(
         }
         None => {
             producer
-                .send_message(&format!("Could not find cart {}", cart_id))
+                .send_message(&format!("Could not find cart {}", cart_id.unwrap()))
                 .await;
 
             return HttpResponse::NotFound()
