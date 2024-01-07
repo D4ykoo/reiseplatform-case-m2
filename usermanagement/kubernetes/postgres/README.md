@@ -3,8 +3,13 @@
 kubectl apply -f pv.yml
 ```
 
+
 ```bash
-helm install postgres-usermanagement oci://registry-1.docker.io/bitnamicharts/postgresql -n usermangement --values values.yml
+helm repo add bitnami https://charts.bitnami.com/bitnami
+```
+
+```bash
+helm install postgres-usermanagement bitnami/postgresql -n usermanagement --values values.yml
 ```
 
 Notes:

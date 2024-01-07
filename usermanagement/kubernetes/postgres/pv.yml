@@ -6,4 +6,9 @@ metadata:
   labels:
     type: local
 spec:
-  storageClassName: ""
+  storageClassName: "standard"
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

@@ -1,15 +1,15 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: usermanagement-web-ingress
+  name: usermanagement-app-ingress
 spec:
   rules:
     - http:
         paths:
           - pathType: Prefix
-            path: /users/(/|$)(.*)
+            path: /api/(/|$)(.*)
             backend:
               service:
-                name: usermanagement-web-service
+                name: usermanagement-app-service
                 port:
                   number: 8082

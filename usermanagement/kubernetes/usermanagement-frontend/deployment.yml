@@ -4,7 +4,7 @@ metadata:
   name: usermanagement-web
   labels:
     app: usermanagement-web
-  spec:
+spec:
     replicas: 1
     selector:
       matchLabels:
@@ -26,8 +26,8 @@ metadata:
                 value: http://localhost:8083/cart
               - name: VITE_TRAVELMANAGEMENT_URL
                 value: http://localhost:8085/travma
-              -name: VITE_MONITORING_URL
+              - name: VITE_MONITORING_URL
                 value: http://localhost:8087/*
             ports:
-              - name: usermanagement-web
+              - name: http
                 containerPort: 8081

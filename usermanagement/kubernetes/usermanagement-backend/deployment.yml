@@ -4,7 +4,7 @@ metadata:
   name: usermanagement-backend
   labels:
     app: usermanagement-backend
-  spec:
+spec:
     replicas: 1
     selector:
       matchLabels:
@@ -52,5 +52,5 @@ metadata:
               - name: PRODUCTION
                 value: "false"
             ports:
-              - name: http-usermanagement-backend
+              - name: http
                 containerPort: 8082

@@ -1,3 +1,8 @@
+# IMPORTANT
+May not required e.g.
+* when using minikube -> just activate addon
+* docker desktop
+
 #### 1. Add Repo
 ```bash
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
