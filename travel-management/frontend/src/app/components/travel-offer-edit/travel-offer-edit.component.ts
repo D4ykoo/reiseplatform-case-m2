@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { Hotel } from '../../models/hotel';
 import { FormsModule } from '@angular/forms';
@@ -17,37 +23,46 @@ import { MessageService } from 'primeng/api';
 @Component({
   selector: 'app-travel-offer-edit',
   standalone: true,
-  imports: [DropdownModule, CommonModule, FormsModule, InputNumberModule, CalendarModule, EditorModule, ToastModule],
+  imports: [
+    DropdownModule,
+    CommonModule,
+    FormsModule,
+    InputNumberModule,
+    CalendarModule,
+    EditorModule,
+    ToastModule,
+  ],
   templateUrl: './travel-offer-edit.component.html',
   styleUrl: './travel-offer-edit.component.css',
-  providers: [MessageService]
+  providers: [MessageService],
 })
 export class TravelOfferEditComponent implements OnInit, OnChanges {
-
   @Input()
   editorMode!: string | undefined;
 
   hotels!: Hotel[];
   selectedHotel: Hotel | undefined;
   travels!: Travel[];
-  selectedTravel!: Travel | undefined;;
+  selectedTravel!: Travel | undefined;
   price!: number;
   public rangeDates: Date[] | undefined;
   description: string | undefined;
 
-  constructor(private readonly httpClient: HttpClient, private messageService: MessageService) {
-  }
-
+  constructor(
+    private readonly httpClient: HttpClient,
+    private messageService: MessageService,
+  ) {}
 
   ngOnInit(): void {
     this.setup();
   }
 
   public setup() {
-    lastValueFrom(this.httpClient.get(environment.Hotel_API + "hotels")).then((hotels) => {
-      if (hotels)
-        this.hotels = (hotels as Hotel[])
-    })
+    lastValueFrom(this.httpClient.get(environment.Hotel_API + 'hotels')).then(
+      (hotels) => {
+        if (hotels) this.hotels = hotels as Hotel[];
+      },
+    );
   }
   submit() {
     let from = new Date();
@@ -57,31 +72,67 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
       from = this.rangeDates[0];
       to = this.rangeDates[1];
       if (!to) {
-        to = from
+        to = from;
       }
     }
-    if (this.editorMode == "New") {
-      let createTravel: CreateTravel = {
-        description: this.description as string, from: from.toISOString(), to: to.toISOString(), price: this.price, vendorid: 0, vendorname: ""
+    if (this.editorMode == 'New') {
+      const createTravel: CreateTravel = {
+        description: this.description as string,
+        from: from.toISOString(),
+        to: to.toISOString(),
+        price: this.price,
+        vendorid: 0,
+        vendorname: '',
       };
-      lastValueFrom(this.httpClient.post(environment.Hotel_API + "hotels/" + this.selectedHotel?.id + "/travels", createTravel)).then((res) => {
-        this.clear();
-        if (res) {
-          this.messageService.add({
-            severity: 'success', summary: 'Success', detail: 'The hotel offer has been created (' + (res as Travel).id + ')'
-          })
-        }
-      }).catch((err) => this.handleAuthorizationError(err))
-    }
-    if (this.editorMode == "Edit") {
-      let updateTravel: CreateTravel = {
-        description: this.description as string, from: from.toISOString(), to: to.toISOString(), price: this.price, vendorid: 0, vendorname: ""
-      };
-      lastValueFrom(this.httpClient.put(environment.Hotel_API + "hotels/" + this.selectedHotel?.id + "/travels/" + this.selectedTravel?.id, updateTravel)).then(
-        (res) => {
+      lastValueFrom(
+        this.httpClient.post(
+          environment.Hotel_API +
+            'hotels/' +
+            this.selectedHotel?.id +
+            '/travels',
+          createTravel,
+        ),
+      )
+        .then((res) => {
+          this.clear();
           if (res) {
-            let tmp = (res as Travel)
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Hotel offer has been updated' });
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail:
+                'The hotel offer has been created (' + (res as Travel).id + ')',
+            });
+          }
+        })
+        .catch((err) => this.handleAuthorizationError(err));
+    }
+    if (this.editorMode == 'Edit') {
+      const updateTravel: CreateTravel = {
+        description: this.description as string,
+        from: from.toISOString(),
+        to: to.toISOString(),
+        price: this.price,
+        vendorid: 0,
+        vendorname: '',
+      };
+      lastValueFrom(
+        this.httpClient.put(
+          environment.Hotel_API +
+            'hotels/' +
+            this.selectedHotel?.id +
+            '/travels/' +
+            this.selectedTravel?.id,
+          updateTravel,
+        ),
+      )
+        .then((res) => {
+          if (res) {
+            const tmp = res as Travel;
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Hotel offer has been updated',
+            });
             if (this.selectedTravel) {
               this.selectedTravel.id = tmp.id;
               this.selectedTravel.createdat = tmp.createdat;
@@ -97,7 +148,8 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
               this.selectedTravel = tmp;
             }
           }
-        }).catch((err) => this.handleAuthorizationError(err))
+        })
+        .catch((err) => this.handleAuthorizationError(err));
     }
   }
 
@@ -105,42 +157,55 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
     if (this.selectedTravel) {
       this.description = this.selectedTravel.description;
       this.price = this.selectedTravel.price;
-      this.rangeDates = [new Date(this.selectedTravel.from), new Date(this.selectedTravel.from)];
+      this.rangeDates = [
+        new Date(this.selectedTravel.from),
+        new Date(this.selectedTravel.from),
+      ];
     }
   }
 
   loadTravels() {
     if (this.editorMode == 'Edit' && this.selectedHotel) {
-      this.travels = this.selectedHotel.travels
+      this.travels = this.selectedHotel.travels;
       this.selectedTravel = undefined;
     }
   }
 
   loadTraveldata() {
-    if (this.editorMode == 'Edit' && this.selectedHotel && this.selectedTravel) {
+    if (
+      this.editorMode == 'Edit' &&
+      this.selectedHotel &&
+      this.selectedTravel
+    ) {
       this.description = this.selectedTravel.description;
       this.price = this.selectedTravel.price;
-      this.rangeDates = [new Date(this.selectedTravel.from), new Date(this.selectedTravel.to)];
+      this.rangeDates = [
+        new Date(this.selectedTravel.from),
+        new Date(this.selectedTravel.to),
+      ];
     }
-
   }
 
   clear() {
-    lastValueFrom(this.httpClient.get(environment.Hotel_API + "hotels")).then(res => {
-      if (res)
-        this.hotels = (res as Hotel[]);
-    })
+    lastValueFrom(this.httpClient.get(environment.Hotel_API + 'hotels')).then(
+      (res) => {
+        if (res) this.hotels = res as Hotel[];
+      },
+    );
     this.selectedHotel = undefined;
-    this.description = "";
+    this.description = '';
     this.price = 0;
-    this.rangeDates = new Array();
-    this.travels = new Array()
+    this.rangeDates = [];
+    this.travels = [];
     this.selectedTravel = undefined;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     const mode = changes['editorMode'];
-    if (mode.currentValue != mode.previousValue && mode.currentValue == "Edit") {
+    if (
+      mode.currentValue != mode.previousValue &&
+      mode.currentValue == 'Edit'
+    ) {
       this.setup();
     } else {
       this.clear();
@@ -148,29 +213,45 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
   }
   delete() {
     if (this.selectedHotel && this.selectedTravel) {
-      lastValueFrom(this.httpClient.delete(environment.Hotel_API + "hotels/" + this.selectedHotel?.id + "/travels/" + this.selectedTravel.id)).then(
-        (e) => {
+      lastValueFrom(
+        this.httpClient.delete(
+          environment.Hotel_API +
+            'hotels/' +
+            this.selectedHotel?.id +
+            '/travels/' +
+            this.selectedTravel.id,
+        ),
+      )
+        .then(() => {
           this.clear();
-          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Hotel offer has been deleted' });
-        }).catch((err) => this.handleAuthorizationError(err));
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Hotel offer has been deleted',
+          });
+        })
+        .catch((err) => this.handleAuthorizationError(err));
     }
   }
 
   async handleAuthorizationError(err: HttpErrorResponse) {
     if (err.status == 401) {
-      console.error("Invalid Authorization: " + err.message);
-      this.messageService.add({ severity: 'error', summary: 'Invalid Authorization', detail: 'Redirect to login page' });
+      console.error('Invalid Authorization: ' + err.message);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Invalid Authorization',
+        detail: 'Redirect to login page',
+      });
       await this.delay(3000);
       let url = environment.Login_URL as unknown as string;
-      url = url + "?name=travmngt";
-      window.open(url, "_self");
+      url = url + '?name=travmngt';
+      window.open(url, '_self');
     } else {
-      console.error("ERROR:", err)
+      console.error('ERROR:', err);
     }
   }
 
   delay(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
-
 }

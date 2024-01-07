@@ -8,10 +8,9 @@ describe('HotelEditComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HotelEditComponent]
-    })
-    .compileComponents();
-    
+      imports: [HotelEditComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(HotelEditComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

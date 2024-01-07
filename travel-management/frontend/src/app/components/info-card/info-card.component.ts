@@ -14,41 +14,57 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 @Component({
   selector: 'app-info-card',
   standalone: true,
-  imports: [CardModule, ButtonModule, DialogModule, CommonModule, GalleriaModule, FormsModule,DataViewModule,TagModule],
+  imports: [
+    CardModule,
+    ButtonModule,
+    DialogModule,
+    CommonModule,
+    GalleriaModule,
+    FormsModule,
+    DataViewModule,
+    TagModule,
+  ],
   templateUrl: './info-card.component.html',
-  styleUrl: './info-card.component.css'
+  styleUrl: './info-card.component.css',
 })
 export class InfoCardComponent implements OnInit {
-
   hotelOffer: Hotel | undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   responsiveOptions: any[] | undefined;
-  constructor(private offerService: OfferService,  private dialogService: DialogService, private ref: DynamicDialogRef){
-  }
+  constructor(
+    private offerService: OfferService,
+    private dialogService: DialogService,
+    private ref: DynamicDialogRef,
+  ) {}
 
   ngOnInit(): void {
     this.hotelOffer = this.offerService.getSelectedOffer();
     this.responsiveOptions = [
       {
-          breakpoint: '1024px',
-          numVisible: 5
+        breakpoint: '1024px',
+        numVisible: 5,
       },
       {
-          breakpoint: '768px',
-          numVisible: 3
+        breakpoint: '768px',
+        numVisible: 3,
       },
       {
-          breakpoint: '560px',
-          numVisible: 1
-      }
-  ];
+        breakpoint: '560px',
+        numVisible: 1,
+      },
+    ];
   }
 
-closeDialog() {
+  closeDialog() {
     this.ref.close();
-}
+  }
 
-buy(id: number) {
-  this.offerService.addToCart({hotelId: (this.hotelOffer as Hotel).id,travelId:(this.hotelOffer as Hotel).travels[id].id, userId: 0 });
-  this.closeDialog()
-}
+  buy(id: number) {
+    this.offerService.addToCart({
+      hotelId: (this.hotelOffer as Hotel).id,
+      travelId: (this.hotelOffer as Hotel).travels[id].id,
+      userId: 0,
+    });
+    this.closeDialog();
+  }
 }

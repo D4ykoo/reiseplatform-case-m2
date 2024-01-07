@@ -9,5 +9,5 @@
             [style]="{'width':'100%'}"></p-dropdown>
     </div>
 </div>
-<app-hotel-edit *ngIf="selectedType.id==1" [editorMode]="activeItem.label"></app-hotel-edit>
-<app-travel-offer-edit *ngIf="selectedType.id==2"[editorMode]="activeItem.label"></app-travel-offer-edit>
+<app-hotel-edit *ngIf="selectedType.id===1" [editorMode]="activeItem.label"></app-hotel-edit>
+<app-travel-offer-edit *ngIf="selectedType.id===2"[editorMode]="activeItem.label"></app-travel-offer-edit>

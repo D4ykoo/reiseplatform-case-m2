@@ -4,11 +4,11 @@
         <ng-template pTemplate="header">
             <p-galleria [value]="hotelOffer.pictures" [responsiveOptions]="responsiveOptions" [numVisible]="5">
                 <ng-template pTemplate="item" let-item>
-                    <img [src]="item.payload" style="width: auto; max-height: 480px;" />
+                    <img [src]="item.payload" style="width: auto; max-height: 480px;" alt="hotel pic"/>
                 </ng-template>
                 <ng-template pTemplate="thumbnail" let-item>
                     <div class="grid grid-nogutter justify-content-center">
-                        <img [src]="item.payload" style="max-width: 100px; max-height: 100px;" />
+                        <img [src]="item.payload" style="max-width: 100px; max-height: 100px;" alt="hotel pic" />
                     </div>
                 </ng-template>
             </p-galleria>
