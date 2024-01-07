@@ -258,7 +258,11 @@ async fn main() -> std::io::Result<()> {
     }
 
     let mut producer = MessageProducer { producer: None };
-    producer.init_message_producer();
+    let kafka_url = env::var("KAFKA_URL").unwrap_or("".into());
+
+    println!("Kafka url: {}", kafka_url.as_str());
+
+    producer.init_message_producer(kafka_url.as_str());
 
     producer.send_message("Starting checkout webserver").await;
 
