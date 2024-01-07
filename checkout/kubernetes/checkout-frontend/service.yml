@@ -1,0 +1,10 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: checkout-web-service
+spec:
+  selector:
+    app: checkout-web-service
+    tier: frontend
+  ports:
+  - port: 8083
