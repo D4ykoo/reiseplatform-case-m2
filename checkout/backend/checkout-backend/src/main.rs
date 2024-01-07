@@ -20,7 +20,7 @@ use crate::dto::CombinedCartResponse;
 #[get("/{cart_id}")]
 async fn get_cart(
     pool: Data<PostgresPool>,
-    // producer: web::Data<MessageProducer>,
+    producer: web::Data<MessageProducer>,
     req: HttpRequest,
 ) -> HttpResponse {
     let cart_id: i32 = req.match_info().query("cart_id").parse().unwrap();
@@ -162,6 +162,8 @@ async fn delete_cart_entry(pool: web::Data<PostgresPool>, req: HttpRequest) -> H
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
+    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
+
     let api_url = env::var("API_URL").expect("API_URL must be set");
     let srpai = api_url.as_str();
 
@@ -177,12 +179,15 @@ async fn main() -> std::io::Result<()> {
         panic!("Could not run migrations");
     }
 
-    // let mut producer = MessageProducer { producer: None };
-    // let _ = producer.init_message_producer();
-    // async send message thath is not blocking  using producer
 
-    // producer.send_message("Starting checkout webserver");
-    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
+
+
+    let mut producer = MessageProducer { producer: None };
+    let _ = producer.init_message_producer();
+
+    producer.send_message("Starting checkout webserver").await;
+    
+    
     HttpServer::new(move || {
         let cors = Cors::permissive();
 
@@ -190,7 +195,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(cors)
             .wrap(actix_web::middleware::Logger::default())
             .app_data(web::Data::new(pool.clone()))
-            // .app_data(web::Data::new(producer.clone()))
+            .app_data(web::Data::new(producer.clone()))
             .service(
                 web::scope("/api/v1/cart")
                     .service(get_cart)

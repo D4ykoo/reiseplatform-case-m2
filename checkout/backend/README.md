@@ -13,6 +13,9 @@ An up and running postgresdb. Copy the following command for creating a postgres
 ```bash
 docker run -p 8094:5432  --name checkout-backend-db --network checkout -e POSTGRES_PASSWORD=password -e POSTGRES_USER=checkout -e POSTGRES_DB=checkout -d postgres
 ```
+
+An up and running kafka. Therefore the docker compose can be used.
+ 
 ## Bare Metal
 ```bash
 cargo run

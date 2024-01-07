@@ -4,7 +4,7 @@
 //! Uses only one broker defined in the .env file.
 
 use dotenvy::dotenv;
-use rdkafka::config::ClientConfig;
+use rdkafka::config::{ClientConfig, RDKafkaLogLevel};
 use rdkafka::producer::{FutureProducer, FutureRecord};
 use serde::Serialize;
 use std::env;
@@ -26,8 +26,9 @@ impl MessageProducer {
         dotenv().ok();
 
         let future_producer: FutureProducer = ClientConfig::new()
-            .set("bootstrap.servers", &env::var("KAFKA_URL").unwrap())
+            .set("bootstrap.servers", &env::var("KAFKA_URL").unwrap_or("".into()))
             .set("message.timeout.ms", "5000")
+            .set_log_level(RDKafkaLogLevel::Debug)
             .create()
             .expect("producer creation error");
 
