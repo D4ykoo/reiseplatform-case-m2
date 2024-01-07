@@ -1,0 +1,10 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: usermanagement-web-service
+spec:
+  selector:
+    app: usermanagement-web-service
+    tier: frontend
+  ports:
+  - port: 8081

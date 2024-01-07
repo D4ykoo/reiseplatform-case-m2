@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: usermanagement-backend
+  labels:
+    app: usermanagement-backend
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: usermanagement-backend
+        tier: backend
+    template:
+      metadata:
+        labels:
+          app: usermanagement-backend
+          tier: backend
+      spec:
+        containers:
+          - name: usermanagement-backend
+            image: dak4408/usermanagement-backend:latest
+            env:
+              - name: DOMAIN
+                value: http://localhost:8081
+              - name: API_URL
+                value: http://localhost:8082
+              - name: SALT
+                value: your-secret-salt
+              - name: JWT_SECRET
+                value: your-jwt-secret
+              - name: DEBUG 
+                value: "true"
+              - name: BROKERS
+                value: localhost:9092
+              - name: TOPIC
+                value: usermanagement
+              - name: DB_HOST
+                value: localhost
+              - name: DB_PORT
+                value: "8092"
+              - name: DB_USER
+                value: usermanagement
+              - name: DB_PASSWORD
+                value: password
+              - name: DB_NAME
+                value: usermanagement
+              - name: SSL_TLS
+                value: "disable"
+              - name: TIMEZONE
+                value: "Europe/Berlin"
+              # only when using with tls 
+              - name: PRODUCTION
+                value: "false"
+            ports:
+              - name: http-usermangement-backend
+                containerPort: 8084

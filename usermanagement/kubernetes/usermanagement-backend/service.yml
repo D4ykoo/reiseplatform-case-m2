@@ -1,0 +1,10 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: usermanagement-backend-service
+spec:
+  selector:
+    app: usermanagement-backend-service
+    tier: backend
+  ports:
+  - port: 8084

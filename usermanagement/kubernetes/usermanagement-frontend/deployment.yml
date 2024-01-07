@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: usermanagement-web
+  labels:
+    app: usermanagement-web
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: usermanagement-web
+        tier: frontend
+    template:
+      metadata:
+        labels:
+          app: usermanagement-web
+          tier: frontend
+      spec:
+        containers:
+          - name: usermanagement-web
+            image: dak4408/usermanagement-frontend:latest
+            env:
+              - name: VITE_API_URL
+                value: http://localhost:8082/api/v1/
+              - name: VITE_CHECKOUT_URL
+                value: http://localhost:8083/cart
+              - name: VITE_TRAVELMANAGEMENT_URL
+                value: http://localhost:8085/travma
+              -name: VITE_MONITORING_URL
+                value: http://localhost:8087/*
+            ports:
+              - name: usermanagement-web
+                containerPort: 8081
