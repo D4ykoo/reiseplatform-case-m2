@@ -6,16 +6,18 @@ import (
 	"testing"
 )
 
-var jwtSecret = "your-fav-secret"
+var jwtSecret = "your-jwt-secret"
 
 // TestJWTBuilding calls greetings.
 // Checking for a valid return value.
 func TestJWTBuilding(t *testing.T) {
 	username := "test"
-	got, err := adapter.CreateJWT(username, jwtSecret, true)
+	var userId uint = 1
+
+	got, err := adapter.CreateJWT(username, &userId, jwtSecret, true)
 
 	// generated with: https://jwt.io
-	want := "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjY4NjYyMDgwMCwidXNlcm5hbWUiOiJ0ZXN0In0.CbmybuROnf_3ClsxXiYiTbK26Dc0e2zSwMeCZZz4guszI-q8LL6HO42HJTeAjQ0gDFRmL4PikQoP8QzdPC03yw"
+	want := "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjY4NjYyMDgwMCwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJ0ZXN0In0.j1McK-wmsGqNWQ9ir_DqT90uFFvIt7zjYbABe1Lf0iJ8wbZeaqedbTr5v2UB43ZLCySEwTx3QzROTXltzTIXoA"
 	valid, exErr := regexp.MatchString(want, got)
 	if !valid || exErr != nil {
 		t.Fatalf(`createJWT(%q) = %q, %v, want match for %#q, nil`, username, got, err, want)
@@ -23,7 +25,7 @@ func TestJWTBuilding(t *testing.T) {
 }
 
 func TestJWTValidating(t *testing.T) {
-	token := "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjY4NjYyMDgwMCwidXNlcm5hbWUiOiJ0ZXN0In0.CbmybuROnf_3ClsxXiYiTbK26Dc0e2zSwMeCZZz4guszI-q8LL6HO42HJTeAjQ0gDFRmL4PikQoP8QzdPC03yw"
+	token := "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjY4NjYyMDgwMCwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJ0ZXN0In0.j1McK-wmsGqNWQ9ir_DqT90uFFvIt7zjYbABe1Lf0iJ8wbZeaqedbTr5v2UB43ZLCySEwTx3QzROTXltzTIXoA"
 	valid, err, claims := adapter.ValidateJWT(token, jwtSecret)
 
 	if !valid || err != nil {
@@ -31,15 +33,21 @@ func TestJWTValidating(t *testing.T) {
 	}
 
 	username := "test"
+	var userId uint = 1
 	iat := 686620800
 
 	usernameClaim := string(claims["username"].(string))
+	userIdClaim := uint(claims["user_id"].(float64))
 	iatClaim := int(claims["iat"].(float64))
 
 	uRes, uErr := regexp.MatchString(usernameClaim, username)
 
 	if !uRes || uErr != nil {
 		t.Fatalf(`username claim %q does not equal the test value: %q`, usernameClaim, username)
+	}
+
+	if userIdClaim != 1 {
+		t.Fatalf(`iat claim %d does not equal the test value: %d`, userIdClaim, userId)
 	}
 
 	if iatClaim != 686620800 {
