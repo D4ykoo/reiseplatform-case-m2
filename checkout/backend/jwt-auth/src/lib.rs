@@ -15,7 +15,7 @@ pub fn validate_jwt(token: &str) -> Result<bool, jsonwebtoken::errors::Error> {
     let jwt_secret = env::var("JWT_SECRET").expect("Secret must be set");
 
     let mut val = Validation::new(Algorithm::HS512);
-    val.set_required_spec_claims(&["username", "iat"]);
+    val.set_required_spec_claims(&["username", "user_id", "iat"]);
 
     let decoded = decode::<Claims>(
         &token,
@@ -27,6 +27,22 @@ pub fn validate_jwt(token: &str) -> Result<bool, jsonwebtoken::errors::Error> {
         Ok(_) => return Ok(true),
         Err(e) => return Err(e),
     };
+}
+
+pub fn decode_jwt(token: &str) -> Result<Claims, jsonwebtoken::errors::Error> {
+    dotenv().ok();
+
+    let mut val = Validation::new(Algorithm::HS512);
+    val.set_required_spec_claims(&["username", "user_id", "iat"]);
+
+    let jwt_secret = env::var("JWT_SECRET").expect("Secret must be set");
+    let decoded = decode::<Claims>(
+        &token,
+        &DecodingKey::from_secret(jwt_secret.as_bytes()),
+        &val,
+    )?;
+
+    return Ok(decoded.claims);
 }
 
 #[cfg(test)]
