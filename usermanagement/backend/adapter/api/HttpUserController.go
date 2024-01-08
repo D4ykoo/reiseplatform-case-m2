@@ -23,7 +23,7 @@ func RegisterRequest(c *gin.Context) {
 		return
 	}
 
-	err := application.RegisterUser(user.ToUser())
+	userId, err := application.RegisterUser(user.ToUser())
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -36,7 +36,7 @@ func RegisterRequest(c *gin.Context) {
 	isProd := false
 	isProd, _ = strconv.ParseBool(os.Getenv("PRODUCTION"))
 
-	jwt, jwtErr := adapter.CreateJWT(user.Username, os.Getenv("JWT_SECRET"), false)
+	jwt, jwtErr := adapter.CreateJWT(user.Username, userId, os.Getenv("JWT_SECRET"), false)
 
 	if jwtErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -58,7 +58,7 @@ func LoginRequest(c *gin.Context) {
 		return
 	}
 
-	loginErr := application.LoginUser(user.Username, user.Password)
+	userId, loginErr := application.LoginUser(user.Username, user.Password)
 
 	if loginErr != nil {
 		if errors.Is(loginErr, errors.New("falsePassword")) {
@@ -73,7 +73,7 @@ func LoginRequest(c *gin.Context) {
 	}
 
 	// if valid create jwt
-	jwt, jwtErr := adapter.CreateJWT(user.Username, os.Getenv("JWT_SECRET"), false)
+	jwt, jwtErr := adapter.CreateJWT(user.Username, userId, os.Getenv("JWT_SECRET"), false)
 
 	if jwtErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": jwtErr.Error()})
@@ -118,7 +118,7 @@ func ResetPasswordRequest(c *gin.Context) {
 	//}
 
 	// when password ok after clicking on link
-	errUpdate := application.ResetPassword(user.Username, user.NewPassword)
+	userId, errUpdate := application.ResetPassword(user.Username, user.NewPassword)
 
 	if errUpdate != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": errUpdate.Error()})
@@ -129,7 +129,7 @@ func ResetPasswordRequest(c *gin.Context) {
 	kafka.SendEvent(model.EventPasswordReset, "user "+user.Username+"password reset")
 
 	// if valid create jwt
-	jwt, jwtErr := adapter.CreateJWT(user.Username, os.Getenv("JWT_SECRET"), false)
+	jwt, jwtErr := adapter.CreateJWT(user.Username, userId, os.Getenv("JWT_SECRET"), false)
 
 	if jwtErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": jwtErr.Error()})

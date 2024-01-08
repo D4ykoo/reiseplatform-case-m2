@@ -7,17 +7,19 @@ import (
 	"time"
 )
 
-func CreateJWT(username string, secret string, test bool) (string, error) {
+func CreateJWT(username string, userId *uint, secret string, test bool) (string, error) {
 	var token *jwt.Token
 
 	if test {
 		token = jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{
 			"username": username,
+			"user_id":  userId,
 			"iat":      time.Date(1991, 10, 5, 0, 0, 0, 0, time.UTC).Unix(),
 		})
 	} else {
 		token = jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{
 			"username": username,
+			"user_id":  userId,
 			"iat":      time.Now().Add(time.Hour * 1).Unix(),
 		})
 	}
