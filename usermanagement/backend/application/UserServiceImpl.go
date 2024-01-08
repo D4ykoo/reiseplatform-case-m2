@@ -88,38 +88,45 @@ func ListAllUser() (*[]model.User, error) {
 	return dbGorm.ListAll()
 }
 
-func RegisterUser(user model.User) error {
+func RegisterUser(user model.User) (*uint, error) {
 	user.Password = utils.HashPassword(user.Password, []byte(os.Getenv("SALT")))
 
 	err := dbGorm.Save(user)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+
+	dbUser, findErr := dbGorm.FindByUsername(user.Username)
+
+	if findErr != nil {
+		return nil, err
+	}
+
+	return &dbUser.Id, nil
 }
 
-func LoginUser(username string, password string) error {
+func LoginUser(username string, password string) (*uint, error) {
 	dbUser, err := dbGorm.FindByUsername(username)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 	salt := []byte(os.Getenv("SALT"))
 
 	isOk := utils.ComparePasswords(dbUser.Password, password, salt)
 	if !isOk {
-		return errors.New("falsePassword")
+		return nil, errors.New("falsePassword")
 	}
 
-	return nil
+	return &dbUser.Id, nil
 }
 
-func ResetPassword(username string, newPassword string) error {
+func ResetPassword(username string, newPassword string) (*uint, error) {
 	dbUser, err := dbGorm.FindByUsername(username)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	var updatedUser model.User
@@ -133,8 +140,8 @@ func ResetPassword(username string, newPassword string) error {
 	errUpdate := dbGorm.Update(dbUser.Id, updatedUser)
 
 	if errUpdate != nil {
-		return errUpdate
+		return nil, errUpdate
 	}
 
-	return nil
+	return &dbUser.Id, nil
 }
