@@ -4,6 +4,8 @@
 
 In the [.env](.env) file of the this frontend directory. It will also affect the docker environments.
 
+**IMPORTANT** When running *not* in AIO mode (docker compose in the repository root), change the base in [vite.config.ts](vite.config.ts) to something like `/`. The base property represents the `base href="/users/` tag in html.
+
 ## Bare Metal
 
 ```bash

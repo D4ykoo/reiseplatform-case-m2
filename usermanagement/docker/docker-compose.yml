@@ -2,37 +2,39 @@
 # for the usermanagement microservices 
 version: '3'
 services:
-  postgres:
+  usermanagement-db:
     image: postgres
     container_name: usermanagement-db
     restart: always
+
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: usermanagement
       POSTGRES_DB: usermanagement
+
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U travelmanagement" ]
       interval: 5s
       timeout: 5s
       retries: 10
-    ports: 
-    - "8092:5432"
-    volumes:
-      # - ./postgres-data:/var/lib/postgresql/data
-      - ./postgres-data:/data/postgres
 
-  backend:
-    image: usermanagement-backend:latest
+    volumes:
+      - usermanagement-db:/var/lib/postgresql/data
+
+    networks:
+      - usermanagementnet
+      - dbnet
+
+  usermanagement-backend:
+    image: dak4408/travma-usermanagement-backend:latest
     container_name: usermanagement-backend
     restart: always
     depends_on:
-      postgres:
+      usermanagement-db:
         condition: service_healthy
-    # not every enviroment variable needs to be set
-    # just delete the environment vars when the default is not changed
     environment:
       DOMAIN: http://localhost:8081
-      API_URL: localhost:8082
+      API_URL: :8082
       
       SALT: your-secret-salt
       JWT_SECRET: your-jwt-secret
@@ -48,38 +50,41 @@ services:
       TOPIC: usermanagement
 
       # DB
-      DB_HOST: localhost
+      DB_HOST: usermanagement-db
       DB_USER: usermanagement
       DB_PASSWORD: password
       DB_NAME: usermanagement
-      DB_PORT: 8092
+      DB_PORT: 5432
       SSL_TLS: disable
       TIMEZONE: Europe/Berlin
-    # note that this is an security issue
-    # network_mode: host
+
     ports:
       - "8082:8082"
     networks:
-      - publicnet
       - usermanagementnet
+      - dbnet
   
   frontend:
-    image: usermanagement-frontend:latest
+    image: dak4408/travma-usermanagement-frontend:latest
     container_name: usermanagement-frontend
     restart: always
     environment:
-      - VITE_API_URL: http://localhost:8082/api/v1
-      - VITE_CHECKOUT_URL: http://localhost:8083/cart
-      - VITE_TRAVELMANAGEMENT_URL: http://localhost:8085/travma
-      - VITE_USERMANAGEMENT_URL: http://localhost:8087/*
+      API_URL: http://usermanagement-backend/api/v1
+      CHECKOUT_URL: http://checkout-frontend:8083/#/cart
+      TRAVELMANAGEMENT_URL: http://travelmngt-frontend:8085/#/travma
+      MONITORING_URL: http://localhost:8087/*
+    
+    networks: 
+      - usermanagementnet
     ports:
       - "8081:80"
     volumes:
-      - "./frontend/nginx.conf:/etc/nginx/nginx.conf"
+      - "./frontend/nginx.conf:/etc/nginx/nignx.conf"
 
 volumes:
-  postgres-data:
+  usermanagement-db:
 
 networks:
   publicnet:
   usermanagementnet:
+  dbnet:

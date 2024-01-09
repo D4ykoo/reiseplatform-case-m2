@@ -1,0 +1,10 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: checkout-backend-service
+spec:
+  selector:
+    app: checkout-backend-service
+    tier: backend
+  ports:
+  - port: 8083

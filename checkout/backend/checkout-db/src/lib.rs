@@ -117,10 +117,10 @@ fn create_travel_slice(
 
     // if present, then create a new travel slice
     let new_travel_slice = NewTravelSlice::create(
-        travel_slice.vendor_name.as_deref(),
+        travel_slice.vendor_name,
         travel_slice.price,
-        travel_slice.from_date.as_deref(),
-        travel_slice.to_date.as_deref(),
+        travel_slice.from_date,
+        travel_slice.to_date,
         travel_slice.fk_checkout_hotel,
     );
 
@@ -182,12 +182,12 @@ fn delete_travel_slice(
 
 pub fn get_cart_id(conn: &mut PgConnection, userid: &i32) -> Result<i32, diesel::result::Error>{
     use self::schema::checkoutcart::dsl::*;
-    let res = checkoutcart
+    
+
+    checkoutcart
         .filter(user_id.eq(userid))
         .select(id)
-        .first(conn);
-
-    res
+        .first(conn)
 }
 
 // find hotel by cart id and hotel name

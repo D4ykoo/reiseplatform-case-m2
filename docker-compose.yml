@@ -73,6 +73,24 @@ services:
     volumes:
       - "./travel-management/frontend/nginx.conf:/etc/nginx/nginx.conf"
   
+  usermanagement-db:
+    image: postgres
+    container_name: usermanagement-db
+    environment:
+      POSTGRES_USER: usermanagement
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: usermanagement
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U usermanagement" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - usermanagement-db:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - dbnetusermanagement
+
   usermanagement-app:
     image: dak4408/travma-usermanagement-backend:latest
     container_name: usermanagement-backend
@@ -81,8 +99,8 @@ services:
       travelmngt-db:
         condition: service_healthy
     environment:
-      DOMAIN: http://localhost:8081
-      API_URL: localhost:8082
+      DOMAIN: http://usermanagement-frontend:8081
+      API_URL: :8082
       
       SALT: your-secret-salt
       JWT_SECRET: your-jwt-secret
@@ -92,30 +110,35 @@ services:
       # Gives additional information of the webserver
       DEBUG: true
       # BROKERS should be just one value
-      BROKERS: localhost:9092
+      BROKERS: kafka:9092
       TOPIC: usermanagement
       # DB
-      DB_HOST: localhost
+      DB_HOST: usermanagement-db
       DB_USER: usermanagement
       DB_PASSWORD: password
       DB_NAME: usermanagement
-      DB_PORT: 8092
+      DB_PORT: 5432
       SSL_TLS: disable
       TIMEZONE: Europe/Berlin
 
     networks:
       - privatenet
-      - dbnettravmgnt
+      - dbnetusermanagement
 
     ports:
       - "8082:8082"
 
   usermanagement-web:
     image: dak4408/travma-usermanagement-frontend:latest
-    container_name: usermanagement-frontend
+    container_name: usermanagement-web
     restart: always
+    environment:
+      API_URL: http://usermanagement-app:8082/api/v1
+      CHECKOUT_URL: http://checkout-frontend:8083/#/cart
+      TRAVELMANAGEMENT_URL: http://travelmngt-frontend:8085/#/travma
+      MONITORING_URL: http://localhost:8087/*
     ports:
-      - "8081:80"
+      - "8081:8081"
     networks:
       - privatenet
       - publicnet
@@ -233,12 +256,14 @@ services:
 
 volumes:
   travelmngt-db:
+  usermanagement-db:
   monitor-db:
   zookeeper-volume:
   kafka-volume:
 
 networks:
   dbnetmonitor:
+  dbnetusermanagement:
   dbnettravmgnt:
   privatenet:
   publicnet:

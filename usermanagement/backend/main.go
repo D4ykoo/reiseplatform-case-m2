@@ -41,10 +41,11 @@ func RunWebServer() {
 
 	router := gin.Default()
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{os.Getenv("DOMAIN")}
+	config.AllowOrigins = []string{os.Getenv("DOMAIN"), "http://usermanagement-frontend:8081"}
 	config.AllowCredentials = true
 	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
 	config.AllowHeaders = []string{"Authorization", "Origin", "Content-Type", "Accept"}
+
 	router.Use(cors.New(config))
 
 	v1 := router.Group("/api/v1")

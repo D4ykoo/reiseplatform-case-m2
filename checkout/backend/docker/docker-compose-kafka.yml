@@ -1,0 +1,53 @@
+version: "3"
+services:
+  zookeeper:
+    container_name: zookeeper
+    restart: always
+    image: docker.io/bitnami/zookeeper:3.8
+
+    volumes:
+      - "zookeeper-volume:/bitnami"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      kafka:
+
+  kafka:
+    container_name: kafka
+    restart: always
+    image: docker.io/bitnami/kafka:3.4
+
+    volumes:
+      - "kafka-volume:/bitnami"
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    depends_on:
+      - zookeeper
+    ports:
+      - 9094:9094
+    networks:
+      kafka:
+
+  kafka-topics-generator:
+    image: docker.io/bitnami/kafka:3.4
+    depends_on:
+      - kafka
+    command: >
+      bash -c
+        "sleep 5s &&
+        kafka-topics.sh --create --topic=checkout --if-not-exists --bootstrap-server=kafka:9092"
+    networks:
+      kafka:
+
+volumes:
+  kafka-volume:
+  zookeeper-volume:
+
+networks:
+  kafka:

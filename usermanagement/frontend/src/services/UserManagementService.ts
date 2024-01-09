@@ -1,5 +1,5 @@
 import Axios from "axios-observable";
-import { enviroment, headerConf } from "@/assets/config";
+import APP_CONFIG, { enviroment, headerConf } from "@/assets/config";
 import type { UpdateUser } from "@/models/UserModel";
 import { throwError, type Observable, catchError } from "rxjs";
 import type { AxiosError, AxiosResponse } from "axios";
@@ -8,7 +8,7 @@ import { UtilService } from "./UtilService";
 export class UserManagementService {
   utils = new UtilService();
 
-  apiUrl = import.meta.env.VITE_API_URL;
+  apiUrl = APP_CONFIG.apiUrl;
 
   public getSingleUserRequest(id: number) {
     return Axios.get(this.apiUrl + `/users/${id}`, headerConf).subscribe({

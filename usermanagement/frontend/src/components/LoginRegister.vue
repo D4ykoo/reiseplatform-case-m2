@@ -133,6 +133,7 @@
 </template>
 
 <script lang="ts">
+import APP_CONFIG from "@/assets/config";
 import type { LoginUser, RegisterUser } from "@/models/UserModel";
 import { LoginRegisterService } from "@/services/LoginRegisterService";
 import { ref, type Ref } from "vue";
@@ -189,7 +190,7 @@ export default {
         if (res.status === 200) {
           console.log(this.$route.query.page);
           if (this.$route.query.name === "travmngt") {
-            window.location.href = import.meta.env.VITE_TRAVELMANAGEMENT_URL;
+            window.location.href = APP_CONFIG.travelManagagementUrl;
           } else {
             this.$router.push("/users");
           }
