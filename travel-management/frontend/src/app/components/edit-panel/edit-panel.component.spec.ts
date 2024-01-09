@@ -8,10 +8,9 @@ describe('EditPanelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EditPanelComponent]
-    })
-    .compileComponents();
-    
+      imports: [EditPanelComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(EditPanelComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

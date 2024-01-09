@@ -6,22 +6,28 @@ import { BehaviorSubject } from 'rxjs';
 import { OfferCart } from '../models/offerCart';
 import { Tag } from '../models/tag';
 
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class OfferService {
-
-  private offerSubject = new BehaviorSubject<Map<number, Hotel>>(new Map<number, Hotel>)
+  private offerSubject = new BehaviorSubject<Map<number, Hotel>>(
+    new Map<number, Hotel>(),
+  );
   public offers = this.offerSubject.asObservable();
 
   private offerCart: Map<number, OfferCart> = new Map<number, OfferCart>();
 
   private currentSelectedOffer: Hotel | undefined;
 
-  constructor(private readonly httpClient: HttpClient) { }
+  constructor(private readonly httpClient: HttpClient) {}
 
-  public fetchOffers(dest: string | undefined, name: string | undefined, from: Date | undefined, to: Date | undefined, tags: Array<Tag> | undefined): void {
+  public fetchOffers(
+    dest: string | undefined,
+    name: string | undefined,
+    from: Date | undefined,
+    to: Date | undefined,
+    tags: Array<Tag> | undefined,
+  ): void {
     this.offerSubject.value.clear();
     let params = new HttpParams();
 
@@ -36,27 +42,28 @@ export class OfferService {
       params = params.append('to', to.toISOString());
     }
     if (tags) {
-      tags.forEach(tag => {
+      tags.forEach((tag) => {
         params = params.append('tags', tag.id);
       });
     }
 
-    this.httpClient.get(environment.Hotel_API + "hotels", { params: params }).subscribe((hotelsResponse) => {
-      // Show only hits
-      if (hotelsResponse && (hotelsResponse as Array<Hotel>).length > 0) {
-        (hotelsResponse as Array<Hotel>).forEach((res: Hotel) => {
-          if (res.travels.length > 0) {
-            this.offerSubject.value.set(res.id, res)
-          } else {
-            this.offerSubject.value.delete(res.id)
-          }
-        })
-        this.offerSubject.next(this.offerSubject.getValue());
-      } else {
-        this.offerSubject.next(new Map())
-      }
-    })
-
+    this.httpClient
+      .get(environment.Hotel_API + 'hotels', { params: params })
+      .subscribe((hotelsResponse) => {
+        // Show only hits
+        if (hotelsResponse && (hotelsResponse as Array<Hotel>).length > 0) {
+          (hotelsResponse as Array<Hotel>).forEach((res: Hotel) => {
+            if (res.travels.length > 0) {
+              this.offerSubject.value.set(res.id, res);
+            } else {
+              this.offerSubject.value.delete(res.id);
+            }
+          });
+          this.offerSubject.next(this.offerSubject.getValue());
+        } else {
+          this.offerSubject.next(new Map());
+        }
+      });
   }
 
   public selectOffer(id: number) {
@@ -79,11 +86,10 @@ export class OfferService {
     return Array.from(this.offerCart.values());
   }
 
-
   public addToCart(offer: OfferCart) {
     this.offerCart.set(offer.travelId, offer);
   }
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private handleError(error: any): Promise<any> {
     console.log('Interner Fehler: ' + error.message);
     return Promise.reject(error.message || error);

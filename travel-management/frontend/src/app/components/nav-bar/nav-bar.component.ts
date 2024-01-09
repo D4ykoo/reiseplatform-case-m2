@@ -9,31 +9,27 @@ import { environment } from '../../../environments/environment.development';
   standalone: true,
   imports: [ButtonModule, SidebarModule],
   templateUrl: './nav-bar.component.html',
-  styleUrl: './nav-bar.component.css'
+  styleUrl: './nav-bar.component.css',
 })
 export class NavBarComponent {
-
-navigateToStatMngt() {
-}
-navigateToUserMngt() {
-  let url = environment.Login_URL as unknown as string;
-  window.open(url,"_self");
-}
-navigateToTravelMngt() {
-  this.router.navigate(['/management']);
-}
-navigateToSearch() {
-  this.router.navigate(['/']);
-}
-  
-  sidebarVisible: boolean = false;
-  
-  constructor(private readonly router: Router){
-    
+  navigateToStatMngt() {}
+  navigateToUserMngt() {
+    const url = environment.Login_URL as unknown as string;
+    window.open(url, '_self');
+  }
+  navigateToTravelMngt() {
+    this.router.navigate(['/management']);
+  }
+  navigateToSearch() {
+    this.router.navigate(['/']);
   }
 
-  public onNavigate(){
-    let url = environment.Login_URL as unknown as string;
-    window.open(url,"_self");
-}
+  sidebarVisible: boolean = false;
+
+  constructor(private readonly router: Router) {}
+
+  public onNavigate() {
+    const url = environment.Login_URL as unknown as string;
+    window.open(url, '_self');
+  }
 }
