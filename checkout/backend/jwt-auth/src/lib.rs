@@ -39,12 +39,12 @@ pub fn decode_jwt(token: &str) -> Result<Claims, jsonwebtoken::errors::Error> {
 
     let jwt_secret = env::var("JWT_SECRET").expect("Secret must be set");
     let decoded = decode::<Claims>(
-        &token,
+        token,
         &DecodingKey::from_secret(jwt_secret.as_bytes()),
         &val,
     )?;
 
-    return Ok(decoded.claims);
+    Ok(decoded.claims)
 }
 
 #[cfg(test)]
@@ -62,6 +62,6 @@ mod tests {
     fn token_invalid() {
         let token = "eyJhbGciOIJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjY4NjYyMDgwMCwidXNlcm5hbWUiOiJ0ZXN0IiwidXNlcl9pZCI6MX0.mYk1vDz6qRcV-RjnFWdNT8uYHno3A7A7VklLerl1fQImiMGmuu-GlG-EmrI2Wf4FcIL_Svgrp2azZZf7B8DBmg";
         let result = validate_jwt(token);
-        assert!(!result.is_ok());
+        assert!(result.is_err());
     }
 }

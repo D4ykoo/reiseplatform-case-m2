@@ -74,7 +74,7 @@ async fn get_cart(
             .json("Could not find cart");
     }
 
-    let res = checkout_db::get_cart_content(&mut conn, &cart_id.as_ref().unwrap());
+    let res = checkout_db::get_cart_content(&mut conn, cart_id.as_ref().unwrap());
 
     match res {
         Some(result) => {
