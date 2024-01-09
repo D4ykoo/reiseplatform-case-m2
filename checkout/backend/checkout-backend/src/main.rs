@@ -18,13 +18,44 @@ use message_service::MessageProducer;
 
 use crate::dto::CombinedCartResponse;
 
-#[get("/{user_id}")]
+#[get("/find")]
 async fn get_cart(
     pool: Data<PostgresPool>,
     producer: web::Data<MessageProducer>,
     req: HttpRequest,
 ) -> HttpResponse {
-    let user_id: i32 = req.match_info().query("user_id").parse().unwrap();
+    let token = req.cookie("authTravel").unwrap().value().to_string();
+    let validate = jwt_auth::validate_jwt(&token);
+
+    if validate.is_err() {
+        producer
+            .send_message(&format!(
+                "Unauthorized user with token {}",
+                &token
+            ))
+            .await;
+
+        return HttpResponse::Unauthorized()
+            .status(StatusCode::UNAUTHORIZED)
+            .finish();
+    }
+
+    let claims = jwt_auth::decode_jwt(&token);
+
+    if claims.is_err() {
+        producer
+            .send_message(&format!(
+                "Unauthorized user with token {}",
+                &token
+            ))
+            .await;
+
+        return HttpResponse::Unauthorized()
+            .status(StatusCode::UNAUTHORIZED)
+            .finish();
+    }
+
+    let user_id = claims.as_ref().unwrap().user_id as i32;
 
     let mut conn = pool.get().expect("Could not connect to db from pool");
 
@@ -43,7 +74,7 @@ async fn get_cart(
             .json("Could not find cart");
     }
 
-    let res = checkout_db::get_cart_content(&mut conn, &cart_id.as_ref().unwrap());
+    let res = checkout_db::get_cart_content(&mut conn, cart_id.as_ref().unwrap());
 
     match res {
         Some(result) => {
@@ -88,6 +119,22 @@ async fn delete_cart(
     producer: web::Data<MessageProducer>,
     req: HttpRequest,
 ) -> HttpResponse {
+    let token = req.cookie("authTravel").unwrap().value().to_string();
+    let validate = jwt_auth::validate_jwt(&token);
+
+    if validate.is_err() {
+        producer
+            .send_message(&format!(
+                "Unauthorized user with token {}",
+                &token
+            ))
+            .await;
+
+        return HttpResponse::Unauthorized()
+            .status(StatusCode::UNAUTHORIZED)
+            .finish();
+    }
+
     let cart_id: i32 = req.match_info().query("cart_id").parse().unwrap();
     let mut conn = pool.get().expect("Could not connect to db from pool");
 
@@ -117,6 +164,22 @@ async fn add_to_cart(
     producer: web::Data<MessageProducer>,
     req: HttpRequest,
 ) -> HttpResponse {
+    let token = req.cookie("authTravel").unwrap().value().to_string();
+    let validate = jwt_auth::validate_jwt(&token);
+
+    if validate.is_err() {
+        producer
+            .send_message(&format!(
+                "Unauthorized user with token {}",
+                &token
+            ))
+            .await;
+
+        return HttpResponse::Unauthorized()
+            .status(StatusCode::UNAUTHORIZED)
+            .finish();
+    }
+
     let user_id: i32 = req.match_info().query("user_id").parse().unwrap();
     let hotel_id: i32 = req.match_info().query("hotel_id").parse().unwrap();
     let travel_id: i32 = req.match_info().query("travel_id").parse().unwrap();
@@ -204,6 +267,22 @@ async fn delete_cart_entry(
     producer: web::Data<MessageProducer>,
     req: HttpRequest,
 ) -> HttpResponse {
+    let token = req.cookie("authTravel").unwrap().value().to_string();
+    let validate = jwt_auth::validate_jwt(&token);
+
+    if validate.is_err() {
+        producer
+            .send_message(&format!(
+                "Unauthorized user with token {}",
+                &token
+            ))
+            .await;
+
+        return HttpResponse::Unauthorized()
+            .status(StatusCode::UNAUTHORIZED)
+            .finish();
+    }
+
     let cart_id: i32 = req.match_info().query("cart_id").parse().unwrap();
     let hotel_id: i32 = req.match_info().query("hotel_id").parse().unwrap();
     let travel_id: i32 = req.match_info().query("travel_id").parse().unwrap();
