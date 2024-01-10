@@ -12,6 +12,7 @@ use crate::schema::user_event;
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct UserEvent {
     pub id: i32,
+    #[serde(rename = "type")] 
     pub type_: String,
     pub log: Option<String>,
     pub time: DateTime<Utc>,
@@ -37,6 +38,7 @@ impl NewUserEvent {
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct CheckoutEvent {
     pub id: i32,
+    #[serde(rename = "type")] 
     pub type_: String,
     pub log: Option<String>,
     pub time: DateTime<Utc>,
@@ -62,6 +64,7 @@ impl NewCheckoutEvent {
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct HotelEvent {
     pub id: i32,
+    #[serde(rename = "type")] 
     pub type_: String,
     pub log: Option<String>,
     pub time: DateTime<Utc>,
