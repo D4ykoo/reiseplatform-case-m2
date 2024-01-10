@@ -99,7 +99,7 @@ async fn get_user_events(
     State(pool): State<deadpool_diesel::postgres::Pool>,
     querry: Query<Period>,
 ) -> Result<Json<Vec<UserEvent>>, (StatusCode, String)> {
-    //validate_auth(cookies)?;
+    validate_auth(cookies)?;
 
     let period = querry.0;
 
