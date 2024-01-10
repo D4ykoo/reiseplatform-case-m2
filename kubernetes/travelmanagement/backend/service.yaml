@@ -1,0 +1,10 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: travelmngt-app-service
+spec:
+  selector:
+    app: travelmngt-app
+    tier: backend
+  ports:
+  - port: 8086
