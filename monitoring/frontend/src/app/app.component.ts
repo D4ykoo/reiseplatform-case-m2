@@ -5,23 +5,23 @@ import { TabMenuModule } from 'primeng/tabmenu';
 import { MenuItem } from 'primeng/api';
 import { TableModule } from 'primeng/table';
 import { Subscription, interval, startWith, switchMap } from 'rxjs';
-import { UserService } from './service/user.service';
+import { EventService } from './service/event.service';
 import { Events } from './model/response';
-import { NavBarComponent } from "./components/nav-bar/nav-bar.component";
+import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 
 @Component({
-    selector: 'app-root',
-    standalone: true,
-    templateUrl: './app.component.html',
-    styleUrl: './app.component.css',
-    imports: [
-        CommonModule,
-        RouterOutlet,
-        TabMenuModule,
-        TabMenuModule,
-        TableModule,
-        NavBarComponent
-    ]
+  selector: 'app-root',
+  standalone: true,
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.css',
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    TabMenuModule,
+    TabMenuModule,
+    TableModule,
+    NavBarComponent,
+  ],
 })
 export class AppComponent implements OnInit, OnDestroy {
   items: MenuItem[] | undefined;
@@ -31,7 +31,7 @@ export class AppComponent implements OnInit, OnDestroy {
   checkoutEvents!: Events[];
   activeItem: MenuItem | undefined;
 
-  constructor(private userService: UserService) {}
+  constructor(private eventService: EventService) {}
 
   ngOnInit() {
     this.items = [
@@ -52,7 +52,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.timeInterval = interval(5000)
           .pipe(
             startWith(0),
-            switchMap(() => this.userService.getUserEvents()),
+            switchMap(() => this.eventService.getUserEvents()),
           )
           .subscribe((res) => {
             if (res.ok) {
@@ -67,7 +67,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.timeInterval = interval(5000)
           .pipe(
             startWith(0),
-            switchMap(() => this.userService.getCheckoutEvents()),
+            switchMap(() => this.eventService.getCheckoutEvents()),
           )
           .subscribe((res) => {
             if (res.ok) {
@@ -82,7 +82,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.timeInterval = interval(5000)
           .pipe(
             startWith(0),
-            switchMap(() => this.userService.getTravelEvents()),
+            switchMap(() => this.eventService.getTravelEvents()),
           )
           .subscribe((res) => {
             if (res.ok) {

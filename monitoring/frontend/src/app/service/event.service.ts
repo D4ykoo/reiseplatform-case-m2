@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UserService {
+export class EventService {
   constructor(private httpClient: HttpClient) {}
   public getUserEvents() {
     /* from:Date, to:Date
@@ -12,7 +13,7 @@ export class UserService {
     params = params.append('from', from.toISOString());
     params = params.append('to', to.toISOString());*/
 
-    return this.httpClient.get('http://localhost:3000/api/v1/user-events', {
+    return this.httpClient.get(environment.Monitor_API + 'user-events', {
       observe: 'response',
     });
   }
@@ -23,7 +24,7 @@ export class UserService {
      params = params.append('from', from.toISOString());
      params = params.append('to', to.toISOString());*/
 
-    return this.httpClient.get('http://localhost:3000/api/v1/hotel-events', {
+    return this.httpClient.get(environment.Monitor_API + 'hotel-events', {
       observe: 'response',
     });
   }
@@ -34,7 +35,7 @@ export class UserService {
      params = params.append('from', from.toISOString());
      params = params.append('to', to.toISOString());*/
 
-    return this.httpClient.get('http://localhost:3000/api/v1/checkout-events', {
+    return this.httpClient.get(environment.Monitor_API + 'checkout-events', {
       observe: 'response',
     });
   }

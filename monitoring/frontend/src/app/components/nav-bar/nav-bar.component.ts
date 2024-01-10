@@ -12,7 +12,6 @@ import { environment } from '../../../environments/environment.development';
   styleUrl: './nav-bar.component.css',
 })
 export class NavBarComponent {
-
   navigateToUserMngt() {
     const url = environment.Login_URL as unknown as string;
     window.open(url, '_self');
