@@ -7,19 +7,21 @@ import { TableModule } from 'primeng/table';
 import { Subscription, interval, startWith, switchMap } from 'rxjs';
 import { UserService } from './service/user.service';
 import { Events } from './model/response';
+import { NavBarComponent } from "./components/nav-bar/nav-bar.component";
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [
-    CommonModule,
-    RouterOutlet,
-    TabMenuModule,
-    TabMenuModule,
-    TableModule,
-  ],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
+    selector: 'app-root',
+    standalone: true,
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.css',
+    imports: [
+        CommonModule,
+        RouterOutlet,
+        TabMenuModule,
+        TabMenuModule,
+        TableModule,
+        NavBarComponent
+    ]
 })
 export class AppComponent implements OnInit, OnDestroy {
   items: MenuItem[] | undefined;
