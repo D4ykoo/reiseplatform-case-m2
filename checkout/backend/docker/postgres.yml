@@ -1,6 +1,5 @@
 version: '3'
 services:
-
   checkout-db:
     image: postgres
     container_name: checkout-db
@@ -9,11 +8,12 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: checkout
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U usermanagement" ]
+      test: [ "CMD-SHELL", "pg_isready -U checkout"]
       interval: 5s
       timeout: 5s
       retries: 10
-    volumes:
-      - usermanagement-db:/var/lib/postgresql/data
+    # volumes:
+    #   - usermanagement-db:/var/lib/postgresql/data
     restart: always
-      
+    ports:
+      - 8094:5432

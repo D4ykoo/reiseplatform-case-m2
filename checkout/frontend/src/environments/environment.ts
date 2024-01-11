@@ -1,7 +1,21 @@
 export const environment = {
-  production: false,
-  api: 'http://localhost:8084/api/v1',
-  usermanagement_url: 'http://localhost:8081/#',
-  hotelmanagement_url: 'http://localhost:8085/travma',
-  monitoring_url: 'http://localhost:8087/*',
+  production: true,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  apiUrl: window['env']['apiUrl'] || 'http://checkout-app:8084/api/v1',
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  usermanagementUrl:
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+    window['env']['usermanagementUrl'] || 'http://localhost:8081/#',
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  hotelmanagementUrl:
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+    window['env']['hotelmanagementUrl'] || 'http://localhost:8085/travma',
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  monitoringUrl: window['env']['monitoringUrl'] || 'http://localhost:8087/*',
 };

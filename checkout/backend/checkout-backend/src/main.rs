@@ -24,7 +24,17 @@ async fn get_cart(
     producer: web::Data<MessageProducer>,
     req: HttpRequest,
 ) -> HttpResponse {
-    let token = req.cookie("authTravel").unwrap().value().to_string();
+    let raw_token = req.cookie("authTravel");
+    let token;
+
+    match raw_token {
+    Some(token_cookie) => token = token_cookie.value().to_string(),
+    None => return HttpResponse::Unauthorized()
+        .status(StatusCode::UNAUTHORIZED)
+        .finish(),
+    }
+   
+
     let validate = jwt_auth::validate_jwt(&token);
 
     if validate.is_err() {

@@ -33,7 +33,7 @@ Create the builder:
 ```
 Then build and push the multi platform images: 
 ```bash
-sudo docker buildx build --push --platform linux/amd64,linux/arm64,linux/arm/v7 --builder=armbuilder -t dak4408/travma-usermanagement-<checkout/backend>:latest .
+sudo docker buildx build --push --platform linux/amd64,linux/arm64 --builder=armbuilder -t dak4408/travma-checkout-<frontend/backend>:latest .
 ```
 
 ## Technology Stack

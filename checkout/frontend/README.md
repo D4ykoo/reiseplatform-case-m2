@@ -30,6 +30,8 @@ Now the whole application is located in the dist/ directory.<br>
 The application can be served by any desired webserver after coping the whole directory to e. g. `var/www/html/`.
 
 ## Docker
+Make sure node_modules exists, if not run `npm install`
+
 Create the network if it does not already exist:
 ```bash
 docker network create checkout
