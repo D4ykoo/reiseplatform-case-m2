@@ -6,24 +6,26 @@ import { environment } from '../../../environments/environment.development';
 import { LoginService } from '../../services/login.service';
 import { User } from '../../models/user';
 import { CommonModule } from '@angular/common';
-import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
-  imports: [ButtonModule, SidebarModule, CommonModule,FormsModule],
+  imports: [ButtonModule, SidebarModule, CommonModule, FormsModule],
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.css',
 })
-export class NavBarComponent implements OnInit{
+export class NavBarComponent implements OnInit {
   sidebarVisible: boolean = false;
 
   user!: User;
-  constructor(private readonly router: Router, private loginService: LoginService) {}
+  constructor(
+    private readonly router: Router,
+    private loginService: LoginService,
+  ) {}
 
   ngOnInit(): void {
-    this.loginService.user.subscribe((loginStatus)=>{
+    this.loginService.user.subscribe((loginStatus) => {
       this.user = loginStatus;
     });
   }
