@@ -1,6 +1,4 @@
-# All-in-One solution (still starts different containers) 
-# for the checkout microservices 
-version: '3'
+version: "3.7"
 services:
   zookeeper:
     container_name: zookeeper
@@ -12,7 +10,7 @@ services:
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
     networks:
-      kafka:
+      privatenet:
 
   kafka:
     container_name: kafka
@@ -34,7 +32,7 @@ services:
     ports:
       - 9094:9094
     networks:
-      kafka:
+      privatenet:
 
   kafka-topics-generator:
     image: docker.io/bitnami/kafka:3.4
@@ -43,76 +41,79 @@ services:
     command: >
       bash -c
         "sleep 5s &&
-        kafka-topics.sh --create --topic=checkout --if-not-exists --bootstrap-server=kafka:9092"
+        kafka-topics.sh --create --topic=checkout --if-not-exists --bootstrap-server=kafka:9092 &&
+        kafka-topics.sh --create --topic=travelmanagement --if-not-exists --bootstrap-server=kafka:9092 &&
+        kafka-topics.sh --create --topic=usermanagement --if-not-exists --bootstrap-server=kafka:9092"
     networks:
-      kafka:
+      privatenet:
 
-  postgres:
+  checkout-db:
     image: postgres
     container_name: checkout-db
-    restart: always
     environment:
       POSTGRES_USER: checkout
       POSTGRES_PASSWORD: password
       POSTGRES_DB: checkout
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "checkout"]
+      test: [ "CMD-SHELL", "pg_isready -U checkout" ]
       interval: 5s
       timeout: 5s
-      retries: 5
-    networks:
-      - checkoutnet
+      retries: 10
     volumes:
-      # - checkout-db:/var/lib/postgresql/data
-      - checkout-db:/data/postgres
-    
-  backend:
-    image: dak4408/travma-checkout-backend:latest
-    container_name: checkout-backend
+      - checkout-db:/var/lib/postgresql/data
     restart: always
-    environment:
-      API_URL: "http://localhost:8084/api/v1"
-      JWT_SECRET: "your-fav-secret"
-      KAFKA_URL: "kafka:9092"      
-      TOPIC: checkout
-      DATABASE_URL: "postgres://checkout:password@checkout-db:5432/checkout"
+    ports: 
+      - "5432:5432"
+    networks:
+      - privatenet
+
+  checkout-app:
+    image: dak4408/travma-checkout-backend:latest
+    container_name: checkout-app
+    restart: always
     depends_on:
-      postgres:
+      checkout-db:
         condition: service_healthy
-    # note that this is an security issue
-    # network_mode: host
+      kafka-topics-generator:
+        condition: service_completed_successfully
+    environment:
+      API_URL: "0.0.0.0"
+      API_PORT: "8084"
+      TRAVEL_API_URL: "http://localhost:8086/api/v1/"
+      JWT_SECRET: "your-jwt-secret"
+      KAFKA_URL: "kafka:9092"
+      TOPIC: "checkout"
+      DATABASE_URL: "postgres://checkout:password@checkout-db:5432/checkout"
     ports:
       - "8084:8084"
     networks:
-      - checkoutnet
-      - publicnet
-      - kafka    
+      publicnet:
+      privatenet:
   
-  frontend:
+  checkout-web:
     image: dak4408/travma-checkout-frontend:latest
-    container_name: checkout-frontend
+    container_name: checkout-web
     restart: always
     environment:
-      API_URL: "http://localhost:8084/api/v1"
+      API_URL: "http://localhost:8083/api/v1"
       USERMANAGEMENT_URL: "http://localhost:8081/users"
       HOTELMANAGEMENT_URL: "http://localhost:8085/travma"
       MONITORING_URL: "http://localhost:8087/*"    
     depends_on:
-      - backend
+      - checkout-app
     ports:
       - "8083:8083"
     networks:
-      - publicnet
+      privatenet:
+      publicnet:
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ../frontend/nginx.conf:/etc/nginx/nginx.conf
 
 
 volumes:
-  checkout-db:
   kafka-volume:
   zookeeper-volume:
-
+  checkout-db:
 networks:
-  kafka:
-  checkoutnet:
+  privatenet:
   publicnet:

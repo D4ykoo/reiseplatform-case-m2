@@ -1,18 +1,18 @@
 version: '3'
 services: 
-  frontend:
+  checkout-web:
     image: dak4408/travma-checkout-frontend:latest
     container_name: checkout-frontend
     restart: always
     environment:
-      API_URL: "http://checkout-app:8084/api/v1"
+      API_URL: "http://localhost:8083/api/v1"
       USERMANAGEMENT_URL: "http://localhost:8081/users"
       HOTELMANAGEMENT_URL: "http://localhost:8085/travma"
       MONITORING_URL: "http://localhost:8087/*"    
     ports:
       - "8083:8083"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ../nginx.conf:/etc/nginx/nginx.conf
     networks: 
       - docker_checkoutnet
 
