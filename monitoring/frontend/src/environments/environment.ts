@@ -13,5 +13,5 @@ export const environment = {
     window['env' as any]['LOGIN_URL' as any] || 'http://localhost:8081/',
   Monitor_URL:
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    window['env' as any]['MONITOR_URL' as any] || 'http://localhost:8085/',
+    window['env' as any]['TRAVEL_URL' as any] || 'http://localhost:8085/',
 };
