@@ -15,4 +15,7 @@ export const environment = {
   Monitor_URL:
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     window['env' as any]['MONITOR_URL' as any] || 'http://localhost:8087/',
+    Checkout_API:
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    window['env' as any]['CHECKOUT_API' as any] || 'http://localhost:8084/',
 };

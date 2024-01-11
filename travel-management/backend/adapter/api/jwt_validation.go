@@ -33,21 +33,22 @@ func ValidateJWT(tokenString string, secret string) (bool, error, jwt.MapClaims)
 	return false, nil, nil
 }
 
-func ValidateLoginStatus(c *gin.Context) error {
+func ValidateLoginStatus(c *gin.Context) (jwt.MapClaims, error) {
 
 	cookie, cookieErr := c.Cookie("authTravel")
 
+	fmt.Println(cookie)
 	if cookieErr != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": cookieErr.Error()})
-		return cookieErr
+		return nil, cookieErr
 	}
 
-	_, valErr, _ := ValidateJWT(cookie, os.Getenv("JWT_SECRET"))
+	_, valErr, claim := ValidateJWT(cookie, os.Getenv("JWT_SECRET"))
 
 	if valErr != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": valErr.Error()})
-		return valErr
+		return nil, valErr
 	}
 
-	return nil
+	return claim, nil
 }

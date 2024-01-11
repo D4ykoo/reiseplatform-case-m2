@@ -18,7 +18,7 @@ func New() TravelEventImpl {
 
 	// Stop Service
 	if err != nil {
-		log.Panic(err.Error())
+		log.Default().Printf(err.Error())
 	}
 
 	return TravelEventImpl{
