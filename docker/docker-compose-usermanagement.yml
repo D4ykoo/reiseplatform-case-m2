@@ -1,4 +1,4 @@
-version: 3
+version: '3'
 services:
   usermanagement-db:
     image: postgres
@@ -60,17 +60,17 @@ services:
     container_name: usermanagement-web
     restart: always
     environment:
-      API_URL: http://usermanagement-app:8082/api/v1
-      CHECKOUT_URL: http://checkout-frontend:8083/#/cart
-      TRAVELMANAGEMENT_URL: http://travelmngt-frontend:8085/#/travma
-      MONITORING_URL: http://localhost:8087/*
+      API_URL: http://localhost:12345/api/v1
+      CHECKOUT_URL: http://localhost:12345/cart
+      TRAVELMANAGEMENT_URL: http://localhost:12345/travma
+      MONITORING_URL: http://localhost:12345/*
     ports:
       - "8081:8081"
     networks:
       - privatenet
       - publicnet
     volumes:
-      - "../usermanagement/frontend/nginx.conf:/etc/nginx/nignx.conf"
+      - "./conf/nginx.usermanagement.conf:/etc/nginx/nignx.conf"
 
 volumes:
   usermanagement-db:
@@ -78,7 +78,9 @@ volumes:
 networks:
   privatenet:
     external: true
+
   publicnet:
     external: true
+
   dbnetusermanagement:
     external: true

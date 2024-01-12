@@ -7,6 +7,16 @@ When every frontend and backend of each service needs to be deployed seperatly:
  * start the frontend and backend compose files in the corresponding directories
  * further information can be found in the READMEs
 
+## Quick start
+**Note:** All other sections of this README can be ignored if just a fast working project is required
+
+Generate docker networks:
+```bash
+chmod +x network_management.sh && ./network_management.sh -g
+```
+TODO
+
+
 ## Prerequisites
 Make sure to run `network_management.sh`. This script generates all needed docker networks or deletes. 
 
@@ -29,3 +39,6 @@ It is also possible to run in privelged mode e. g. with sudo as prefix: `sudo ./
 #### Why this file is needed
 Since the compose files are split up the networks are having a weird name e. g. `docker_dbcheckoutnet`, this scripts prevents this naming and just creates the networks without any prefix.   
 So in fact it just for personal taste and clearer network reference in the compose files.
+
+## NGINX config files
+Are located in `./config/`. Even though there are now duplicated in this project it makes sense since this docker directory works now without any of the service directories.
