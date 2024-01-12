@@ -57,7 +57,7 @@ services:
       privatenet:
       publicnet:
     volumes:
-      - ./conf/nginx.checkout.conf:/etc/nginx/nginx.conf
+      - ./config/nginx.checkout.conf:/etc/nginx/nginx.conf
 
 volumes:
   checkout-db:

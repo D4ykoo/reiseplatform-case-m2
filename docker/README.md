@@ -14,10 +14,24 @@ Generate docker networks:
 ```bash
 chmod +x network_management.sh && ./network_management.sh -g
 ```
-TODO
 
+Start the container:
+```bash
+chmod +x start-container.sh && ./start-container.sh
+```
 
-## Prerequisites
+When taking the container down run:
+```bash
+chmod +x delete-container.sh && ./delete-container.sh
+```
+
+It is also possible to run in privelged mode e. g. with sudo as prefix: `sudo ./network_management.sh -g` 
+
+Done!
+Now all services can be reached via [http://localhost:12345](http://localhost:12345)
+
+## Running everything manually
+### Prerequisites
 Make sure to run `network_management.sh`. This script generates all needed docker networks or deletes. 
 
 Make it executable at first:
@@ -40,5 +54,34 @@ It is also possible to run in privelged mode e. g. with sudo as prefix: `sudo ./
 Since the compose files are split up the networks are having a weird name e. g. `docker_dbcheckoutnet`, this scripts prevents this naming and just creates the networks without any prefix.   
 So in fact it just for personal taste and clearer network reference in the compose files.
 
+### Now run the docker compose files
+```bash
+docker compose -f docker-compose-kafka.yml up -d
+```
+
+```bash
+docker compose -f docker-compose-monitoring.yml up -d
+```
+
+```bash
+docker compose -f docker-compose-usermanagement.yml up -d
+```
+
+```bash
+docker compose -f docker-compose-travelmanagement.yml up -d
+```
+
+```bash
+docker compose -f docker-compose-checkout.yml up -d
+```
+
+```bash
+docker compose -f docker-compose-proxy.yml up -d
+```
+
+### Take the container down
+```bash
+docker compose -f docker-compose-<suffix>.yml down
+```
 ## NGINX config files
 Are located in `./config/`. Even though there are now duplicated in this project it makes sense since this docker directory works now without any of the service directories.
