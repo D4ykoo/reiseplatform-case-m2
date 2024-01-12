@@ -7,3 +7,4 @@ data:
   CHECKOUT_URL: "http://localhost:8083/cart"
   LOGIN_URL: "http://localhost:8081/login"
   MONITOR_URL: "http://localhost:8087/"
+  CHECKOUT_API: ""

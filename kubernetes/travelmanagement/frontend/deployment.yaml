@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: travelmngt-web
-          image: mig3177/travma-travelmanagement-frontend:test
+          image: mig3177/travma-travelmanagement-frontend:latest
           envFrom:
             - configMapRef:
                 name: travelmngt-web-config

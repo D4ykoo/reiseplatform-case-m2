@@ -22,6 +22,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: travelmngt-app-config
+            - secretRef:
+                name: travelmngt-app-secret
           ports:
             - name: travelmngt-app
               containerPort: 8086
