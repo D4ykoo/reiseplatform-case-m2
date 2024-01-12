@@ -9,7 +9,7 @@ do
     esac
 done
 
-NETWORKS=('dbnetcheckout' 'dbnetmonitor' 'dbnetusermanagement' 'dbnettravmgnt' 'privatnet' 'publicnet')
+NETWORKS=('dbnetcheckout' 'dbnetmonitor' 'dbnetusermanagement' 'dbnettravmgnt' 'privatenet' 'publicnet')
 
 if [ "$generate" = true ] ; then
     echo "Generating networks..."

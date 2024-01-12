@@ -23,7 +23,7 @@ services:
     container_name: usermanagement-backend
     restart: always
     depends_on:
-      travelmngt-db:
+      usermanagement-db:
         condition: service_healthy
     environment:
       DOMAIN: http://usermanagement-frontend:8081
@@ -59,6 +59,8 @@ services:
     image: dak4408/travma-usermanagement-frontend:latest
     container_name: usermanagement-web
     restart: always
+    depends_on:
+      - usermanagement-app
     environment:
       API_URL: http://localhost:12345/api/v1
       CHECKOUT_URL: http://localhost:12345/cart
@@ -70,7 +72,7 @@ services:
       - privatenet
       - publicnet
     volumes:
-      - "./conf/nginx.usermanagement.conf:/etc/nginx/nignx.conf"
+      - "./config/nginx.usermanagement.conf:/etc/nginx/nignx.conf"
 
 volumes:
   usermanagement-db:

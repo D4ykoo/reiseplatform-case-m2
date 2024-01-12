@@ -25,8 +25,6 @@ services:
     depends_on:
       monitor-db:
         condition: service_healthy
-      kafka-topics-generator:
-        condition: service_completed_successfully
     environment:
       DOMAIN: :8088
       API_URL: :8088

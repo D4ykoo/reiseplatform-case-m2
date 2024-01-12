@@ -5,7 +5,7 @@ services:
     ports:
       - "12345:80"
     volumes:
-      - "./nignx/nginx.proxy.conf:/etc/nginx/nginx.conf"
+      - "./config/nginx.proxy.conf:/etc/nginx/nginx.conf"
     networks:
       - publicnet
 
