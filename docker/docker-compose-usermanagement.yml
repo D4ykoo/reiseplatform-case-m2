@@ -62,6 +62,7 @@ services:
     depends_on:
       - usermanagement-app
     environment:
+      API_URL: http://localhost:12345/users/api/v1
       CHECKOUT_URL: http://localhost:12345/cart
       TRAVELMANAGEMENT_URL: http://localhost:12345/travma
       MONITORING_URL: http://localhost:12345/*

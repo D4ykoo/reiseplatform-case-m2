@@ -2,6 +2,7 @@ version: '3'
 services:
   proxy:
     image: nginx:stable-alpine3.17
+    container_name: nginx-proxy
     ports:
       - "12345:80"
     volumes:
