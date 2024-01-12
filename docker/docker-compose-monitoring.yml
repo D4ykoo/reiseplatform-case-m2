@@ -1,0 +1,62 @@
+version: '3'
+services:
+  monitor-db:
+    image: postgres
+    container_name: monitor-db
+    environment:
+      POSTGRES_USER: monitor
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: monitor
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U monitor" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - monitor-db:/var/lib/postgresql/data
+    restart: always
+    networks:
+      dbnetmonitor:
+
+  monitor-app:
+    image: mig3177/travma-monitoring-backend:latest
+    container_name: monitor-app
+    restart: always
+    depends_on:
+      monitor-db:
+        condition: service_healthy
+      kafka-topics-generator:
+        condition: service_completed_successfully
+    environment:
+      DOMAIN: :8088
+      API_URL: :8088
+      JWT_SECRET: your-jwt-secret
+
+      # Change to true when using tls
+      PRODUCTION: false
+
+      # Gives additional information of the webserver
+      DEBUG: true
+
+      # BROKER Settings
+      BROKERS: kafka:9092
+
+      # DB Settings
+      DB_HOST: monitor-db
+      DB_USER: monitor
+      DB_PASSWORD: password
+      DB_NAME: monitor
+    ports:
+      - "8087:8087"
+    networks:
+      privatenet:
+      dbnetmonitor:
+
+volumes:
+  monitor-db:
+
+networks:
+  privatenet:
+    external: true
+  dbnetmonitor:
+    external: true
