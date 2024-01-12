@@ -9,7 +9,11 @@ import { GalleriaModule } from 'primeng/galleria';
 import { FormsModule } from '@angular/forms';
 import { DataViewModule } from 'primeng/dataview';
 import { TagModule } from 'primeng/tag';
-import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { DynamicDialogRef } from 'primeng/dynamicdialog';
+import { LoginService } from '../../services/login.service';
+import { User } from '../../models/user';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment.development';
 
 @Component({
   selector: 'app-info-card',
@@ -31,14 +35,18 @@ export class InfoCardComponent implements OnInit {
   hotelOffer: Hotel | undefined;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   responsiveOptions: any[] | undefined;
+
+  user: User | undefined;
   constructor(
     private offerService: OfferService,
-    private dialogService: DialogService,
+    private httpClient: HttpClient,
     private ref: DynamicDialogRef,
+    private loginService: LoginService,
   ) {}
 
   ngOnInit(): void {
     this.hotelOffer = this.offerService.getSelectedOffer();
+    this.user = this.loginService.getLoginStatus();
     this.responsiveOptions = [
       {
         breakpoint: '1024px',
@@ -59,12 +67,17 @@ export class InfoCardComponent implements OnInit {
     this.ref.close();
   }
 
-  buy(id: number) {
-    this.offerService.addToCart({
-      hotelId: (this.hotelOffer as Hotel).id,
-      travelId: (this.hotelOffer as Hotel).travels[id].id,
-      userId: 0,
-    });
+  addToCart(id: number) {
+    this.httpClient.put(
+      environment.Checkout_API +
+        'addtocart/' +
+        (this.hotelOffer as Hotel).id +
+        '/' +
+        (this.hotelOffer as Hotel).travels[id].id +
+        '/' +
+        (this.user?.userid as number),
+      {},
+    );
     this.closeDialog();
   }
 }

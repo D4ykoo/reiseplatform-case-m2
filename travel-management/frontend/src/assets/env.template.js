@@ -7,4 +7,5 @@
   window["env"]["CHECKOUT_URL"] = "${CHECKOUT_URL}";
   window["env"]["LOGIN_URL"] = "${LOGIN_URL}";
   window["env"]["MONITOR_URL"] = "${MONITOR_URL}";
+  window["env"]["CHECKOUT_API"] = "${CHECKOUT_API}";
 })(this);
