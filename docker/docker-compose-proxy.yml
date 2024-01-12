@@ -1,0 +1,14 @@
+version: '3'
+services:
+  proxy:
+    image: nginx:stable-alpine3.17
+    ports:
+      - "12345:80"
+    volumes:
+      - "./nignx/nginx.proxy.conf:/etc/nginx/nginx.conf"
+    networks:
+      - publicnet
+
+networks:
+  publicnet:
+    external: true
