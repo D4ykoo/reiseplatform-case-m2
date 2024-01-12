@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: travelmngt-db-config
+data:
+  POSTGRES_USER: travelmanagement
+  POSTGRES_DB: travelmanagement
+  POSTGRES_SSLMODE: "disable"

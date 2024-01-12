@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: travelmngt-db
+spec:
+  selector:
+    matchLabels:
+      app: travelmngt-pg
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: travelmngt-pg
+        tier: backend
+    spec:
+      containers:
+        - image: postgres:16.1-alpine3.19
+          name: travelmngt-pg
+          envFrom:
+            - configMapRef:
+                name: travelmngt-db-config
+            - secretRef:
+                name: travelmngt-db-secret
+          ports:
+            - containerPort: 5432
+              name: travelmngt-pg
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: travelmngt-db-storage
+              mountPath: /var/lib/postgresql/data
+          resources:
+            requests:
+              memory: "10Mi"
+              cpu: "100m"
+            limits:
+              memory: "100Mi"
+              cpu: "100Mi"      
+      volumes:
+        - name: travelmngt-db-storage
+          persistentVolumeClaim:
+            claimName: db-travelmngt-pvc

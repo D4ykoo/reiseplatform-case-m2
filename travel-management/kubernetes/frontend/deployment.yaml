@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: travelmngt-web
+  labels:
+    app: travelmngt-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: travelmngt-web
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: travelmngt-web
+        tier: frontend
+    spec:
+      containers:
+        - name: travelmngt-web
+          image: mig3177/travma-travelmanagement-frontend:latest
+          envFrom:
+            - configMapRef:
+                name: travelmngt-web-config
+          ports:
+            - name: travelmngt-web
+              containerPort: 8085
