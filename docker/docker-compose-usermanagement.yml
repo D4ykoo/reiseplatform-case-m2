@@ -1,54 +1,44 @@
-# All-in-One solution (still starts different containers) 
-# for the usermanagement microservices 
-version: '3'
+version: 3
 services:
   usermanagement-db:
     image: postgres
     container_name: usermanagement-db
-    restart: always
-
     environment:
-      POSTGRES_PASSWORD: password
       POSTGRES_USER: usermanagement
+      POSTGRES_PASSWORD: password
       POSTGRES_DB: usermanagement
-
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U travelmanagement" ]
+      test: [ "CMD-SHELL", "pg_isready -U usermanagement" ]
       interval: 5s
       timeout: 5s
       retries: 10
-
     volumes:
       - usermanagement-db:/var/lib/postgresql/data
-
+    restart: always
     networks:
-      - usermanagementnet
-      - dbnet
+      - dbnetusermanagement
 
-  usermanagement-backend:
+  usermanagement-app:
     image: dak4408/travma-usermanagement-backend:latest
     container_name: usermanagement-backend
     restart: always
     depends_on:
-      usermanagement-db:
+      travelmngt-db:
         condition: service_healthy
     environment:
-      DOMAIN: http://localhost:8081
+      DOMAIN: http://usermanagement-frontend:8081
       API_URL: :8082
       
       SALT: your-secret-salt
       JWT_SECRET: your-jwt-secret
-
       # Change to true when using tls
       PRODUCTION: false
       
       # Gives additional information of the webserver
       DEBUG: true
-
       # BROKERS should be just one value
-      BROKERS: localhost:9092
+      BROKERS: kafka:9092
       TOPIC: usermanagement
-
       # DB
       DB_HOST: usermanagement-db
       DB_USER: usermanagement
@@ -58,33 +48,37 @@ services:
       SSL_TLS: disable
       TIMEZONE: Europe/Berlin
 
+    networks:
+      - privatenet
+      - dbnetusermanagement
+
     ports:
       - "8082:8082"
-    networks:
-      - usermanagementnet
-      - dbnet
-  
-  frontend:
+
+  usermanagement-web:
     image: dak4408/travma-usermanagement-frontend:latest
-    container_name: usermanagement-frontend
+    container_name: usermanagement-web
     restart: always
     environment:
-      API_URL: http://usermanagement-backend/api/v1
+      API_URL: http://usermanagement-app:8082/api/v1
       CHECKOUT_URL: http://checkout-frontend:8083/#/cart
       TRAVELMANAGEMENT_URL: http://travelmngt-frontend:8085/#/travma
       MONITORING_URL: http://localhost:8087/*
-    
-    networks: 
-      - usermanagementnet
     ports:
-      - "8081:80"
+      - "8081:8081"
+    networks:
+      - privatenet
+      - publicnet
     volumes:
-      - "./frontend/nginx.conf:/etc/nginx/nignx.conf"
+      - "../usermanagement/frontend/nginx.conf:/etc/nginx/nignx.conf"
 
 volumes:
   usermanagement-db:
 
 networks:
+  privatenet:
+    external: true
   publicnet:
-  usermanagementnet:
-  dbnet:
+    external: true
+  dbnetusermanagement:
+    external: true
