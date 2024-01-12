@@ -1,32 +1,32 @@
 version: '3'
 services:
-  usermanagement-db:
+  users-db:
     image: postgres
-    container_name: usermanagement-db
+    container_name: users-db
     environment:
-      POSTGRES_USER: usermanagement
+      POSTGRES_USER: travelmanagement
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: usermanagement
+      POSTGRES_DB: travelmanagement
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U usermanagement" ]
+      test: [ "CMD-SHELL", "pg_isready -U travelmanagement" ]
       interval: 5s
       timeout: 5s
       retries: 10
     volumes:
-      - usermanagement-db:/var/lib/postgresql/data
+      - users-db:/var/lib/postgresql/data
     restart: always
     networks:
-      - dbnetusermanagement
+      - dbnetusers
 
   usermanagement-app:
     image: dak4408/travma-usermanagement-backend:latest
-    container_name: usermanagement-backend
+    container_name: usermanagement-app
     restart: always
     depends_on:
-      usermanagement-db:
+      users-db:
         condition: service_healthy
     environment:
-      DOMAIN: http://usermanagement-frontend:8081
+      DOMAIN: http://localhost:12345
       API_URL: :8082
       
       SALT: your-secret-salt
@@ -40,17 +40,17 @@ services:
       BROKERS: kafka:9092
       TOPIC: usermanagement
       # DB
-      DB_HOST: usermanagement-db
-      DB_USER: usermanagement
+      DB_HOST: users-db
+      DB_USER: travelmanagement
       DB_PASSWORD: password
-      DB_NAME: usermanagement
+      DB_NAME: travelmanagement
       DB_PORT: 5432
       SSL_TLS: disable
       TIMEZONE: Europe/Berlin
 
     networks:
       - privatenet
-      - dbnetusermanagement
+      - dbnetusers
 
     ports:
       - "8082:8082"
@@ -62,7 +62,6 @@ services:
     depends_on:
       - usermanagement-app
     environment:
-      API_URL: http://localhost:12345/api/v1
       CHECKOUT_URL: http://localhost:12345/cart
       TRAVELMANAGEMENT_URL: http://localhost:12345/travma
       MONITORING_URL: http://localhost:12345/*
@@ -72,10 +71,10 @@ services:
       - privatenet
       - publicnet
     volumes:
-      - "./config/nginx.usermanagement.conf:/etc/nginx/nignx.conf"
+      - "./config/nginx.usermanagement.conf:/etc/nginx/nginx.conf"
 
 volumes:
-  usermanagement-db:
+  users-db:
 
 networks:
   privatenet:
@@ -84,5 +83,5 @@ networks:
   publicnet:
     external: true
 
-  dbnetusermanagement:
+  dbnetusers:
     external: true

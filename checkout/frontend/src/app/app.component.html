@@ -25,7 +25,7 @@
 
         <li><a href="{{ usermanagement_url }}">Login/ Register</a></li>
         <li>
-          <a href="{{ usermanagement_url + '/users' }}">Usermanagement</a>
+          <a href="{{ usermanagement_url }}">Usermanagement</a>
         </li>
         <li><a href="{{ monitoring_url }}">Logging</a></li>
       </ul>
@@ -36,7 +36,7 @@
     <ul class="menu menu-horizontal px-1">
       <li><a :href="{{ hotelmanagement_url }}">Travelmangement</a></li>
       <li><a href="{{ usermanagement_url }}">Login/ Register</a></li>
-      <li><a href="{{ usermanagement_url + '/users' }}">Usermanagement</a></li>
+      <li><a href="{{ usermanagement_url }}">Usermanagement</a></li>
       <li><a href="{{ monitoring_url }}">Logging</a></li>
     </ul>
   </div>
@@ -47,11 +47,14 @@
       </a>
     </div>
     <div>
-      <a href="{{ usermanagement_url + '/logout' }}" class="btn">Logout</a>
+      <a href="{{ usermanagement_url }}" class="btn">Logout</a>
     </div>
   </div>
 </div>
-
+<div role="alert" class="alert right-2 w-fit absolute">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+  <span>You need to logout at the usermanagment site</span>
+</div>
 <router-outlet></router-outlet>
 
 <footer

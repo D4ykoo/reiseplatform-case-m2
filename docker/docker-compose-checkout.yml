@@ -45,7 +45,7 @@ services:
     container_name: checkout-web
     restart: always
     environment:
-      API_URL: "http://localhost:12345/api/v1"
+      API_URL: "http://localhost:12345/cart/api/v1"
       USERMANAGEMENT_URL: "http://localhost:12345/users"
       HOTELMANAGEMENT_URL: "http://localhost:12345/travma"
       MONITORING_URL: "http://localhost:12345/*"    

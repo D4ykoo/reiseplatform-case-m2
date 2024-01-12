@@ -13,7 +13,7 @@ services:
       POSTGRES_DB: usermanagement
 
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U travelmanagement" ]
+      test: [ "CMD-SHELL", "pg_isready -U usermanagement" ]
       interval: 5s
       timeout: 5s
       retries: 10
