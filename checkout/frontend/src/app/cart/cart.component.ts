@@ -15,7 +15,7 @@ import { CombinedCart } from '../../models/cart.models';
 export class CartComponent {
   constructor(private cartService: CartService) {}
 
-  hotelmanagementUrl = environment.hotelmanagement_url;
+  hotelmanagementUrl = environment.hotelmanagementUrl;
 
   cartId = 1;
 
@@ -29,7 +29,7 @@ export class CartComponent {
   }
 
   public getCart() {
-    this.cartService.getCart(this.cartId).subscribe((res) => {
+    this.cartService.getCart().subscribe((res) => {
       this.cart = res as CombinedCart;
     });
   }

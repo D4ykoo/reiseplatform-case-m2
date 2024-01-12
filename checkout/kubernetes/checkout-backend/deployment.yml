@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkout-backend
+  labels:
+    app: checkout-backend
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: checkout-backend
+        tier: backend
+    template:
+      metadata:
+        labels:
+          app: checkout-backend
+          tier: backend
+      spec:
+        containers:
+          - name: checkout-backend
+            image: dak4408/checkout-backend:latest
+            env:
+              - name: API_URL
+                value: http://127.0.0.1
+              - name: JWT_SECRET
+                value: your-jwt-secret
+              - name: KAFKA_URL
+                value: kafka:9092
+              - name: TOPIC
+                value: checkout
+              - name: TRAVEL_API_URL
+                value: http://localhost:8086/api/v1
+              - name: DATABASE_URL
+                value: "postgres://checkout:password@localhost:8094/checkout"
+            
+            ports:
+              - name: http-checkout-backend
+                containerPort: 8084

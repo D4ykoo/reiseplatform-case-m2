@@ -1,9 +1,12 @@
 # Checkout/ Payment Microservice
 Frontend and backend can be deployed seperatly. For simplicty of this lecture it is one directory in a monorepo instead of two seperate repositories.
 
+Every microservice as well as the root of the checkout directory contains a docker directory. This provides some docker-compose files for the corresponding services. 
+
 ## Prerequisites
 * A postgresql database where the configuration and credentials are known
 * See [backend/README.md](backend/README.md) for docker postgresdb instructions (the network arg can be removed when the other services are not deployed with docker) 
+* A kafka instance e. g. using the AiO solution or the example inside the backend docker directory
 * Make sure to install `npm`, `angular` and `rustc` compared with `cargo` when running in bare metal mode
 
 ## Configuration
@@ -13,13 +16,11 @@ All configuration instructions can be viewed in the corresponding READMEs of the
 Follow the instructions in the [RunInVM.md](RunInVM.md) of this directory.
 
 ## How to run - Docker
-Follow the instructions in the READMEs located at:
+An All-in-One Solution is provided in the `docker` directory. Follow the [/docker/README.md](/docker/README.md) instructions for more information.
+
+When running the frontend and backend seperatly follow the instructions in the READMEs located at:
 [/frontend/README.md](/frontend/README.md) and [/backend/README.md](/backend/README.md).
 
-<!-- #### Run with image from docker hub registry 
-```bash
-docker compose -f docker-compose.yml up -d 
-``` -->
 ## How to run the k8s manifests
 Follow the instructions located in [ApplyManifests.md](ApplyManifests.md)
 
@@ -33,7 +34,7 @@ Create the builder:
 ```
 Then build and push the multi platform images: 
 ```bash
-sudo docker buildx build --push --platform linux/amd64,linux/arm64,linux/arm/v7 --builder=armbuilder -t dak4408/travma-usermanagement-<checkout/backend>:latest .
+sudo docker buildx build --push --platform linux/amd64,linux/arm64 --builder=armbuilder -t dak4408/travma-checkout-<frontend/backend>:latest .
 ```
 
 ## Technology Stack

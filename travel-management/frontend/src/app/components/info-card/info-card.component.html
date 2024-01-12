@@ -90,7 +90,7 @@
               >
                 {{ "$" + travel.price }}
               </div>
-              <p-button (click)="buy(i)">Buy</p-button>
+              <p-button [disabled]="!user" (click)="addToCart(i)">Buy</p-button>
             </div>
           </div>
         </ng-template>

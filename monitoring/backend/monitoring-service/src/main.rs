@@ -21,12 +21,14 @@ use std::sync::mpsc::channel;
 use tower_cookies::{CookieManagerLayer, Cookies};
 use tower_http::services::ServeDir;
 use tracing::warn;
+use tower_http::cors::{Any, CorsLayer};
 
 use crate::model::TokenError;
 
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
+    let cors = CorsLayer::new().allow_origin(Any);
     let (tx, rx) = channel();
 
     let pool = get_connection_pool();
@@ -84,10 +86,12 @@ async fn main() {
         .route("/api/v1/hotel-events", get(get_hotel_events))
         .route("/api/v1/checkout-events", get(get_checkout_events))
         .layer(CookieManagerLayer::new())
+        .layer(cors)
         .with_state(pool);
 
     // run our app with hyper, listening globally on port 3000
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    let api = env::var("API_URL").unwrap_or("".into());
+    let listener = tokio::net::TcpListener::bind(api).await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
 

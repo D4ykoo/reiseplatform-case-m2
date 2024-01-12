@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: usermanagement-backend-service
+  namespace: usermanagement
+
+spec:
+  selector:
+    app: usermanagement-backend-service
+    tier: backend
+  ports:
+  - port: 8082

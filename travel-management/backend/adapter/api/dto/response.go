@@ -43,6 +43,11 @@ type TagResponse struct {
 	Name string `json:"name"`
 }
 
+type UserResponse struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
+}
+
 func ToPictureResopnse(pics []*model.Picture) []*PictureResponse {
 	pictures := make([]*PictureResponse, len(pics))
 	for i, pic := range pics {

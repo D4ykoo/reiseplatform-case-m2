@@ -76,7 +76,7 @@
         </div>
         <div class="sidbar-link">User Profile</div>
       </p-button>
-      <p-button [text]="true" [plain]="true" (click)="navigateToStatMngt()">
+      <p-button [text]="true" [plain]="true" (click)="navigateToMonitoring()">
         <div class="sidbar-icon">
           <svg
             id="Layer_1_1_"
@@ -123,6 +123,10 @@
   </div>
   <div class="header-title">
     <h1>travMa</h1>
+  </div>
+  <div *ngIf="user && user.userid !== 0">
+    Hallo, <br />
+    {{ user.name }}
   </div>
   <div class="sidbar-btn">
     <p-button

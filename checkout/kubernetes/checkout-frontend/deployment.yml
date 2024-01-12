@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkout-web
+  labels:
+    app: checkout-web
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: checkout-web
+        tier: frontend
+    template:
+      metadata:
+        labels:
+          app: checkout-web
+          tier: frontend
+      spec:
+        containers:
+          - name: checkout-web
+            image: dak4408/checkout-frontend:latest
+            env:
+              - name: API_URL
+                value: http://localhost:8084/api/v1/
+              - name: USERMANAGEMENT_URL
+                value: http://localhost:8081/users
+              - name: HOTELMANAGEMENT_URL
+                value: http://localhost:8085/travma
+              -name: MONITORING_URL
+                value: http://localhost:8087/*
+            ports:
+              - name: checkout-web
+                containerPort: 8083

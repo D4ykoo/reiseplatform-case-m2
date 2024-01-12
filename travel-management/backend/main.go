@@ -56,6 +56,8 @@ func main() {
 	router.SetTrustedProxies([]string{""})
 	//router.Use(cors.New(config))
 
+	router.GET("/api/v1/loginstatus", service.CheckLoginStatus)
+
 	// CRUD
 	// Create
 	router.POST("/api/v1/hotels", service.CreateHotelRequest)

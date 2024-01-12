@@ -59,6 +59,7 @@
 </template>
 
 <script lang="ts">
+import APP_CONFIG from "@/assets/config";
 import { LoginRegisterService } from "@/services/LoginRegisterService";
 
 let loginRegisterService = new LoginRegisterService();
@@ -66,9 +67,9 @@ let loginRegisterService = new LoginRegisterService();
 export default {
   name: "NavBar",
   data() {
-    let checkoutUrl = import.meta.env.VITE_CHECKOUT_URL;
-    let travelmanagementUrl = import.meta.env.VITE_TRAVELMANAGEMENT_URL;
-    let monitoringUrl = import.meta.env.VITE_MONITORING_URL;
+    let checkoutUrl = APP_CONFIG.checkoutUrl;
+    let travelmanagementUrl = APP_CONFIG.travelManagagementUrl;
+    let monitoringUrl = APP_CONFIG.monitoringUrl;
 
     return {
       checkoutUrl,

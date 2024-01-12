@@ -8,6 +8,8 @@ import UserManagementViewVue from "@/views/UserManagementView.vue";
 
 const router = createRouter({
   history: createWebHashHistory(),
+  // history: createWebHistory(),
+  
   routes: [
     {
       path: "/",
