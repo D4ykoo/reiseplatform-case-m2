@@ -12,7 +12,7 @@ import { environment } from '../environments/environment';
 })
 export class AppComponent {
   title = 'frontend';
-  usermanagement_url = environment.usermanagement_url;
-  monitoring_url = environment.monitoring_url;
-  hotelmanagement_url = environment.hotelmanagement_url;
+  usermanagement_url = environment.usermanagementUrl;
+  monitoring_url = environment.monitoringUrl;
+  hotelmanagement_url = environment.hotelmanagementUrl;
 }

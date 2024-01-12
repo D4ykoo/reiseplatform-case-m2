@@ -12,5 +12,5 @@ RUN cargo build --release
 FROM builder AS release
 COPY --from=build /app/target/release/checkout-backend /usr/bin/server
 
-EXPOSE 8084/tcp
+EXPOSE 8084
 CMD ["server"]

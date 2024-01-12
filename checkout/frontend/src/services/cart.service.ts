@@ -6,24 +6,13 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root',
 })
 export class CartService {
-  apiUrl = environment.api;
+  apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
-  public getCart(id: number) {
-    console.log(id);
-    console.log(`${this.apiUrl}/cart/${id}`);
-    return this.http.get(`${this.apiUrl}/cart/${id}`);
-  }
-
-  public addToCart(payload: {
-    userId: number;
-    hotelId: number;
-    travelId: number;
-  }) {
-    return this.http.post(`${this.apiUrl}/cart`, payload).subscribe((res) => {
-      console.log(res);
-    });
+  public getCart() {
+    console.log(this.apiUrl);
+    return this.http.get(`${this.apiUrl}/cart/find`);
   }
 
   public removeFromCart(cartId: number, hotelId: number, travelId: number) {

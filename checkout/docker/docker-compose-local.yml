@@ -68,7 +68,7 @@ services:
       - privatenet
 
   checkout-app:
-    image: dak4408/travma-checkout-backend:latest
+    image: checkout-backend:latest
     container_name: checkout-app
     restart: always
     depends_on:
@@ -91,7 +91,7 @@ services:
       privatenet:
   
   checkout-web:
-    image: dak4408/travma-checkout-frontend:latest
+    image: checkout-frontend:latest
     container_name: checkout-web
     restart: always
     environment:

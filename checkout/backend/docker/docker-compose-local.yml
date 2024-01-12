@@ -26,11 +26,11 @@ services:
       checkout-db:
         condition: service_healthy
     environment:
-      API_URL: "127.0.0.1"
+      API_URL: "0.0.0.0"
       API_PORT: "8084"
       TRAVEL_API_URL: "http://localhost:8086/api/v1/"
       JWT_SECRET: "your-jwt-secret"
-      KAFKA_URL: "kafka:9094"
+      KAFKA_URL: "kafka:9092"
       TOPIC: "checkout"
       DATABASE_URL: "postgres://checkout:password@checkout-db:5432/checkout"
     ports:

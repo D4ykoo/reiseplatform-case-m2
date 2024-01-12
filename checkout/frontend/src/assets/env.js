@@ -5,7 +5,7 @@
   window["env"] = window["env"] || {};
 
   window["env"].production = false;
-  window["env"].apiUrl = "http://localhost:8084/api/v1";
+  window["env"].apiUrl = "http://checkout-app:8084/api/v1";
 
   // Enviroment for frontends
   window["env"].usermanagementUrl = "http://localhost:8081/#/users";

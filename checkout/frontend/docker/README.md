@@ -1,12 +1,9 @@
 # Run the checkout backend
 ### Configuration
 In the environment section of the corresponding docker-compose<-xx>.yml files.  
-The kafka topic creation can be set in the kafka compose file e. g. `--topic=checkout` in the command section of the generator service. 
 
-### 1. Kafka, if not already set up
-```bash
-docker compose -f docker-compose-kafka.yml up -d 
-```
+### 1. Prerequisites
+When running with backend functionallity make sure the backend is running in some way, e. g. using docker.
 
 ### 2. Registry and local image
 Decide if local building is desired or not. 
