@@ -8,7 +8,7 @@ data:
   DEBUG: "true"
 
   # BROKERS should be just one value
-  BROKERS: "localhost:9094"
+  BROKERS: "kafka-service:9092"
   TOPIC: "travelmanagement"
 
   # DB

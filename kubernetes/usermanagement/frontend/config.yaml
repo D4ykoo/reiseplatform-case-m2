@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: usermngt-web-config
+data:
+  VITE_API_URL: "http://mini.local/users/api/v1/"
+  VITE_CHECKOUT_URL: "http://mini.local/checkout/"
+  VITE_TRAVELMANAGEMENT_URL: "http://mini.local/travma/"
+  VITE_MONITORING_URL: "http://mini.local/moitoring/"

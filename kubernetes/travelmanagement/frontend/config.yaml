@@ -5,6 +5,6 @@ metadata:
 data:
   API_URL_FR: "http://mini.local/travma/api/v1/"
   CHECKOUT_URL: "http://localhost:8083/cart"
-  LOGIN_URL: "http://localhost:8081/login"
-  MONITOR_URL: "http://localhost:8087/"
+  LOGIN_URL: "http://mini.local/users/"
+  MONITOR_URL: "http://mini.local/monitor/"
   CHECKOUT_API: ""
