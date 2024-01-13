@@ -17,8 +17,10 @@ npm run build
 Now the whole application is located in the dist/ directory.<br>
 The application can be served by any desired webserver after coping the whole directory to e. g. `var/www/html/`.
 
-## Docker
+## Docker Compose
+Follow the instructions in the docker directory.
 
+## Docker
 Create the network if it does not already exist:
 
 ```bash
