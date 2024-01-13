@@ -1,4 +1,4 @@
-version: "3.7"
+version: '3'
 services:
   checkout-db:
     image: postgres
@@ -16,7 +16,7 @@ services:
       - checkout-db:/var/lib/postgresql/data
     restart: always
     networks:
-      - privatenet
+      dbnetcheckout:
 
   checkout-app:
     image: dak4408/travma-checkout-backend:latest
@@ -25,11 +25,10 @@ services:
     depends_on:
       checkout-db:
         condition: service_healthy
-
     environment:
       API_URL: "0.0.0.0"
       API_PORT: "8084"
-      TRAVEL_API_URL: "http://localhost:8086/api/v1/"
+      TRAVEL_API_URL: "http://localhost:12345/travma/api/v1/"
       JWT_SECRET: "your-jwt-secret"
       KAFKA_URL: "kafka:9092"
       TOPIC: "checkout"
@@ -39,16 +38,17 @@ services:
     networks:
       publicnet:
       privatenet:
+      dbnetcheckout:
   
   checkout-web:
     image: dak4408/travma-checkout-frontend:latest
     container_name: checkout-web
     restart: always
     environment:
-      API_URL: "http://localhost:8083/api/v1"
-      USERMANAGEMENT_URL: "http://localhost:8081/users"
-      HOTELMANAGEMENT_URL: "http://localhost:8085/travma"
-      MONITORING_URL: "http://localhost:8087/*"    
+      API_URL: "http://localhost:12345/cart/api/v1"
+      USERMANAGEMENT_URL: "http://localhost:12345/users"
+      HOTELMANAGEMENT_URL: "http://localhost:12345/travma"
+      MONITORING_URL: "http://localhost:12345/*"    
     depends_on:
       - checkout-app
     ports:
@@ -57,11 +57,17 @@ services:
       privatenet:
       publicnet:
     volumes:
-      - ../frontend/nginx.conf:/etc/nginx/nginx.conf
-
+      - ./config/nginx.checkout.conf:/etc/nginx/nginx.conf
 
 volumes:
   checkout-db:
+
 networks:
-  privatenet:
   publicnet:
+    external: true
+
+  privatenet:
+    external: true
+
+  dbnetcheckout:
+    external: true

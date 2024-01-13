@@ -6,14 +6,14 @@ services:
     image: postgres
     container_name: usermanagement-db
     restart: always
-    
+
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: usermanagement
       POSTGRES_DB: usermanagement
 
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U travelmanagement" ]
+      test: [ "CMD-SHELL", "pg_isready -U usermanagement" ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -25,9 +25,9 @@ services:
       - usermanagementnet
       - dbnet
 
-  usermanagement-backend:
-    image: usermanagement-backend:latest
-    container_name: usermanagement-backend
+  usermanagement-app:
+    image: dak4408/travma-usermanagement-backend:latest
+    container_name: usermanagement-app
     restart: always
     depends_on:
       usermanagement-db:
@@ -64,12 +64,12 @@ services:
       - usermanagementnet
       - dbnet
   
-  frontend:
-    image: usermanagement-frontend:latest
-    container_name: usermanagement-frontend
+  usermanagement-web:
+    image: dak4408/travma-usermanagement-frontend:non-aio
+    container_name: usermanagement-web
     restart: always
     environment:
-      API_URL: http://localhost:8082/api/v1
+      API_URL: http://usermanagement-backend/api/v1
       CHECKOUT_URL: http://checkout-frontend:8083/#/cart
       TRAVELMANAGEMENT_URL: http://travelmngt-frontend:8085/#/travma
       MONITORING_URL: http://localhost:8087/*

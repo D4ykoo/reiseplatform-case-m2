@@ -1,0 +1,83 @@
+version: '3'
+services:
+  travelmngt-db:
+    image: postgres
+    container_name: travelmngt-db
+    environment:
+      POSTGRES_USER: travelmanagement
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: travelmanagement
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U travelmanagement" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - travelmngt-db:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - dbnettravmgnt
+
+  travelmngt-app:
+    image: mig3177/travma-travelmanagement-backend:latest
+    container_name: travelmngt-app
+    restart: always
+    depends_on:
+      travelmngt-db:
+        condition: service_healthy
+    environment:
+      DOMAIN: :8086
+      API_URL: :8086
+      JWT_SECRET: your-jwt-secret
+
+      # Change to true when using tls
+      PRODUCTION: false
+
+      # Gives additional information of the webserver
+      DEBUG: true
+
+      GIN_MODE: release
+
+      # BROKER Settings
+      BROKERS: kafka:9092
+      TOPIC: travelmanagement
+
+      # DB Settings
+      DB_HOST: travelmngt-db
+      DB_USER: travelmanagement
+      DB_PASSWORD: password
+      DB_NAME: travelmanagement
+      DB_PORT: 5432
+      SSL_TLS: disable
+      TIMEZONE: Europe/Berlin
+
+    networks:
+      - privatenet
+      - dbnettravmgnt
+
+  travelmngt-web:
+    image: mig3177/travma-travelmanagement-frontend:latest
+    container_name: travelmngt-web
+    depends_on: 
+      - travelmngt-app
+    environment:
+      API_URL_FR: "http://localhost:12345/travma/api/v1/"
+      CHECKOUT_URL: "http://localhost:12345/cart"
+      LOGIN_URL: "http://localhost:12345/users"
+      MONITOR_URL: "http://localhost:12345/*"
+    networks:
+      - privatenet
+      - publicnet
+    volumes:
+      - "./config/nginx.travelmanagement.conf:/etc/nginx/nginx.conf"
+  
+volumes:
+  travelmngt-db:
+
+networks:
+  privatenet:
+    external: true
+  publicnet:
+    external: true
+  dbnettravmgnt:
+    external: true
