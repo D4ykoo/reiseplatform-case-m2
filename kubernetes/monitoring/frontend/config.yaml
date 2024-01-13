@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: monitor-web-config
+data:
+  MONITOR_API: "http://mini.local/monitor/api/v1/"
+  CHECKOUT_URL: "http://mini.local/checkout/"
+  LOGIN_URL: "http://mini.local/users/"
+  TRAVEL_URL: "http://mini.local/travma/"

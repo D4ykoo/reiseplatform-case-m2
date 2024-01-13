@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monitor-web
+  labels:
+    app: monitor-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: monitor-web
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: monitor-web
+        tier: frontend
+    spec:
+      containers:
+        - name: monitor-web
+          image: mig3177/travma-monitoring-frontend:latest
+          envFrom:
+            - configMapRef: 
+                name: monitor-web-config
+          ports:
+            - name: monitor-web
+              containerPort: 8087
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "10Mi"
+              cpu: "100m"
+            limits:
+              memory: "100Mi"
+              cpu: "100Mi"

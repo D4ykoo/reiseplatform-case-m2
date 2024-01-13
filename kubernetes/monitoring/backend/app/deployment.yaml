@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monitor-app
+  labels:
+    app: monitor-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: monitor-app
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: monitor-app
+        tier: backend
+    spec:
+      containers:
+        - name: monitor-app
+          image: mig3177/travma-monitoring-backend:latest
+          envFrom:
+            - configMapRef:
+                name: monitor-app-config
+            - secretRef:
+                name: monitor-app-secret
+          ports:
+            - name: monitor-app
+              containerPort: 8088
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "10Mi"
+              cpu: "100m"
+            limits:
+              memory: "100Mi"
+              cpu: "100Mi"

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: monitor-db-config
+data:
+  POSTGRES_USER: monitoring
+  POSTGRES_DB: monitoring
+  POSTGRES_SSLMODE: "disable"
