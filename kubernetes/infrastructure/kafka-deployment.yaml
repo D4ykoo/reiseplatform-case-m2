@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kafka-service
+  name: kafka-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-service
+  template:
+    metadata:
+      labels:
+        app: kafka-service
+    spec:
+      containers:
+        - image: bitnami/kafka:3.4
+          imagePullPolicy: IfNotPresent
+          name: kafka-service
+          envFrom:
+            - configMapRef:
+                name: kafka-config
+          ports:
+            - containerPort: 9092
