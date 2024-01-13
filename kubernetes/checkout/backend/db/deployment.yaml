@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkout-db
+spec:
+  selector:
+    matchLabels:
+      app: checkout-pg
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: checkout-pg
+        tier: backend
+    spec:
+      containers:
+        - image: postgres:16.1-alpine3.19
+          name: checkout-pg
+          envFrom:
+            - configMapRef:
+                name: checkout-db-config
+            - secretRef:
+                name: checkout-db-secret
+          ports:
+            - containerPort: 5432
+              name: checkout-pg
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: checkout-db-storage
+              mountPath: /var/lib/postgresql/data
+          resources:
+            requests:
+              memory: "10Mi"
+              cpu: "100m"
+            limits:
+              memory: "100Mi"
+              cpu: "100Mi"      
+      volumes:
+        - name: checkout-db-storage
+          persistentVolumeClaim:
+            claimName: db-checkout-pvc
