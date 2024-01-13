@@ -9,6 +9,8 @@ Optional: There is a docker compose without kafka. Make sure the kafka instance 
 ```bash
 docker compose -f docker-compose-without-kafka.yml up -d 
 ```
+Otherwise the backend service will not be reachable by the frontend.
+
 An example kafka docker compose can be found in the backend directory.
 
 ### 1. Configuration
