@@ -91,6 +91,16 @@ TIMEZONE="Europe/Berlin"
 
 When running with a native installation please make sure the configuration in `backend/.env`is the same as the database.
 
+## Kafka
+### Native install
+Try follow the official instructions, keep in mind to install zookeeper as well.
+
+### Docker
+An example docker-compose can be found [here](https://github.com/D4ykoo/travelplatform-case-m2/blob/develop/docker/docker-compose-kafka.yml), just run it and configure as needed:
+```bash
+docker compose up -d
+```
+
 ## Run the checkout services by building on host
 #### 1. Clone the repository if not already done
 ```bash
@@ -115,6 +125,12 @@ ng build
 Now the whole application is located in the dist/ directory.<br>
 The application can be served by any desired webserver by coping the whole directory and renaming it to e.g. usermanagement. 
 
+##### Alternatively
+```bash
+cd ./travelplatform-case-m2/usermanagement/frontend
+ng serve
+```
+
 ## Run the checkout services by building on host
 #### 1. Clone the repository if not already done
 ```bash
@@ -124,7 +140,8 @@ cd ./travelplatform-case-m2/checkout/
 ```
 
 #### 2. Run the docker compose
-Optional configure the env vars in the [docker-compose.yml](docker-compose.yml)
+Optional configure the env vars in the [docker/docker-compose.yml](docker/docker-compose.yml).
+Further information can be gathered in the [docker/README.md](docker/README.md)
 ```bash
 docker compose up -d
 ```

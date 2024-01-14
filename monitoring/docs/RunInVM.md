@@ -1,8 +1,7 @@
 # How to run in a Virtual Machine
 It is assumed that the target is a debian/ ubuntu based VM and the package manager `apt` is available.
 
-**IMPORTANT:**  
-For all configuration please refer to the README information in the root directory `./README.md`.
+**Important:** When not using docker (compose) for the services. Make sure to configure the `.env` files to fit your needs. 
 
 ## Install build tools
 When running the services with docker skip the first steps and jump to the last step which describes how to install docker. Otherwise skip the docker section and follow the other instructions.
@@ -34,11 +33,16 @@ sudo apt-get update
 sudo apt-get install nodejs -y
 ```
 
-#### Golang
-Install via apt
+### Rust
+Install using rustup:
 ```bash
-sudo apt install golang 
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
+More information cna be found here:
+[https://www.rust-lang.org/tools/install](https://www.rust-lang.org/tools/install)
+
+**IMPORTANT:** Restart the terminal or log out. Otherwise the compiler and cargo will not be available in current session.
+
 
 #### Docker (optional)
 Required for a fast and easy docker setup when no native build of the services and installation of the db is desired.
@@ -77,14 +81,14 @@ sudo apt-get -y install postgresql
 
 Example default configuration for the database:
 ```bash
-POSTGRES_USER="usermanagement"
+POSTGRES_USER="monitor"
 POSTGRES_PASSWORD="password"
-POSTGRES_DB="usermanagement"
+POSTGRES_DB="monitor"
 SSL_TLS="disable"
 TIMEZONE="Europe/Berlin"
 ```
 
-When running with a native installation please make sure the configuration in `backend/.env`is the same as the database.
+When running with a native installation please make sure the configuration in `backend/`is the same as the database.
 
 ## Kafka
 ### Native install
@@ -103,41 +107,34 @@ https://github.com/D4ykoo/travelplatform-case-m2.git
 ```
 #### 2. Install and run backend
 ```bash
-cd ./travelplatform-case-m2/usermanagement/backend
-# install the packages
-go install
+cd ./travelplatform-case-m2/monitoring/backend
 # create the binary
-go build 
+cargo build 
 # run the binary 
-./usermanagement
+./target/release/monitoring-service
 ```
 
 #### 3. Install and run frontend
-For the quick serve, make sure the `backend/.env` configuration has the same port in the `DOMAIN` entry:
+For quick serve:
 ```bash
-cd ./travelplatform-case-m2/usermanagement/frontend
-npm run dev
+cd ./travelplatform-case-m2/monitoring/frontend
+ng serve
 ```
 
+For building:
 ```bash
-cd ./travelplatform-case-m2/usermanagement/frontend
-npm run build
+cd ./travelplatform-case-m2/monitoring/frontend
+ng build
 ```
 Now the whole application is located in the dist/ directory.<br>
 The application can be served by any desired webserver by coping the whole directory and renaming it to e.g. usermanagement. 
 
-##### Alternatively
-```bash
-cd ./travelplatform-case-m2/usermanagement/frontend
-npm run dev
-```
 
-## Run the usermanagement services by building on host
+## Run the travel management services by building on host
 #### 1. Clone the repository if not already done
 ```bash
 git clone https://github.com/D4ykoo/travelplatform-case-m2.git
-cd ./travelplatform-case-m2/usermanagement/
-
+cd ./travelplatform-case-m2/monitoring/
 ```
 
 #### 2. Run the docker compose
