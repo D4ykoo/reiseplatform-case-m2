@@ -1,4 +1,4 @@
-minikube start
+minikube start --cpus 4
 minikube addons enable ingress
 echo "Wait for the “Ingress” startup to complete."
 sleep 10

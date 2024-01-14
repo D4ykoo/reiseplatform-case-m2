@@ -1,15 +1,15 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: travelmngt-ingress
+  name: usermngt-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
   - http:
       paths:
       - pathType: Prefix
-        path: /users/(/|$)(.*)
+        path: /
         backend:
           service:
             name: usermngt-web-service

@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: checkout-web
-          image: dak4408/travma-checkout-frontend:test
+          image: dak4408/travma-checkout-frontend:latest
           envFrom:
             - configMapRef: 
                 name: checkout-web-config

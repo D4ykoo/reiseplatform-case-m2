@@ -18,14 +18,18 @@ spec:
     spec:
       containers:
         - name: usermngt-web
-          image: dak4408/travma-usermanagement-frontend:latest
+          image: dak4408/travma-usermanagement-frontend:non-aio
+          imagePullPolicy: Always
           envFrom:
             - configMapRef: 
                 name: usermngt-web-config
+          volumeMounts:
+            - name: usermngt-nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
           ports:
             - name: usermngt-web
               containerPort: 8081
-          imagePullPolicy: Always
           resources:
             requests:
               memory: "10Mi"
@@ -33,3 +37,7 @@ spec:
             limits:
               memory: "100Mi"
               cpu: "100Mi"
+      volumes:
+        - name: usermngt-nginx-config
+          configMap:
+            name: usermngt-nginx-config
