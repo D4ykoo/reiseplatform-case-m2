@@ -25,7 +25,7 @@ COPY ${frontend_path}dist .
 FROM nginx:alpine 
 COPY --from=prerelease /app/dist/frontend/browser /usr/share/nginx/html
 
-COPY nginx.conf /etc/nginx/nignx.conf
+COPY nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 8083
 CMD ["/bin/sh",  "-c",  "envsubst < /usr/share/nginx/html/assets/env.template.js > /usr/share/nginx/html/assets/env.js && exec nginx -g 'daemon off;'"]

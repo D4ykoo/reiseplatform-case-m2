@@ -18,14 +18,14 @@ spec:
     spec:
       containers:
         - name: usermngt-web
-          image: dak4408/travma-usermanagement-frontend:test
+          image: dak4408/travma-usermanagement-frontend:latest
           envFrom:
             - configMapRef: 
                 name: usermngt-web-config
           ports:
             - name: usermngt-web
               containerPort: 8081
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           resources:
             requests:
               memory: "10Mi"

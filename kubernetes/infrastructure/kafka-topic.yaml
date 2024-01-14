@@ -12,8 +12,6 @@ spec:
      targetPort: 9092
   selector:
     app: kafka-topic-service
-  clusterIP: None
-  type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -39,4 +37,5 @@ spec:
             - "sleep 5s &&
               kafka-topics.sh --create --topic=checkout --if-not-exists --bootstrap-server=kafka-service:9092 &&
               kafka-topics.sh --create --topic=travelmanagement --if-not-exists --bootstrap-server=kafka-service:9092 &&
-              kafka-topics.sh --create --topic=usermanagement --if-not-exists --bootstrap-server=kafka-service:9092"
+              kafka-topics.sh --create --topic=usermanagement --if-not-exists --bootstrap-server=kafka-service:9092 && 
+              sleep infinity"
