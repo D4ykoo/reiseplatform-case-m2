@@ -1,8 +1,7 @@
 # How to run in a Virtual Machine
 It is assumed that the target is a debian/ ubuntu based VM and the package manager `apt` is available.
 
-**IMPORTANT:**  
-For all configuration please refer to the README information in the root directory `./README.md`.
+**Important:** When not using docker (compose) for the services. Make sure to configure the `.env` files to fit your needs. 
 
 ## Install build tools
 When running the services with docker skip the first steps and jump to the last step which describes how to install docker. Otherwise skip the docker section and follow the other instructions.
@@ -77,9 +76,9 @@ sudo apt-get -y install postgresql
 
 Example default configuration for the database:
 ```bash
-POSTGRES_USER="usermanagement"
+POSTGRES_USER="travelmanagement"
 POSTGRES_PASSWORD="password"
-POSTGRES_DB="usermanagement"
+POSTGRES_DB="travelmanagement"
 SSL_TLS="disable"
 TIMEZONE="Europe/Berlin"
 ```
@@ -103,7 +102,7 @@ https://github.com/D4ykoo/travelplatform-case-m2.git
 ```
 #### 2. Install and run backend
 ```bash
-cd ./travelplatform-case-m2/usermanagement/backend
+cd ./travelplatform-case-m2/travel-management/backend
 # install the packages
 go install
 # create the binary
@@ -113,31 +112,26 @@ go build
 ```
 
 #### 3. Install and run frontend
-For the quick serve, make sure the `backend/.env` configuration has the same port in the `DOMAIN` entry:
+For quick serve:
 ```bash
-cd ./travelplatform-case-m2/usermanagement/frontend
-npm run dev
+cd ./travelplatform-case-m2/travel-management/frontend
+ng serve
 ```
 
+For building:
 ```bash
-cd ./travelplatform-case-m2/usermanagement/frontend
-npm run build
+cd ./travelplatform-case-m2/travel-management/frontend
+ng build
 ```
 Now the whole application is located in the dist/ directory.<br>
 The application can be served by any desired webserver by coping the whole directory and renaming it to e.g. usermanagement. 
 
-##### Alternatively
-```bash
-cd ./travelplatform-case-m2/usermanagement/frontend
-npm run dev
-```
 
-## Run the usermanagement services by building on host
+## Run the travel management services by building on host
 #### 1. Clone the repository if not already done
 ```bash
 git clone https://github.com/D4ykoo/travelplatform-case-m2.git
-cd ./travelplatform-case-m2/usermanagement/
-
+cd ./travelplatform-case-m2/travel-management/
 ```
 
 #### 2. Run the docker compose
