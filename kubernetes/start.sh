@@ -4,7 +4,7 @@ echo "Wait for the “Ingress” startup to complete."
 sleep 10
 kubectl get pods -n ingress-nginx
 sleep 3
-echo "Setup Infrastructure"
+echo "Create infrastructure"
 kubectl apply -f infrastructure/nginx.yaml
 kubectl apply -f infrastructure/zookeeper-deployment.yaml
 kubectl apply -f infrastructure/zookeeper-service.yaml
@@ -14,42 +14,66 @@ kubectl apply -f infrastructure/kafka-service.yaml
 sleep 1
 kubectl apply -f infrastructure/kafka-topic.yaml
 
-echo "Make sure your persistence volume 'standard' exist"
+echo "Create Checkout"
 sleep 3
-echo "Setup Travelmanagement"
-echo "Travelmanagement - Frontend"
-kubectl apply -f travelmanagement/frontend
-sleep 3
-echo "Travelmanagement - DB"
-kubectl apply -f travelmanagement/backend/db
-sleep 3
-echo "Travelmanagement - App"
-kubectl apply -f travelmanagement/backend/app
-sleep 3
+kubectl apply -f travelplatform-case-m2/kubernetes/checkout/frontend/config.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/checkout/frontend/deployment.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/checkout/frontend/service.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/checkout/frontend/ingress.yaml
 
-echo "usermanagement todo"
+kubectl apply -f travelplatform-case-m2/kubernetes/checkout/db/config.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/checkout/db/secrets.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/checkout/db/pvc.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/checkout/db/deployment.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/checkout/db/service.yaml
 
-echo "Setup Checkout"
-echo "Checkout - Frontend"
-kubectl apply -f checkout/frontend
-sleep 3
-echo "Checkout - DB"
-kubectl apply -f checkout/backend/db
-sleep 3
-echo "Checkout - App"
-kubectl apply -f checkout/backend/app
-sleep 3
+kubectl apply -f travelplatform-case-m2/kubernetes/checkout/app/config.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/checkout/app/secrets.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/checkout/app/deployment.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/checkout/app/service.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/checkout/app/ingress.yaml
 
-echo "Setup Monitoring"
-echo "Monitoring - Frontend"
-kubectl apply -f monitoring/frontend
+echo "Create Travelmanagement"
 sleep 3
-echo "Monitoring - DB"
-kubectl apply -f monitoring/backend/db
+kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/frontend/config.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/frontend/deployment.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/frontend/service.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/frontend/ingress.yaml
+
+kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/db/config.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/db/secrets.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/db/pvc.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/db/deployment.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/db/service.yaml
+
+kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/app/config.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/app/secrets.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/app/deployment.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/app/service.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/app/ingress.yaml
+
+echo "Create usermanagement"
 sleep 3
-echo "Monitoring - App"
-kubectl apply -f monitoring/backend/app
+# TODO
+
+echo "Create Monitoring"
 sleep 3
+kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/frontend/config.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/frontend/deployment.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/frontend/service.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/frontend/ingress.yaml
+
+kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/db/config.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/db/secrets.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/db/pvc.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/db/deployment.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/db/service.yaml
+
+kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/app/config.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/app/secrets.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/app/deployment.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/app/service.yaml
+kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/app/ingress.yaml
 
 echo "To Access the cluster execute minikube tunnel in a separate terminal"
 echo "The DNS name is current mini.local (Todo change name)"
