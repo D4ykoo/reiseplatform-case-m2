@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: usermngt-web-config
+  name: user-web-config
 data:
   API_URL: "http://mini.local/users/api/v1"
   CHECKOUT_URL: "http://mini.local/checkout/"

@@ -22,7 +22,7 @@ spec:
           imagePullPolicy: Always
           envFrom:
             - configMapRef: 
-                name: usermngt-web-config
+                name: user-web-config
           volumeMounts:
             - name: usermngt-nginx-config
               mountPath: /etc/nginx/nginx.conf

@@ -1,3 +1,22 @@
+# How to run
+Run with the start script:
+```bash
+chmod +x start.sh && ./start.sh
+```
+
+When using Minikube:
+```bash
+./start.sh -m
+```
+It will automatically create a new or start an existing k8s cluster as well as activating the ingress addon.
+
+### When using minikube
+Start in another terminal `minikube tunnel`. It shows the status and a route. Paste the ip after the `->` inside `/etc/hosts` e.g. 
+```bash
+192.168.39.8    mini.local
+```
+
+
 # Minikube and Ingress (Docker-Driver)
 
 Here is a brief introduction to configuring Minikube for our application.
