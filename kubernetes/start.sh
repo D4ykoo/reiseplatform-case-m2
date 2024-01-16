@@ -1,8 +1,18 @@
-minikube start --cpus 4
-minikube addons enable ingress
-echo "Wait for the “Ingress” startup to complete."
-sleep 10
-kubectl get pods -n ingress-nginx
+while getopts m flag
+do
+    case "${flag}" in
+        m) minikube=true;;
+    esac
+done
+
+if [ "$minikube" = true ] ; then
+    minikube start --cpus 4
+    minikube addons enable ingress
+    echo "Wait for the “Ingress” startup to complete."
+    sleep 10
+    kubectl get pods -n ingress-nginx
+fi
+
 sleep 3
 echo "Create infrastructure"
 kubectl apply -f infrastructure/nginx.yaml
@@ -16,67 +26,90 @@ kubectl apply -f infrastructure/kafka-topic.yaml
 
 echo "Create Checkout"
 sleep 3
-kubectl apply -f travelplatform-case-m2/kubernetes/checkout/frontend/config.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/checkout/frontend/deployment.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/checkout/frontend/service.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/checkout/frontend/ingress.yaml
+# travelplatform-case-m2/kubernetes/
+kubectl apply -f checkout/frontend/config.yaml
+kubectl apply -f checkout/frontend/deployment.yaml
+kubectl apply -f checkout/frontend/service.yaml
+kubectl apply -f checkout/frontend/ingress.yaml
 
-kubectl apply -f travelplatform-case-m2/kubernetes/checkout/db/config.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/checkout/db/secrets.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/checkout/db/pvc.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/checkout/db/deployment.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/checkout/db/service.yaml
+kubectl apply -f checkout/backend/db/config.yaml
+kubectl apply -f checkout/backend/db/secrets.yaml
+kubectl apply -f checkout/backend/db/pvc.yaml
+kubectl apply -f checkout/backend/db/deployment.yaml
+kubectl apply -f checkout/backend/db/service.yaml
 
-kubectl apply -f travelplatform-case-m2/kubernetes/checkout/app/config.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/checkout/app/secrets.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/checkout/app/deployment.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/checkout/app/service.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/checkout/app/ingress.yaml
+kubectl apply -f checkout/backend/app/config.yaml
+kubectl apply -f checkout/backend/app/secrets.yaml
+kubectl apply -f checkout/backend/app/deployment.yaml
+kubectl apply -f checkout/backend/app/service.yaml
+kubectl apply -f checkout/backend/app/ingress.yaml
 
 echo "Create Travelmanagement"
 sleep 3
-kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/frontend/config.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/frontend/deployment.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/frontend/service.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/frontend/ingress.yaml
+kubectl apply -f travelmanagement/frontend/config.yaml
+kubectl apply -f travelmanagement/frontend/deployment.yaml
+kubectl apply -f travelmanagement/frontend/service.yaml
+kubectl apply -f travelmanagement/frontend/ingress.yaml
 
-kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/db/config.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/db/secrets.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/db/pvc.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/db/deployment.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/db/service.yaml
+kubectl apply -f travelmanagement/backend/db/config.yaml
+kubectl apply -f travelmanagement/backend/db/secrets.yaml
+kubectl apply -f travelmanagement/backend/db/pvc.yaml
+kubectl apply -f travelmanagement/backend/db/deployment.yaml
+kubectl apply -f travelmanagement/backend/db/service.yaml
 
-kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/app/config.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/app/secrets.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/app/deployment.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/app/service.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/travelmanagement/app/ingress.yaml
+kubectl apply -f travelmanagement/backend/app/config.yaml
+kubectl apply -f travelmanagement/backend/app/secrets.yaml
+kubectl apply -f travelmanagement/backend/app/deployment.yaml
+kubectl apply -f travelmanagement/backend/app/service.yaml
+kubectl apply -f travelmanagement/backend/app/ingress.yaml
 
 echo "Create usermanagement"
 sleep 3
-# TODO
+                 
+kubectl apply -f usermanagement/frontend/config.yml
+kubectl apply -f usermanagement/frontend/nginx.conf.yml
+kubectl apply -f usermanagement/frontend/secrets.yml
+kubectl apply -f usermanagement/frontend/deployment.yml
+kubectl apply -f usermanagement/frontend/service.yml
+kubectl apply -f usermanagement/frontend/ingress.yml
+
+kubectl apply -f usermanagement/backend/db/config.yaml
+kubectl apply -f usermanagement/backend/db/secrets.yaml
+kubectl apply -f usermanagement/backend/db/pvc.yaml
+kubectl apply -f usermanagement/backend/db/deployment.yaml
+kubectl apply -f usermanagement/backend/db/service.yaml
+
+kubectl apply -f usermanagement/backend/app/config.yaml
+kubectl apply -f usermanagement/backend/app/secrets.yaml
+kubectl apply -f usermanagement/backend/app/deployment.yaml
+kubectl apply -f usermanagement/backend/app/service.yaml
+kubectl apply -f usermanagement/backend/app/ingress.yaml
 
 echo "Create Monitoring"
 sleep 3
-kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/frontend/config.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/frontend/deployment.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/frontend/service.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/frontend/ingress.yaml
+kubectl apply -f monitoring/frontend/config.yaml
+kubectl apply -f monitoring/frontend/deployment.yml
+kubectl apply -f monitoring/frontend/service.yml
+kubectl apply -f monitoring/frontend/ingress.yml
 
-kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/db/config.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/db/secrets.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/db/pvc.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/db/deployment.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/db/service.yaml
+kubectl apply -f monitoring/backend/db/config.yaml
+kubectl apply -f monitoring/backend/db/secrets.yaml
+kubectl apply -f monitoring/backend/db/pvc.yaml
+kubectl apply -f monitoring/backend/db/deployment.yaml
+kubectl apply -f monitoring/backend/db/service.yaml
 
-kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/app/config.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/app/secrets.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/app/deployment.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/app/service.yaml
-kubectl apply -f travelplatform-case-m2/kubernetes/monitoring/app/ingress.yaml
+kubectl apply -f monitoring/backend/app/config.yaml
+kubectl apply -f monitoring/backend/app/secrets.yaml
+kubectl apply -f monitoring/backend/app/deployment.yaml
+kubectl apply -f monitoring/backend/app/service.yaml
+kubectl apply -f monitoring/backend/app/ingress.yaml
 
-echo "To Access the cluster execute minikube tunnel in a separate terminal"
-echo "The DNS name is current mini.local (Todo change name)"
-echo "Add an Host in your /etc/hosts"
-echo "eg.: 192.168.49.2 mini.local"
-echo "the travelmanagement is now reachable at mini.local/travma"
+if [ "$minikube" = true ] ; then
+    echo "To Access the cluster execute minikube tunnel in a separate terminal"
+    echo "The DNS name is current mini.local (Todo change name)"
+    echo "Add an Host in your /etc/hosts"
+    echo "eg.: 192.168.49.2 mini.local"
+    echo "the travelmanagement is now reachable at mini.local/travma"
+else
+    echo "the travelmanagement is now reachable at sub.domain/travma"
+fi

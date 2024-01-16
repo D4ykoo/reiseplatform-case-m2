@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: usermngt-web-config
 data:
-  API_URL: "http://mini.local/users/api/v1/"
+  API_URL: "http://mini.local/users/api/v1"
   CHECKOUT_URL: "http://mini.local/checkout/"
   TRAVELMANAGEMENT_URL: "http://mini.local/travma/"
   MONITORING_URL: "http://mini.local/moitoring/"

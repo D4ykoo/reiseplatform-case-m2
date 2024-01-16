@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: usermngt-app-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /api/$1
+spec:
+  rules:
+  - http:
+      paths:
+      - pathType: Prefix
+        path: /users/api/(.*)
+        backend:
+          service:
+            name: usermngt-app-service
+            port:
+              number: 8086
