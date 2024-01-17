@@ -3,11 +3,11 @@ apiVersion: v1
 metadata:
   name: checkout-web-service
 spec:
-  type: NodePort
+  # type: NodePort
   selector:
     app: checkout-web
     tier: frontend
   ports:
-  - port: 8083
+  - protocol: TCP
+    port: 8083
     targetPort: 8083
-    nodePort: 30015

@@ -4,6 +4,6 @@ metadata:
   name: user-web-config
 data:
   API_URL: "http://mini.local/users/api/v1"
-  CHECKOUT_URL: "http://mini.local/checkout/"
+  CHECKOUT_URL: "http://mini.local/cart/"
   TRAVELMANAGEMENT_URL: "http://mini.local/travma/"
-  MONITORING_URL: "http://mini.local/moitoring/"
+  MONITORING_URL: "http://mini.local/monitor/"

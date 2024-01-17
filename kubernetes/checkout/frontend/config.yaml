@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: checkout-web-config
 data:
-  API_URL: "http://mini.local/checkout/api/v1/"
+  API_URL: "http://mini.local/cart/api/v1/"
   MONITORING_URL: "http://mini.local/monitor/"
-  USERMANAGEMENT_URL: "http://mini.local/users/"
+  USERMANAGEMENT_URL: "http://mini.local/"
   HOTELMANAGEMENT_URL: "http://mini.local/travma/"

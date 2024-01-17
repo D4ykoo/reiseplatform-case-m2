@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: monitor-app-ingress
+  name: checkout-app-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /api/$1
 spec:
@@ -9,7 +9,7 @@ spec:
   - http:
       paths:
       - pathType: Prefix
-        path: /checkout/api/(.*)
+        path: /cart/api/(.*)
         backend:
           service:
             name: checkout-app-service

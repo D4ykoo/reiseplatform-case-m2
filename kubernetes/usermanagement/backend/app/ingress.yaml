@@ -14,4 +14,4 @@ spec:
           service:
             name: usermngt-app-service
             port:
-              number: 8086
+              number: 8082

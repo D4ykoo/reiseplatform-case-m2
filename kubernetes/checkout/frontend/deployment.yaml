@@ -22,6 +22,11 @@ spec:
           envFrom:
             - configMapRef: 
                 name: checkout-web-config
+
+          volumeMounts:
+            - name: checkout-nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
           ports:
             - name: checkout-web
               containerPort: 8083
@@ -33,3 +38,8 @@ spec:
             limits:
               memory: "100Mi"
               cpu: "100Mi"
+
+      volumes:
+        - name: checkout-nginx-config
+          configMap:
+            name: checkout-nginx-config

@@ -26,7 +26,7 @@ spec:
                 name: usermngt-app-secret
           ports:
             - name: usermngt-app
-              containerPort: 8086
+              containerPort: 8082
           imagePullPolicy: Always
           resources:
             requests:

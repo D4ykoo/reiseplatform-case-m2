@@ -4,7 +4,7 @@ metadata:
   name: usermngt-app-config
 data:
   DOMAIN: "http://mini.local/"
-  API_URL: "0.0.0.0:8086"
+  API_URL: "0.0.0.0:8082"
   PRODUCTION: "false"
   DEBUG: "true"
 
