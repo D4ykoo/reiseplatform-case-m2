@@ -2,8 +2,7 @@
 Project for the lecture Cloud Native Development.
 As the name suggests it is a travel management platform for creating hotels, travels and book them. Everything packed with a usermanagement!
 
-TODO DIAGRAM
-
+![overview_architecture.png](ressources/overview_architecture.png)
 ## Overview
 ### User Management
 This hexagonal service takes care of login, register, user operations (create, read, update, delete) as well as JWT operations.
