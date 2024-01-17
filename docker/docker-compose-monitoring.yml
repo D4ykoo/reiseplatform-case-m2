@@ -45,7 +45,7 @@ services:
       DB_PASSWORD: password
       DB_NAME: monitor
     ports:
-      - "8087:8087"
+      - "8088:8088"
     networks:
       privatenet:
       dbnetmonitor:
@@ -57,14 +57,17 @@ services:
     depends_on:
       - monitor-app
     environment:
-      MONITOR_API: http://localhost:12345/
+      MONITOR_API: http://localhost:12345/monitor/api/v1/
       CHECKOUT_URL: http://localhost:12345/cart
       LOGIN_URL: http://localhost:12345/users
       TRAVEL_URL: http://localhost:12345/travma
     ports:
-      - "8088:8088"
+      - "8087:8087"
     networks:
+      - privatenet
       - publicnet
+    volumes:
+      - "./config/nginx.monitor.conf:/etc/nginx/nginx.conf"
 
 volumes:
   monitor-db:
