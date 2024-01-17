@@ -11,6 +11,9 @@ This hexagonal service takes care of login, register, user operations (create, r
 **Technology Stack:**  
 Frontend: VueJS3 + Typescript + Vite + TailwindCSS + DaisyUI  
 Backend: Go + Gin + GORM
+
+Author: Dario Köllner
+
 ### Travel Management
 The travel management is a hexagonal service, which has CRUD operations for hotels and corresponding travels. Each hotel can have several travels.
 They can be stored inside a cart provided by the checkout service.  
@@ -18,6 +21,8 @@ They can be stored inside a cart provided by the checkout service.
 **Technology Stack:**  
 Frontend: Angular + Typescript  
 Backend: Go + Gin + GORM
+
+Author: Michael Gürtner
 
 ### Checkout
 The checkout service has, depending on the user, all cart information is capable of storing, creating and deleting it.  
@@ -27,12 +32,16 @@ The payment process is mocked.
 Frontend: Angular + Typescript + TailwindCSS + DaisyUI  
 Backend: Rust + Actix Web + Diesel
 
+Author: Dario Köllner
+
 ### Monitoring
 This service receives logs provided from the services mentioned above and displays them.
 
 **Technology Stack:**  
 Frontend: Angular + Typescript  
 Backend: Rust + Diesel
+
+Author: Michael Gürtner
 
 ## Project Structure
 Every service is seperated in frontend and backend directories. Each microservice has its own documentation as well as some docker-compose files.
