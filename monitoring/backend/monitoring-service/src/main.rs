@@ -2,6 +2,7 @@ pub mod model;
 
 use axum::extract::{Query, State};
 use axum::Json;
+use axum::http::HeaderValue;
 use axum::{http::StatusCode, routing::get, Router};
 use chrono::{DateTime, Utc};
 use dotenvy::dotenv;
@@ -20,15 +21,14 @@ use std::env;
 use std::sync::mpsc::channel;
 use tower_cookies::{CookieManagerLayer, Cookies};
 use tower_http::services::ServeDir;
-use tracing::warn;
-use tower_http::cors::{Any, CorsLayer};
+use tower_http::cors::CorsLayer;
 
 use crate::model::TokenError;
 
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
-    let cors = CorsLayer::new().allow_origin(Any);
+    let cors = CorsLayer::new().allow_origin("http://localhost:8087".parse::<HeaderValue>().unwrap()).allow_credentials(true);
     let (tx, rx) = channel();
 
     let pool = get_connection_pool();
@@ -71,7 +71,7 @@ async fn main() {
                         let event: NewCheckoutEvent = serde_json::from_str(&event.payload).unwrap();
                         add_checkout_event(conn, event).expect("Error");
                     }
-                    &_ => (),
+                    &_ => {()},
                 }
             }
         });

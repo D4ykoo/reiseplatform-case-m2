@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment.development';
   providedIn: 'root',
 })
 export class LoginService {
-  private userSubject = new BehaviorSubject<User>({ userid: 0, name: '' });
+  private userSubject = new BehaviorSubject<User>({ id: 0, name: '' });
   public user = this.userSubject.asObservable();
 
   private currentUser: User | undefined;
@@ -17,7 +17,7 @@ export class LoginService {
 
   checkLoginStatus() {
     
-    if (this.userSubject.value.userid == 0) {
+    if (this.userSubject.value.id == 0) {
       this.httpClient
         .get(environment.Hotel_API + 'loginstatus',{withCredentials:true})
         .subscribe((res) => {

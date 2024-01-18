@@ -14,6 +14,7 @@ import { LoginService } from '../../services/login.service';
 import { User } from '../../models/user';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-info-card',
@@ -42,11 +43,11 @@ export class InfoCardComponent implements OnInit {
     private httpClient: HttpClient,
     private ref: DynamicDialogRef,
     private loginService: LoginService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.hotelOffer = this.offerService.getSelectedOffer();
-    this.user = this.loginService.getLoginStatus();
+    this.loginService.user.subscribe((u) => this.user = u);
     this.responsiveOptions = [
       {
         breakpoint: '1024px',
@@ -68,16 +69,13 @@ export class InfoCardComponent implements OnInit {
   }
 
   addToCart(id: number) {
-    this.httpClient.put(
+    lastValueFrom(this.httpClient.put(
       environment.Checkout_API +
-        'addtocart/' +
-        (this.hotelOffer as Hotel).id +
-        '/' +
-        (this.hotelOffer as Hotel).travels[id].id +
-        '/' +
-        (this.user?.userid as number),
-      {},
-    );
+      'cart/addtocart/' + (this.user?.id as number) + '/' +
+      (this.hotelOffer as Hotel).id +
+      '/' +
+      (this.hotelOffer as Hotel).travels[id].id, {}, { withCredentials: true }
+    ));
     this.closeDialog();
   }
 }

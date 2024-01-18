@@ -44,9 +44,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   startpolling() {
-    console.log(event);
     this.timeInterval?.unsubscribe();
-    console.log('CHANGE ' + this.activeItem?.id);
     switch (this.activeItem?.id) {
       case '0':
         this.timeInterval = interval(5000)

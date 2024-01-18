@@ -7,5 +7,5 @@
   window["env"]["CHECKOUT_URL"] = "http://localhost:8083/";
   window["env"]["LOGIN_URL"] = "http://localhost:8081/";
   window["env"]["MONITOR_URL"] = "http://localhost:8087/";
-  window["env"]["CHECKOUT_API"] = "http://localhost:8084/";
+  window["env"]["CHECKOUT_API"] = "http://localhost:8084/api/v1/";
 })(this);

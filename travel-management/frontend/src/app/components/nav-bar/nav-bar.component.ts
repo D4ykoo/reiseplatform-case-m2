@@ -46,8 +46,8 @@ export class NavBarComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
-  public onNavigate() {
-    const url = environment.Login_URL as unknown as string;
+  public navigateToCart() {
+    const url = environment.Monitor_URL as unknown as string;
     window.open(url, '_self');
   }
 }

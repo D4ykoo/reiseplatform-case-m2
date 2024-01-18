@@ -23,6 +23,8 @@ import { DropdownModule } from 'primeng/dropdown';
 import { Travel } from '../../models/travel';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { User } from '../../models/user';
+import { LoginService } from '../../services/login.service';
 
 @Component({
   selector: 'app-hotel-edit',
@@ -46,6 +48,7 @@ export class HotelEditComponent implements OnInit, OnChanges {
   @Input()
   editorMode!: string | undefined;
 
+  user!: User;
   hotels!: Hotel[];
   hotel!: Hotel | undefined;
 
@@ -64,7 +67,8 @@ export class HotelEditComponent implements OnInit, OnChanges {
   constructor(
     private httpClient: HttpClient,
     private messageService: MessageService,
-  ) {}
+    private loginService: LoginService
+  ) { }
   /* eslint-disable  @typescript-eslint/no-explicit-any */
   onFileChange(event: any) {
     if (event.target.files && event.target.files[0]) {
@@ -101,11 +105,11 @@ export class HotelEditComponent implements OnInit, OnChanges {
         state: this.state,
         street: this.street,
         tagids: this.selectedTags,
-        vendorid: 0,
-        vendorname: 'asdf',
+        vendorid: this.user.id,
+        vendorname: this.user.name,
       };
       lastValueFrom(
-        this.httpClient.post(environment.Hotel_API + 'hotels', createHotel,{withCredentials:true}),
+        this.httpClient.post(environment.Hotel_API + 'hotels', createHotel, { withCredentials: true }),
       )
         .then((res) => {
           this.clear();
@@ -129,15 +133,15 @@ export class HotelEditComponent implements OnInit, OnChanges {
         state: this.state,
         street: this.street,
         tags: this.selectedTags,
-        vendorid: 0,
-        vendorname: 'asdf',
+        vendorid: this.user.id,
+        vendorname: this.user.name,
         id: this.hotel?.id as number,
         travels: this.hotel?.travels as Travel[],
       };
       lastValueFrom(
         this.httpClient.put(
           environment.Hotel_API + 'hotels/' + this.hotel?.id,
-          UpdateHotel,{withCredentials:true}
+          UpdateHotel, { withCredentials: true }
         ),
       )
         .then((res) => {
@@ -217,6 +221,7 @@ export class HotelEditComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
+    this.loginService.user.subscribe((u) => this.user = u);
     this.setup();
   }
 
@@ -235,7 +240,7 @@ export class HotelEditComponent implements OnInit, OnChanges {
   delete() {
     lastValueFrom(
       this.httpClient.delete(
-        environment.Hotel_API + 'hotels/' + (this.hotel?.id as number),{withCredentials:true}
+        environment.Hotel_API + 'hotels/' + (this.hotel?.id as number), { withCredentials: true }
       ),
     )
       .then(() => {

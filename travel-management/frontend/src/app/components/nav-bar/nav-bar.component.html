@@ -95,7 +95,7 @@
             />
           </svg>
         </div>
-        <div class="sidbar-link">Statistics</div>
+        <div class="sidbar-link">Monitoring</div>
       </p-button>
     </p-sidebar>
     <p-button (click)="sidebarVisible = true" severity="secondary">
@@ -124,14 +124,14 @@
   <div class="header-title">
     <h1>travMa</h1>
   </div>
-  <div *ngIf="user && user.userid !== 0">
+  <div *ngIf="user && user.id !== 0" style="text-align: center; margin: auto;">
     Hallo, <br />
     {{ user.name }}
   </div>
   <div class="sidbar-btn">
     <p-button
       class="checkout_btn"
-      (click)="sidebarVisible = true"
+      (click)="navigateToCart()"
       severity="secondary"
     >
       <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
@@ -176,7 +176,7 @@
     </p-button>
   </div>
   <div class="sidbar-btn">
-    <p-button class="checkout_btn" severity="secondary" (click)="onNavigate()">
+    <p-button class="checkout_btn" severity="secondary" (click)="navigateToUserMngt()">
       <svg id="Outlined" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
         <g id="Fill">
           <path

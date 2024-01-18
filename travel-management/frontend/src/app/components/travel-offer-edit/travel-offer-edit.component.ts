@@ -19,6 +19,8 @@ import { CreateTravel } from '../../models/requests';
 import { Travel } from '../../models/travel';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { LoginService } from '../../services/login.service';
+import { User } from '../../models/user';
 
 @Component({
   selector: 'app-travel-offer-edit',
@@ -40,6 +42,8 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
   @Input()
   editorMode!: string | undefined;
 
+  user!: User;
+
   hotels!: Hotel[];
   selectedHotel: Hotel | undefined;
   travels!: Travel[];
@@ -51,9 +55,11 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
   constructor(
     private readonly httpClient: HttpClient,
     private messageService: MessageService,
+    private loginService: LoginService
   ) { }
 
   ngOnInit(): void {
+    this.loginService.user.subscribe((u) => this.user = u);
     this.setup();
   }
 
@@ -81,8 +87,8 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
         from: from.toISOString(),
         to: to.toISOString(),
         price: this.price,
-        vendorid: 0,
-        vendorname: '',
+        vendorid: this.user.id,
+        vendorname: this.user.name,
       };
       lastValueFrom(
         this.httpClient.post(
@@ -112,8 +118,8 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
         from: from.toISOString(),
         to: to.toISOString(),
         price: this.price,
-        vendorid: 0,
-        vendorname: '',
+        vendorid: this.user.id,
+        vendorname: this.user.name,
       };
       lastValueFrom(
         this.httpClient.put(
@@ -122,7 +128,7 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
           this.selectedHotel?.id +
           '/travels/' +
           this.selectedTravel?.id,
-          updateTravel,{withCredentials:true}
+          updateTravel, { withCredentials: true }
         ),
       )
         .then((res) => {
@@ -219,7 +225,7 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
           'hotels/' +
           this.selectedHotel?.id +
           '/travels/' +
-          this.selectedTravel.id,{withCredentials:true}
+          this.selectedTravel.id, { withCredentials: true }
         ),
       )
         .then(() => {
