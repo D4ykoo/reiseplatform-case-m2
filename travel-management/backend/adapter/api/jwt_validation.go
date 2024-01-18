@@ -42,12 +42,12 @@ func ValidateLoginStatus(c *gin.Context) (jwt.MapClaims, error) {
 		return nil, cookieErr
 	}
 
-	suc, valErr, claim := ValidateJWT(cookie, os.Getenv("JWT_SECRET"))
+	_, valErr, claim := ValidateJWT(cookie, os.Getenv("JWT_SECRET"))
 
 	if valErr != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": valErr.Error()})
 		return nil, valErr
 	}
-	fmt.Println(suc)
+
 	return claim, nil
 }

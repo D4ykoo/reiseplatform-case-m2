@@ -65,6 +65,7 @@ services:
       CHECKOUT_URL: "http://localhost:12345/cart"
       LOGIN_URL: "http://localhost:12345/users"
       MONITOR_URL: "http://localhost:12345/monitor"
+      Checkout_API: "http://localhost:12345/cart/api/v1/"
     networks:
       - privatenet
       - publicnet

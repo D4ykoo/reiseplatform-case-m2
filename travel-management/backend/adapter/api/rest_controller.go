@@ -32,8 +32,6 @@ func (ctr RestController) CheckLoginStatus(c *gin.Context) {
 
 	username := claims["username"].(string)
 	user_id := claims["user_id"].(float64)
-	fmt.Println(username)
-	fmt.Println(user_id)
 	id := int(user_id)
 
 	c.JSON(http.StatusOK, dto.UserResponse{Id: id, Name: username})
@@ -41,7 +39,6 @@ func (ctr RestController) CheckLoginStatus(c *gin.Context) {
 }
 
 func (ctr RestController) CreateHotelRequest(c *gin.Context) {
-
 	// Function can only be executed with a valid login status
 
 	if _, err := ValidateLoginStatus(c); err != nil {

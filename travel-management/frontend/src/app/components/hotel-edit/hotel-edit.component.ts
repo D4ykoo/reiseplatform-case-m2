@@ -48,7 +48,6 @@ export class HotelEditComponent implements OnInit, OnChanges {
   @Input()
   editorMode!: string | undefined;
 
-  user!: User;
   hotels!: Hotel[];
   hotel!: Hotel | undefined;
 
@@ -63,6 +62,8 @@ export class HotelEditComponent implements OnInit, OnChanges {
   street!: string;
   state!: string;
   land!: string;
+  user!: User;
+
 
   constructor(
     private httpClient: HttpClient,
@@ -221,7 +222,8 @@ export class HotelEditComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.loginService.user.subscribe((u) => this.user = u);
+    this.loginService.user.subscribe((u) => { this.user = u });
+    // this.loginService.checkLoginStatus();
     this.setup();
   }
 

@@ -13,20 +13,17 @@ export class LoginService {
 
   private currentUser: User | undefined;
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient) { }
 
   checkLoginStatus() {
-    
-    if (this.userSubject.value.id == 0) {
-      this.httpClient
-        .get(environment.Hotel_API + 'loginstatus',{withCredentials:true})
-        .subscribe((res) => {
-          if (res) {
-            this.currentUser = res as User;
-            this.userSubject.next(res as User);
-          }
-        });
-    }
+    this.httpClient
+      .get(environment.Hotel_API + 'loginstatus', { withCredentials: true })
+      .subscribe((res) => {
+        if (res) {
+          this.currentUser = res as User;
+          this.userSubject.next(res as User);
+        }
+      });
   }
 
   getLoginStatus(): User | undefined {
