@@ -37,7 +37,6 @@ func ValidateLoginStatus(c *gin.Context) (jwt.MapClaims, error) {
 
 	cookie, cookieErr := c.Cookie("authTravel")
 
-	fmt.Println(cookie)
 	if cookieErr != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": cookieErr.Error()})
 		return nil, cookieErr

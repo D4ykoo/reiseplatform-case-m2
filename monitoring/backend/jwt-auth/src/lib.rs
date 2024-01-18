@@ -18,15 +18,15 @@ pub fn validate_jwt(token: &str) -> Result<bool, jsonwebtoken::errors::Error> {
     val.set_required_spec_claims(&["username", "iat"]);
 
     let decoded = decode::<Claims>(
-        &token,
+        token,
         &DecodingKey::from_secret(jwt_secret.as_bytes()),
         &val,
     );
 
     match decoded {
-        Ok(_) => return Ok(true),
-        Err(e) => return Err(e),
-    };
+        Ok(_) => Ok(true),
+        Err(e) => Err(e),
+    }
 }
 
 #[cfg(test)]
@@ -37,13 +37,13 @@ mod tests {
     fn token_valid() {
         let token = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjY4NjYyMDgwMCwidXNlcm5hbWUiOiJ0ZXN0In0.CbmybuROnf_3ClsxXiYiTbK26Dc0e2zSwMeCZZz4guszI-q8LL6HO42HJTeAjQ0gDFRmL4PikQoP8QzdPC03yw";
         let result = validate_jwt(token);
-        assert_eq!(result.is_ok(), true);
+        assert!(result.is_ok());
     }
 
     #[test]
     fn token_invalid() {
         let token = "pyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjY4NjYyMDgwMCwidXNlcm5hbWUiOiJ0ZXN0In0.CbmybuROnf_3ClsxXiYiTbK26Dc0e2zSwMeCZZz4guszI-q8LL6HO42HJTeAjQ0gDFRmL4PikQoP8QzdPC03yw";
         let result = validate_jwt(token);
-        assert_eq!(result.is_ok(), false);
+        assert!(!result.is_ok());
     }
 }

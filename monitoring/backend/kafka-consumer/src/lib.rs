@@ -18,19 +18,18 @@ pub async fn subscribe(s: Sender<KafkaMsg>, consumer: StreamConsumer) {
         match consumer.recv().await {
             Err(e) => warn!("Kafka error: {}", e),
             Ok(m) => {
-                let payload = match m.payload_view::<str>() {
-                    None => "",
-                    Some(Ok(s)) => s,
+                match m.payload_view::<str>() {
+                    Some(Ok(pay)) => s
+                        .send(KafkaMsg {
+                            topic: m.topic().to_string(),
+                            payload: pay.to_string(),
+                        })
+                        .unwrap(),
                     Some(Err(e)) => {
                         warn!("Error while deserializing message payload: {:?}", e);
-                        ""
                     }
+                    None => (),
                 };
-                s.send(KafkaMsg {
-                    topic: m.topic().to_string(),
-                    payload: payload.to_string(),
-                })
-                .unwrap();
             }
         }
     }
@@ -51,7 +50,6 @@ pub fn create_consumer(server: &str, topic: &[&str]) -> Result<StreamConsumer, K
     consumer.subscribe(topic)?;
     Ok(consumer)
 }
-
 
 #[cfg(test)]
 mod tests {
