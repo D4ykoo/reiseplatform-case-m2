@@ -13,7 +13,7 @@ export class LoginService {
 
   private currentUser: User | undefined;
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient) {}
 
   checkLoginStatus() {
     this.httpClient

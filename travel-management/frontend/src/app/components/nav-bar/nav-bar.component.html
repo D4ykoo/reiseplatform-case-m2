@@ -124,7 +124,7 @@
   <div class="header-title">
     <h1>travMa</h1>
   </div>
-  <div *ngIf="user && user.id !== 0" style="text-align: center; margin: auto;">
+  <div *ngIf="user && user.id !== 0" style="text-align: center; margin: auto">
     Hallo, <br />
     {{ user.name }}
   </div>
@@ -176,7 +176,11 @@
     </p-button>
   </div>
   <div class="sidbar-btn">
-    <p-button class="checkout_btn" severity="secondary" (click)="navigateToUserMngt()">
+    <p-button
+      class="checkout_btn"
+      severity="secondary"
+      (click)="navigateToUserMngt()"
+    >
       <svg id="Outlined" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
         <g id="Fill">
           <path

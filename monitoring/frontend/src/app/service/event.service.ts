@@ -15,7 +15,7 @@ export class EventService {
 
     return this.httpClient.get(environment.Monitor_API + 'user-events', {
       observe: 'response',
-      withCredentials:true
+      withCredentials: true,
     });
   }
 
@@ -27,7 +27,7 @@ export class EventService {
 
     return this.httpClient.get(environment.Monitor_API + 'hotel-events', {
       observe: 'response',
-      withCredentials:true
+      withCredentials: true,
     });
   }
 
@@ -39,7 +39,7 @@ export class EventService {
 
     return this.httpClient.get(environment.Monitor_API + 'checkout-events', {
       observe: 'response',
-      withCredentials:true
+      withCredentials: true,
     });
   }
 }

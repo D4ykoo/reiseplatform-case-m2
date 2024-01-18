@@ -43,11 +43,11 @@ export class InfoCardComponent implements OnInit {
     private httpClient: HttpClient,
     private ref: DynamicDialogRef,
     private loginService: LoginService,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.hotelOffer = this.offerService.getSelectedOffer();
-    this.loginService.user.subscribe((u) => this.user = u);
+    this.loginService.user.subscribe((u) => (this.user = u));
     this.responsiveOptions = [
       {
         breakpoint: '1024px',
@@ -69,13 +69,19 @@ export class InfoCardComponent implements OnInit {
   }
 
   addToCart(id: number) {
-    lastValueFrom(this.httpClient.put(
-      environment.Checkout_API +
-      'cart/addtocart/' + (this.user?.id as number) + '/' +
-      (this.hotelOffer as Hotel).id +
-      '/' +
-      (this.hotelOffer as Hotel).travels[id].id, {}, { withCredentials: true }
-    ));
+    lastValueFrom(
+      this.httpClient.put(
+        environment.Checkout_API +
+          'cart/addtocart/' +
+          (this.user?.id as number) +
+          '/' +
+          (this.hotelOffer as Hotel).id +
+          '/' +
+          (this.hotelOffer as Hotel).travels[id].id,
+        {},
+        { withCredentials: true },
+      ),
+    );
     this.closeDialog();
   }
 }

@@ -64,12 +64,11 @@ export class HotelEditComponent implements OnInit, OnChanges {
   land!: string;
   user!: User;
 
-
   constructor(
     private httpClient: HttpClient,
     private messageService: MessageService,
-    private loginService: LoginService
-  ) { }
+    private loginService: LoginService,
+  ) {}
   /* eslint-disable  @typescript-eslint/no-explicit-any */
   onFileChange(event: any) {
     if (event.target.files && event.target.files[0]) {
@@ -110,7 +109,9 @@ export class HotelEditComponent implements OnInit, OnChanges {
         vendorname: this.user.name,
       };
       lastValueFrom(
-        this.httpClient.post(environment.Hotel_API + 'hotels', createHotel, { withCredentials: true }),
+        this.httpClient.post(environment.Hotel_API + 'hotels', createHotel, {
+          withCredentials: true,
+        }),
       )
         .then((res) => {
           this.clear();
@@ -142,7 +143,8 @@ export class HotelEditComponent implements OnInit, OnChanges {
       lastValueFrom(
         this.httpClient.put(
           environment.Hotel_API + 'hotels/' + this.hotel?.id,
-          UpdateHotel, { withCredentials: true }
+          UpdateHotel,
+          { withCredentials: true },
         ),
       )
         .then((res) => {
@@ -222,7 +224,9 @@ export class HotelEditComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.loginService.user.subscribe((u) => { this.user = u });
+    this.loginService.user.subscribe((u) => {
+      this.user = u;
+    });
     // this.loginService.checkLoginStatus();
     this.setup();
   }
@@ -242,7 +246,8 @@ export class HotelEditComponent implements OnInit, OnChanges {
   delete() {
     lastValueFrom(
       this.httpClient.delete(
-        environment.Hotel_API + 'hotels/' + (this.hotel?.id as number), { withCredentials: true }
+        environment.Hotel_API + 'hotels/' + (this.hotel?.id as number),
+        { withCredentials: true },
       ),
     )
       .then(() => {

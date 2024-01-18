@@ -55,11 +55,11 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
   constructor(
     private readonly httpClient: HttpClient,
     private messageService: MessageService,
-    private loginService: LoginService
-  ) { }
+    private loginService: LoginService,
+  ) {}
 
   ngOnInit(): void {
-    this.loginService.user.subscribe((u) => this.user = u);
+    this.loginService.user.subscribe((u) => (this.user = u));
     this.setup();
   }
 
@@ -93,10 +93,11 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
       lastValueFrom(
         this.httpClient.post(
           environment.Hotel_API +
-          'hotels/' +
-          this.selectedHotel?.id +
-          '/travels',
-          createTravel, { withCredentials: true }
+            'hotels/' +
+            this.selectedHotel?.id +
+            '/travels',
+          createTravel,
+          { withCredentials: true },
         ),
       )
         .then((res) => {
@@ -124,11 +125,12 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
       lastValueFrom(
         this.httpClient.put(
           environment.Hotel_API +
-          'hotels/' +
-          this.selectedHotel?.id +
-          '/travels/' +
-          this.selectedTravel?.id,
-          updateTravel, { withCredentials: true }
+            'hotels/' +
+            this.selectedHotel?.id +
+            '/travels/' +
+            this.selectedTravel?.id,
+          updateTravel,
+          { withCredentials: true },
         ),
       )
         .then((res) => {
@@ -222,10 +224,11 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
       lastValueFrom(
         this.httpClient.delete(
           environment.Hotel_API +
-          'hotels/' +
-          this.selectedHotel?.id +
-          '/travels/' +
-          this.selectedTravel.id, { withCredentials: true }
+            'hotels/' +
+            this.selectedHotel?.id +
+            '/travels/' +
+            this.selectedTravel.id,
+          { withCredentials: true },
         ),
       )
         .then(() => {

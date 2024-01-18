@@ -19,7 +19,7 @@ use monitoring_db::{
 use jwt_auth::validate_jwt;
 use std::env;
 use std::sync::mpsc::channel;
-use tower::util::error;
+
 use tower_cookies::{CookieManagerLayer, Cookies};
 use tower_http::cors::CorsLayer;
 use tower_http::services::ServeDir;
@@ -39,7 +39,7 @@ async fn main() {
     // run the migrations on server startup
     {
         let conn = pool.get().await.unwrap();
-        conn.interact(move |pg| run_migrations(pg))
+        conn.interact(run_migrations)
             .await
             .unwrap()
             .unwrap();
@@ -67,10 +67,10 @@ async fn main() {
                             serde_json::from_str(&event.payload);
                         match event {
                             Ok(e) => {
-                                add_user_event(conn, e).expect("Error");
+                                add_user_event(conn, e).expect("Thread communication error");
                             }
                             Err(er) => {
-                                tracing::warn!("{}", er);
+                                tracing::warn!("Incorrect message format on topic usermanagement: {}", er);
                             }
                         }
                     }
@@ -79,10 +79,10 @@ async fn main() {
                             serde_json::from_str(&event.payload);
                         match event {
                             Ok(e) => {
-                                add_hotel_event(conn, e).expect("Error");
+                                add_hotel_event(conn, e).expect("Thread communication error");
                             }
                             Err(er) => {
-                                tracing::warn!("{}", er);
+                                tracing::warn!("Incorrect message format on topic travelmanagement: {}", er);
                             }
                         }
                     }
@@ -92,10 +92,10 @@ async fn main() {
 
                         match event {
                             Ok(e) => {
-                                add_checkout_event(conn, e).expect("Error");
+                                add_checkout_event(conn, e).expect("Thread communication error");
                             }
                             Err(er) => {
-                                tracing::warn!("{}", er);
+                                tracing::warn!("Incorrect message format on topic checkout: {}", er);
                             }
                         }
                     }
