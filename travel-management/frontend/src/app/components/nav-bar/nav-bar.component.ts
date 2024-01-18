@@ -28,6 +28,7 @@ export class NavBarComponent implements OnInit {
     this.loginService.user.subscribe((loginStatus) => {
       this.user = loginStatus;
     });
+    this.loginService.checkLoginStatus();
   }
 
   navigateToMonitoring() {

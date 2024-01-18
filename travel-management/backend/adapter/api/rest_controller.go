@@ -25,17 +25,16 @@ func New(service domain.TravelService) RestController {
 func (ctr RestController) CheckLoginStatus(c *gin.Context) {
 
 	claims, err := ValidateLoginStatus(c)
-	if err != nil {
-		return
-	}
-	username := claims["username"].(string)
-	user_id := claims["user_id"].(string)
-	id, err := strconv.Atoi(user_id)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	username := claims["username"].(string)
+	user_id := claims["user_id"].(float64)
+	fmt.Println(username)
+	fmt.Println(user_id)
+	id := int(user_id)
 
 	c.JSON(http.StatusOK, dto.UserResponse{Id: id, Name: username})
 
@@ -44,7 +43,8 @@ func (ctr RestController) CheckLoginStatus(c *gin.Context) {
 func (ctr RestController) CreateHotelRequest(c *gin.Context) {
 
 	// Function can only be executed with a valid login status
-	if err, _ := ValidateLoginStatus(c); err != nil {
+
+	if _, err := ValidateLoginStatus(c); err != nil {
 		return
 	}
 
@@ -173,7 +173,7 @@ func (ctr RestController) GetHotelById(c *gin.Context) {
 func (ctr RestController) DeleteHotelRequest(c *gin.Context) {
 
 	// Function can only be executed with a valid login status
-	if err, _ := ValidateLoginStatus(c); err != nil {
+	if _, err := ValidateLoginStatus(c); err != nil {
 		return
 	}
 
@@ -197,7 +197,7 @@ func (ctr RestController) DeleteHotelRequest(c *gin.Context) {
 func (ctr RestController) UpdateHotel(c *gin.Context) {
 
 	// Function can only be executed with a valid login status
-	if err, _ := ValidateLoginStatus(c); err != nil {
+	if _, err := ValidateLoginStatus(c); err != nil {
 		return
 	}
 
@@ -237,7 +237,7 @@ func (ctr RestController) UpdateHotel(c *gin.Context) {
 func (ctr RestController) CreateTravelRequest(c *gin.Context) {
 
 	// Function can only be executed with a valid login status
-	if err, _ := ValidateLoginStatus(c); err != nil {
+	if _, err := ValidateLoginStatus(c); err != nil {
 		return
 	}
 
@@ -312,7 +312,7 @@ func (ctr RestController) GetTravelById(c *gin.Context) {
 func (ctr RestController) DeleteTravel(c *gin.Context) {
 
 	// Function can only be executed with a valid login status
-	if err, _ := ValidateLoginStatus(c); err != nil {
+	if _, err := ValidateLoginStatus(c); err != nil {
 		return
 	}
 
@@ -336,7 +336,7 @@ func (ctr RestController) DeleteTravel(c *gin.Context) {
 func (ctr RestController) UpdateTravel(c *gin.Context) {
 
 	// Function can only be executed with a valid login status
-	if err, _ := ValidateLoginStatus(c); err != nil {
+	if _, err := ValidateLoginStatus(c); err != nil {
 		return
 	}
 
@@ -376,7 +376,7 @@ func (ctr RestController) UpdateTravel(c *gin.Context) {
 func (ctr RestController) CreateTagRequest(c *gin.Context) {
 
 	// Function can only be executed with a valid login status
-	if err, _ := ValidateLoginStatus(c); err != nil {
+	if _, err := ValidateLoginStatus(c); err != nil {
 		return
 	}
 
@@ -418,7 +418,7 @@ func (ctr RestController) GetTagById(c *gin.Context) {
 
 func (ctr RestController) DeleteTagRequest(c *gin.Context) {
 	// Function can only be executed with a valid login status
-	if err, _ := ValidateLoginStatus(c); err != nil {
+	if _, err := ValidateLoginStatus(c); err != nil {
 		return
 	}
 
@@ -460,7 +460,7 @@ func (ctr RestController) ListAllTags(c *gin.Context) {
 func (ctr RestController) UpdateTag(c *gin.Context) {
 
 	// Function can only be executed with a valid login status
-	if err, _ := ValidateLoginStatus(c); err != nil {
+	if _, err := ValidateLoginStatus(c); err != nil {
 		return
 	}
 

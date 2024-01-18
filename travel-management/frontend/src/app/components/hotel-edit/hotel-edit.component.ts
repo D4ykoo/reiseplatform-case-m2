@@ -105,7 +105,7 @@ export class HotelEditComponent implements OnInit, OnChanges {
         vendorname: 'asdf',
       };
       lastValueFrom(
-        this.httpClient.post(environment.Hotel_API + 'hotels', createHotel),
+        this.httpClient.post(environment.Hotel_API + 'hotels', createHotel,{withCredentials:true}),
       )
         .then((res) => {
           this.clear();
@@ -137,7 +137,7 @@ export class HotelEditComponent implements OnInit, OnChanges {
       lastValueFrom(
         this.httpClient.put(
           environment.Hotel_API + 'hotels/' + this.hotel?.id,
-          UpdateHotel,
+          UpdateHotel,{withCredentials:true}
         ),
       )
         .then((res) => {
@@ -235,7 +235,7 @@ export class HotelEditComponent implements OnInit, OnChanges {
   delete() {
     lastValueFrom(
       this.httpClient.delete(
-        environment.Hotel_API + 'hotels/' + (this.hotel?.id as number),
+        environment.Hotel_API + 'hotels/' + (this.hotel?.id as number),{withCredentials:true}
       ),
     )
       .then(() => {

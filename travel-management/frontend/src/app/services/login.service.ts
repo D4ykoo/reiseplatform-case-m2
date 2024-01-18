@@ -16,9 +16,10 @@ export class LoginService {
   constructor(private httpClient: HttpClient) {}
 
   checkLoginStatus() {
+    
     if (this.userSubject.value.userid == 0) {
       this.httpClient
-        .get(environment.Hotel_API + 'loginStatus')
+        .get(environment.Hotel_API + 'loginstatus',{withCredentials:true})
         .subscribe((res) => {
           if (res) {
             this.currentUser = res as User;

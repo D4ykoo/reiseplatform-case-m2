@@ -51,7 +51,7 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
   constructor(
     private readonly httpClient: HttpClient,
     private messageService: MessageService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.setup();
@@ -87,10 +87,10 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
       lastValueFrom(
         this.httpClient.post(
           environment.Hotel_API +
-            'hotels/' +
-            this.selectedHotel?.id +
-            '/travels',
-          createTravel,
+          'hotels/' +
+          this.selectedHotel?.id +
+          '/travels',
+          createTravel, { withCredentials: true }
         ),
       )
         .then((res) => {
@@ -118,11 +118,11 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
       lastValueFrom(
         this.httpClient.put(
           environment.Hotel_API +
-            'hotels/' +
-            this.selectedHotel?.id +
-            '/travels/' +
-            this.selectedTravel?.id,
-          updateTravel,
+          'hotels/' +
+          this.selectedHotel?.id +
+          '/travels/' +
+          this.selectedTravel?.id,
+          updateTravel,{withCredentials:true}
         ),
       )
         .then((res) => {
@@ -216,10 +216,10 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
       lastValueFrom(
         this.httpClient.delete(
           environment.Hotel_API +
-            'hotels/' +
-            this.selectedHotel?.id +
-            '/travels/' +
-            this.selectedTravel.id,
+          'hotels/' +
+          this.selectedHotel?.id +
+          '/travels/' +
+          this.selectedTravel.id,{withCredentials:true}
         ),
       )
         .then(() => {

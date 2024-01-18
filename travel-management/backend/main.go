@@ -46,7 +46,7 @@ func main() {
 	// Router
 	router := gin.Default()
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://travelmngt-web:8085"}
+	config.AllowOrigins = []string{"http://localhost:8085"}
 	config.AllowCredentials = true
 	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
 	config.AllowHeaders = []string{"Authorization", "Origin", "Content-Type", "Accept"}
@@ -54,8 +54,8 @@ func main() {
 	// TODO CORS
 	router.ForwardedByClientIP = true
 	router.SetTrustedProxies([]string{""})
-	//router.Use(cors.New(config))
-
+	router.Use(cors.New(config))
+	//router.Use(cors.Default())
 	router.GET("/api/v1/loginstatus", service.CheckLoginStatus)
 
 	// CRUD
