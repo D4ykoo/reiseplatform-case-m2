@@ -71,7 +71,7 @@ async fn main() {
                         let event: NewCheckoutEvent = serde_json::from_str(&event.payload).unwrap();
                         add_checkout_event(conn, event).expect("Error");
                     }
-                    &_ => warn!("Received not supported Topic {:?}", event),
+                    &_ => (),
                 }
             }
         });
