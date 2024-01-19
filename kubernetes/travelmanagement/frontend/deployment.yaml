@@ -25,7 +25,7 @@ spec:
           ports:
             - name: travelmngt-web
               containerPort: 8085
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           resources:
             requests:
               memory: "10Mi"

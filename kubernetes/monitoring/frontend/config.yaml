@@ -4,6 +4,6 @@ metadata:
   name: monitor-web-config
 data:
   MONITOR_API: "http://mini.local/monitor/api/v1/"
-  CHECKOUT_URL: "http://mini.local/checkout/"
-  LOGIN_URL: "http://mini.local/users/"
+  CHECKOUT_URL: "http://mini.local/cart/"
+  LOGIN_URL: "http://mini.local/"
   TRAVEL_URL: "http://mini.local/travma/"

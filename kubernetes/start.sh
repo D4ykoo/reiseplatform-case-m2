@@ -28,6 +28,7 @@ echo "Create Checkout"
 sleep 3
 # travelplatform-case-m2/kubernetes/
 kubectl apply -f checkout/frontend/config.yaml
+kubectl apply -f checkout/frontend/nginx.conf.yml
 kubectl apply -f checkout/frontend/deployment.yaml
 kubectl apply -f checkout/frontend/service.yaml
 kubectl apply -f checkout/frontend/ingress.yaml
@@ -68,7 +69,6 @@ sleep 3
                  
 kubectl apply -f usermanagement/frontend/config.yml
 kubectl apply -f usermanagement/frontend/nginx.conf.yml
-kubectl apply -f usermanagement/frontend/secrets.yml
 kubectl apply -f usermanagement/frontend/deployment.yml
 kubectl apply -f usermanagement/frontend/service.yml
 kubectl apply -f usermanagement/frontend/ingress.yml

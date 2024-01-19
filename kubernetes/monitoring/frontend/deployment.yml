@@ -25,7 +25,7 @@ spec:
           ports:
             - name: monitor-web
               containerPort: 8087
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           resources:
             requests:
               memory: "10Mi"

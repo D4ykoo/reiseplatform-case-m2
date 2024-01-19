@@ -27,7 +27,7 @@ spec:
           ports:
             - name: monitor-app
               containerPort: 8088
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           resources:
             requests:
               memory: "10Mi"
