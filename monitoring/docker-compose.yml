@@ -99,6 +99,23 @@ services:
     networks:
       - privatenet
 
+  monitor-web:
+    image: mig3177/travma-monitoring-frontend:latest
+    container_name: monitor-web
+    restart: always
+    depends_on:
+      - monitor-app
+      # Default environment; TODO change to docker container names
+    environment:
+      MONITOR_API: http://localhost:8088/
+      CHECKOUT_URL: http://localhost:8083/
+      LOGIN_URL: http://localhost:8081/
+      TRAVEL_URL: http://localhost:8085/
+    ports:
+      - "8088:8088"
+    networks:
+      - publicnet
+
 volumes:
   kafka-volume:
   zookeeper-volume:

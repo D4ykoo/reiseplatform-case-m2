@@ -79,7 +79,7 @@ services:
     ports:
       - "8081:80"
     volumes:
-      - "./frontend/nginx.conf:/etc/nginx/nignx.conf"
+      - "./nginx.conf:/etc/nginx/nginx.conf"
 
 volumes:
   usermanagement-db:

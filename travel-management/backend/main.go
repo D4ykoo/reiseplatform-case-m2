@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -46,7 +45,7 @@ func main() {
 	// Router
 	router := gin.Default()
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://travelmngt-web:8085"}
+	config.AllowOrigins = []string{"http://localhost:8085", "http://localhost:12345"}
 	config.AllowCredentials = true
 	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
 	config.AllowHeaders = []string{"Authorization", "Origin", "Content-Type", "Accept"}
@@ -54,8 +53,8 @@ func main() {
 	// TODO CORS
 	router.ForwardedByClientIP = true
 	router.SetTrustedProxies([]string{""})
-	//router.Use(cors.New(config))
-
+	router.Use(cors.New(config))
+	//router.Use(cors.Default())
 	router.GET("/api/v1/loginstatus", service.CheckLoginStatus)
 
 	// CRUD
@@ -63,10 +62,7 @@ func main() {
 	router.POST("/api/v1/hotels", service.CreateHotelRequest)
 
 	// Read
-	router.GET("/api/v1/hotels", func(ctx *gin.Context) {
-		fmt.Println(ctx.Query("name"))
-		service.FindHotels(ctx)
-	})
+	router.GET("/api/v1/hotels", service.FindHotels)
 
 	router.GET("/api/v1/hotels/:id", service.GetHotelById)
 

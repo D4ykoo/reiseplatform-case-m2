@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment.development';
   providedIn: 'root',
 })
 export class LoginService {
-  private userSubject = new BehaviorSubject<User>({ userid: 0, name: '' });
+  private userSubject = new BehaviorSubject<User>({ id: 0, name: '' });
   public user = this.userSubject.asObservable();
 
   private currentUser: User | undefined;
@@ -16,16 +16,14 @@ export class LoginService {
   constructor(private httpClient: HttpClient) {}
 
   checkLoginStatus() {
-    if (this.userSubject.value.userid == 0) {
-      this.httpClient
-        .get(environment.Hotel_API + 'loginStatus')
-        .subscribe((res) => {
-          if (res) {
-            this.currentUser = res as User;
-            this.userSubject.next(res as User);
-          }
-        });
-    }
+    this.httpClient
+      .get(environment.Hotel_API + 'loginstatus', { withCredentials: true })
+      .subscribe((res) => {
+        if (res) {
+          this.currentUser = res as User;
+          this.userSubject.next(res as User);
+        }
+      });
   }
 
   getLoginStatus(): User | undefined {

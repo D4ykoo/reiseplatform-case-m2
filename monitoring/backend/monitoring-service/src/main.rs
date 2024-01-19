@@ -1,6 +1,7 @@
 pub mod model;
 
 use axum::extract::{Query, State};
+use axum::http::HeaderValue;
 use axum::Json;
 use axum::{http::StatusCode, routing::get, Router};
 use chrono::{DateTime, Utc};
@@ -18,17 +19,19 @@ use monitoring_db::{
 use jwt_auth::validate_jwt;
 use std::env;
 use std::sync::mpsc::channel;
+
 use tower_cookies::{CookieManagerLayer, Cookies};
+use tower_http::cors::CorsLayer;
 use tower_http::services::ServeDir;
-use tracing::warn;
-use tower_http::cors::{Any, CorsLayer};
 
 use crate::model::TokenError;
 
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
-    let cors = CorsLayer::new().allow_origin(Any);
+    let cors = CorsLayer::new()
+        .allow_origin("http://localhost:8087".parse::<HeaderValue>().unwrap())
+        .allow_credentials(true);
     let (tx, rx) = channel();
 
     let pool = get_connection_pool();
@@ -36,7 +39,7 @@ async fn main() {
     // run the migrations on server startup
     {
         let conn = pool.get().await.unwrap();
-        conn.interact(move |pg| run_migrations(pg))
+        conn.interact(run_migrations)
             .await
             .unwrap()
             .unwrap();
@@ -60,18 +63,43 @@ async fn main() {
                 });
                 match event.topic.as_str() {
                     "usermanagement" => {
-                        let event: NewUserEvent = serde_json::from_str(&event.payload).unwrap();
-                        add_user_event(conn, event).expect("Error");
+                        let event: Result<NewUserEvent, serde_json::Error> =
+                            serde_json::from_str(&event.payload);
+                        match event {
+                            Ok(e) => {
+                                add_user_event(conn, e).expect("Thread communication error");
+                            }
+                            Err(er) => {
+                                tracing::warn!("Incorrect message format on topic usermanagement: {}", er);
+                            }
+                        }
                     }
                     "travelmanagement" => {
-                        let event: NewHotelEvent = serde_json::from_str(&event.payload).unwrap();
-                        add_hotel_event(conn, event).expect("Error");
+                        let event: Result<NewHotelEvent, serde_json::Error> =
+                            serde_json::from_str(&event.payload);
+                        match event {
+                            Ok(e) => {
+                                add_hotel_event(conn, e).expect("Thread communication error");
+                            }
+                            Err(er) => {
+                                tracing::warn!("Incorrect message format on topic travelmanagement: {}", er);
+                            }
+                        }
                     }
                     "checkout" => {
-                        let event: NewCheckoutEvent = serde_json::from_str(&event.payload).unwrap();
-                        add_checkout_event(conn, event).expect("Error");
+                        let event: Result<NewCheckoutEvent, serde_json::Error> =
+                            serde_json::from_str(&event.payload);
+
+                        match event {
+                            Ok(e) => {
+                                add_checkout_event(conn, e).expect("Thread communication error");
+                            }
+                            Err(er) => {
+                                tracing::warn!("Incorrect message format on topic checkout: {}", er);
+                            }
+                        }
                     }
-                    &_ => warn!("Received not supported Topic {:?}", event),
+                    &_ => (),
                 }
             }
         });

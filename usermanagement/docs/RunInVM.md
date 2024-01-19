@@ -86,6 +86,16 @@ TIMEZONE="Europe/Berlin"
 
 When running with a native installation please make sure the configuration in `backend/.env`is the same as the database.
 
+## Kafka
+### Native install
+Try follow the official instructions, keep in mind to install zookeeper as well.
+
+### Docker
+An example docker-compose can be found [here](https://github.com/D4ykoo/travelplatform-case-m2/blob/develop/docker/docker-compose-kafka.yml), just run it and configure as needed:
+```bash
+docker compose up -d
+```
+
 ## Run the services by building on the host
 #### 1. Clone the repository
 ```bash
@@ -94,6 +104,8 @@ https://github.com/D4ykoo/travelplatform-case-m2.git
 #### 2. Install and run backend
 ```bash
 cd ./travelplatform-case-m2/usermanagement/backend
+# install the packages
+go install
 # create the binary
 go build 
 # run the binary 
@@ -114,7 +126,13 @@ npm run build
 Now the whole application is located in the dist/ directory.<br>
 The application can be served by any desired webserver by coping the whole directory and renaming it to e.g. usermanagement. 
 
-## Run the checkout services by building on host
+##### Alternatively
+```bash
+cd ./travelplatform-case-m2/usermanagement/frontend
+npm run dev
+```
+
+## Run the usermanagement services by building on host
 #### 1. Clone the repository if not already done
 ```bash
 git clone https://github.com/D4ykoo/travelplatform-case-m2.git

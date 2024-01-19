@@ -1,0 +1,75 @@
+# All-in-One solution (still starts different containers) 
+# for the usermanagement microservices 
+version: '3'
+services:
+  usermanagement-db:
+    image: postgres
+    container_name: usermanagement-db
+    restart: always
+    
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: usermanagement
+      POSTGRES_DB: usermanagement
+
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U travelmanagement" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+    volumes:
+      - usermanagement-db:/var/lib/postgresql/data
+
+    networks:
+      - usermanagementnet
+      - dbnet
+
+  usermanagement-backend:
+    image: usermanagement-backend:latest
+    container_name: usermanagement-app
+    restart: always
+    depends_on:
+      usermanagement-db:
+        condition: service_healthy
+    environment:
+      DOMAIN: http://localhost:8081
+      API_URL: :8082
+      
+      SALT: your-secret-salt
+      JWT_SECRET: your-jwt-secret
+
+      # Change to true when using tls
+      PRODUCTION: false
+      
+      # Gives additional information of the webserver
+      DEBUG: true
+
+      # BROKERS should be just one value
+      BROKERS: kafka:9092
+      TOPIC: usermanagement
+
+      # DB
+      DB_HOST: usermanagement-db
+      DB_USER: usermanagement
+      DB_PASSWORD: password
+      DB_NAME: usermanagement
+      DB_PORT: 5432
+      SSL_TLS: disable
+      TIMEZONE: Europe/Berlin
+
+    ports:
+      - "8082:8082"
+    networks:
+      - docker_kafka
+      - usermanagementnet
+      - dbnet
+
+volumes:
+  usermanagement-db:
+
+networks:
+  usermanagementnet:
+  dbnet:
+  docker_kafka:
+    external: true
