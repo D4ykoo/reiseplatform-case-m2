@@ -28,13 +28,11 @@ services:
     environment:
       API_URL: "0.0.0.0"
       API_PORT: "8084"
-      TRAVEL_API_URL: "http://localhost:12345/travma/api/v1"
+      TRAVEL_API_URL: "http://travelmngt-app:8086/api/v1"
       JWT_SECRET: "your-jwt-secret"
       KAFKA_URL: "kafka:9092"
       TOPIC: "checkout"
       DATABASE_URL: "postgres://checkout:password@checkout-db:5432/checkout"
-    ports:
-      - "8084:8084"
     networks:
       publicnet:
       privatenet:
@@ -48,7 +46,7 @@ services:
       API_URL: "http://localhost:12345/cart/api/v1"
       USERMANAGEMENT_URL: "http://localhost:12345/users"
       HOTELMANAGEMENT_URL: "http://localhost:12345/travma"
-      MONITORING_URL: "http://localhost:12345/*"    
+      MONITORING_URL: "http://localhost:12345/monitor"    
     depends_on:
       - checkout-app
     ports:
