@@ -72,7 +72,7 @@ export class InfoCardComponent implements OnInit {
     lastValueFrom(
       this.httpClient.put(
         environment.Checkout_API +
-          'cart/addtocart/' +
+          'addtocart/' +
           (this.user?.id as number) +
           '/' +
           (this.hotelOffer as Hotel).id +
