@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkout-web
+  labels:
+    app: checkout-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: checkout-web
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: checkout-web
+        tier: frontend
+    spec:
+      containers:
+        - name: checkout-web
+          image: dak4408/travma-checkout-frontend:latest
+          envFrom:
+            - configMapRef: 
+                name: checkout-web-config
+
+          volumeMounts:
+            - name: checkout-nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+          ports:
+            - name: checkout-web
+              containerPort: 8083
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              memory: "10Mi"
+              cpu: "100m"
+            limits:
+              memory: "100Mi"
+              cpu: "100Mi"
+
+      volumes:
+        - name: checkout-nginx-config
+          configMap:
+            name: checkout-nginx-config

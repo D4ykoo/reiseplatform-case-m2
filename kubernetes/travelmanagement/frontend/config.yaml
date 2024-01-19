@@ -4,7 +4,7 @@ metadata:
   name: travelmngt-web-config
 data:
   API_URL_FR: "http://mini.local/travma/api/v1/"
-  CHECKOUT_URL: "http://localhost:8083/cart"
-  LOGIN_URL: "http://localhost:8081/login"
-  MONITOR_URL: "http://localhost:8087/"
-  CHECKOUT_API: ""
+  CHECKOUT_URL: "http://mini.local/cart/"
+  LOGIN_URL: "http://mini.local/"
+  MONITOR_URL: "http://mini.local/monitor/"
+  CHECKOUT_API: "http://mini.local/cart/api/v1/"

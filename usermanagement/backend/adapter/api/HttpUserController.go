@@ -10,9 +10,27 @@ import (
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/ports/outbound"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
+	"strings"
 )
+
+func extractDomain(inputUrl string) (string, error) {
+	parsedUrl, err := url.Parse(inputUrl)
+	if err != nil {
+		return "", err
+	}
+
+	host := parsedUrl.Hostname()
+
+	dotIndex := strings.Index(host, ".")
+	if dotIndex == -1 {
+		host = host[dotIndex+1:]
+	}
+
+	return host, nil
+}
 
 func RegisterRequest(c *gin.Context) {
 	var user dto.CreateUserRequest
@@ -43,8 +61,15 @@ func RegisterRequest(c *gin.Context) {
 		kafka.SendEvent(model.EventRegister, string(rune(http.StatusInternalServerError))+err.Error())
 		return
 	}
+	domain, err := extractDomain(os.Getenv("DOMAIN"))
 
-	c.SetCookie("authTravel", jwt, 3600*24, "/", "localhost", isProd, true)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		kafka.SendEvent(model.EventRegister, string(rune(http.StatusInternalServerError))+err.Error())
+		return
+	}
+
+	c.SetCookie("authTravel", jwt, 3600*24, "/", domain, isProd, true)
 	c.SetSameSite(http.SameSiteDefaultMode)
 
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
@@ -84,7 +109,15 @@ func LoginRequest(c *gin.Context) {
 	isProd := false
 	isProd, _ = strconv.ParseBool(os.Getenv("PRODUCTION"))
 
-	c.SetCookie("authTravel", jwt, 3600*24, "/", "localhost", isProd, true)
+	domain, err := extractDomain(os.Getenv("DOMAIN"))
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		kafka.SendEvent(model.EventRegister, string(rune(http.StatusInternalServerError))+err.Error())
+		return
+	}
+
+	c.SetCookie("authTravel", jwt, 3600*24, "/", domain, isProd, true)
 	c.SetSameSite(http.SameSiteDefaultMode)
 
 	c.JSON(http.StatusOK, gin.H{"status": "success", "jwt": jwt})
@@ -140,7 +173,15 @@ func ResetPasswordRequest(c *gin.Context) {
 	isProd := false
 	isProd, _ = strconv.ParseBool(os.Getenv("PRODUCTION"))
 
-	c.SetCookie("authTravel", jwt, 3600*24, "/", "localhost", isProd, true)
+	domain, err := extractDomain(os.Getenv("DOMAIN"))
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		kafka.SendEvent(model.EventRegister, string(rune(http.StatusInternalServerError))+err.Error())
+		return
+	}
+
+	c.SetCookie("authTravel", jwt, 3600*24, "/", domain, isProd, true)
 	c.SetSameSite(http.SameSiteDefaultMode)
 
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
@@ -150,7 +191,15 @@ func LogoutRequest(c *gin.Context) {
 	isProd := false
 	isProd, _ = strconv.ParseBool(os.Getenv("PRODUCTION"))
 
-	c.SetCookie("authTravel", "", -1, "/", "localhost", isProd, true)
+	domain, err := extractDomain(os.Getenv("DOMAIN"))
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		kafka.SendEvent(model.EventRegister, string(rune(http.StatusInternalServerError))+err.Error())
+		return
+	}
+
+	c.SetCookie("authTravel", "", -1, "/", domain, isProd, true)
 
 	kafka.SendEvent(model.EventLogout, "cookie deleted")
 

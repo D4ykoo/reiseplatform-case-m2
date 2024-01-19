@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: kafka-topic-service
+  name: kafka-topic-service
+spec:
+  ports:
+   - name: kafka-port
+     port: 9092
+     protocol: TCP
+     targetPort: 9092
+  selector:
+    app: kafka-topic-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kafka-topic-service
+  name: kafka-topic-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-topic-service
+  template:
+    metadata:
+      labels:
+        app: kafka-topic-service
+    spec:
+      containers:
+        - image: docker.io/bitnami/kafka:3.4
+          name: kafka-topics-generator
+          command: ["/bin/sh", "-c"]
+          args:
+            - "sleep 5s &&
+              kafka-topics.sh --create --topic=checkout --if-not-exists --bootstrap-server=kafka-service:9092 &&
+              kafka-topics.sh --create --topic=travelmanagement --if-not-exists --bootstrap-server=kafka-service:9092 &&
+              kafka-topics.sh --create --topic=usermanagement --if-not-exists --bootstrap-server=kafka-service:9092 && 
+              sleep infinity"

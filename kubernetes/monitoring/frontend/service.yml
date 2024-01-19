@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: monitor-web-service
+spec:
+  type: NodePort
+  selector:
+    app: monitor-web
+    tier: frontend
+  ports:
+  - port: 8087
+    targetPort: 8087
+    nodePort: 30010

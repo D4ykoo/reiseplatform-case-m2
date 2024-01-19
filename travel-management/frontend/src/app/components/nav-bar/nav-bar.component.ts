@@ -47,7 +47,7 @@ export class NavBarComponent implements OnInit {
   }
 
   public navigateToCart() {
-    const url = environment.Monitor_URL as unknown as string;
+    const url = environment.Checkout_URL as unknown as string;
     window.open(url, '_self');
   }
 }

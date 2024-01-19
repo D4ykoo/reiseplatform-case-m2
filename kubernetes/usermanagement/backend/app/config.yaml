@@ -1,19 +1,21 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: travelmngt-app-config
+  name: usermngt-app-config
 data:
-  API_URL: "0.0.0.0:8086"
+  DOMAIN: "http://mini.local/"
+  API_URL: "0.0.0.0:8082"
   PRODUCTION: "false"
   DEBUG: "true"
 
   # BROKERS should be just one value
   BROKERS: "kafka-service:9092"
-  TOPIC: "travelmanagement"
+  TOPIC: "usermanagement"
 
   # DB
-  DB_HOST: "travelmngt-db-service"
-  DB_USER: "travelmanagement"
+  DB_HOST: "usermngt-db-service"
+  DB_USER: "usermngt"
+  DB_NAME: "usermngt"
   DB_PORT: "5432"
   SSL_TLS: "disable"
   TIMEZONE: "Europe/Berlin"

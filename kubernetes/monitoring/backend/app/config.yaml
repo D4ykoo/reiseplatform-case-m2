@@ -1,19 +1,20 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: travelmngt-app-config
+  name: monitor-app-config
 data:
-  API_URL: "0.0.0.0:8086"
+  API_URL: "0.0.0.0:8088"
   PRODUCTION: "false"
   DEBUG: "true"
 
   # BROKERS should be just one value
   BROKERS: "kafka-service:9092"
-  TOPIC: "travelmanagement"
 
   # DB
-  DB_HOST: "travelmngt-db-service"
-  DB_USER: "travelmanagement"
+  DB_HOST: "monitor-db-service"
+  DB_USER: monitoring
   DB_PORT: "5432"
   SSL_TLS: "disable"
   TIMEZONE: "Europe/Berlin"
+  DB_NAME: monitoring
+  DB_PASSWORD: password

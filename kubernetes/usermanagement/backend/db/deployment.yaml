@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: usermngt-db
+spec:
+  selector:
+    matchLabels:
+      app: usermngt-pg
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: usermngt-pg
+        tier: backend
+    spec:
+      containers:
+        - image: postgres:16.1-alpine3.19
+          name: usermngt-pg
+          envFrom:
+            - configMapRef:
+                name: usermngt-db-config
+            - secretRef:
+                name: usermngt-db-secret
+          ports:
+            - containerPort: 5432
+              name: usermngt-pg
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: usermngt-db-storage
+              mountPath: /var/lib/postgresql/data
+          resources:
+            requests:
+              memory: "10Mi"
+              cpu: "100m"
+            limits:
+              memory: "100Mi"
+              cpu: "100Mi"      
+      volumes:
+        - name: usermngt-db-storage
+          persistentVolumeClaim:
+            claimName: db-usermngt-pvc

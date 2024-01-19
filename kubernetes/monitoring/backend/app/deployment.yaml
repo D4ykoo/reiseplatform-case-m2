@@ -1,32 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: travelmngt-app
+  name: monitor-app
   labels:
-    app: travelmngt-app
+    app: monitor-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: travelmngt-app
+      app: monitor-app
       tier: backend
   template:
     metadata:
       labels:
-        app: travelmngt-app
+        app: monitor-app
         tier: backend
     spec:
       containers:
-        - name: travelmngt-app
-          image: mig3177/travma-travelmanagement-backend:latest
+        - name: monitor-app
+          image: mig3177/travma-monitoring-backend:latest
           envFrom:
             - configMapRef:
-                name: travelmngt-app-config
+                name: monitor-app-config
             - secretRef:
-                name: travelmngt-app-secret
+                name: monitor-app-secret
           ports:
-            - name: travelmngt-app
-              containerPort: 8086
+            - name: monitor-app
+              containerPort: 8088
           imagePullPolicy: IfNotPresent
           resources:
             requests:

@@ -1,30 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: travelmngt-web
+  name: monitor-web
   labels:
-    app: travelmngt-web
+    app: monitor-web
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: travelmngt-web
+      app: monitor-web
       tier: frontend
   template:
     metadata:
       labels:
-        app: travelmngt-web
+        app: monitor-web
         tier: frontend
     spec:
       containers:
-        - name: travelmngt-web
-          image: mig3177/travma-travelmanagement-frontend:latest
+        - name: monitor-web
+          image: mig3177/travma-monitoring-frontend:latest
           envFrom:
-            - configMapRef:
-                name: travelmngt-web-config
+            - configMapRef: 
+                name: monitor-web-config
           ports:
-            - name: travelmngt-web
-              containerPort: 8085
+            - name: monitor-web
+              containerPort: 8087
           imagePullPolicy: IfNotPresent
           resources:
             requests:

@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: checkout-web-service
+spec:
+  # type: NodePort
+  selector:
+    app: checkout-web
+    tier: frontend
+  ports:
+  - protocol: TCP
+    port: 8083
+    targetPort: 8083

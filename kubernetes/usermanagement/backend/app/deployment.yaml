@@ -1,33 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: travelmngt-app
+  name: usermngt-app
   labels:
-    app: travelmngt-app
+    app: usermngt-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: travelmngt-app
+      app: usermngt-app
       tier: backend
   template:
     metadata:
       labels:
-        app: travelmngt-app
+        app: usermngt-app
         tier: backend
     spec:
       containers:
-        - name: travelmngt-app
-          image: mig3177/travma-travelmanagement-backend:latest
+        - name: usermngt-app
+          image: dak4408/travma-usermanagement-backend:latest
           envFrom:
             - configMapRef:
-                name: travelmngt-app-config
+                name: usermngt-app-config
             - secretRef:
-                name: travelmngt-app-secret
+                name: usermngt-app-secret
           ports:
-            - name: travelmngt-app
-              containerPort: 8086
-          imagePullPolicy: IfNotPresent
+            - name: usermngt-app
+              containerPort: 8082
+          imagePullPolicy: Always
           resources:
             requests:
               memory: "10Mi"
