@@ -195,18 +195,16 @@ pub fn find_hotel_by_cart_id_and_hotel_name(
     conn: &mut PgConnection,
     cart_id: &i32,
     hotel_name: &str,
-) -> Option<Hotel> {
+) -> Result<Hotel, diesel::result::Error> {
     use self::schema::checkouthotel::dsl::*;
 
     let res = checkouthotel
         .filter(fk_checkout_cart.eq(cart_id))
         .filter(hotelname.eq(hotel_name))
         .select(Hotel::as_select())
-        .first(conn)
-        .unwrap_or_else(|_| panic!("Error receiving hotel with cart id {} and hotel name {}",
-            cart_id, hotel_name));
+        .first(conn);
 
-    Some(res)
+    return res;    
 }
 
 pub fn add_to_cart(
@@ -227,7 +225,7 @@ pub fn add_to_cart(
     // check if hotel is in db otherwise create it
     let hotel = find_hotel_by_cart_id_and_hotel_name(conn, cart_id, new_hotel.hotelname.unwrap());
 
-    if hotel.is_none() {
+    if hotel.is_err() {
         hotel_id = create_hotel(conn, new_hotel)?;
     } else {
         hotel_id = hotel.unwrap().id;

@@ -6,15 +6,20 @@
 use dotenvy::dotenv;
 use rdkafka::config::{ClientConfig, RDKafkaLogLevel};
 use rdkafka::producer::{FutureProducer, FutureRecord};
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
+use serde_json::to_vec;
 use std::env;
 use std::time::Duration;
+use chrono::{DateTime, Utc};
 
-#[derive(Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct EventMessage {
-    pub event: String,
-    pub data: String,
+    #[serde(rename = "type")] 
+    pub type_: String,
+    pub log: String,
+    pub time: DateTime<Utc>
 }
+
 
 #[derive(Clone)]
 pub struct MessageProducer {
@@ -36,11 +41,18 @@ impl MessageProducer {
     }
 
     pub async fn send_message(&self, payload: &str) {
+
+        let complete_message: EventMessage = EventMessage{ 
+            type_: "Checkout".to_owned(),
+            log: payload.to_owned(),
+            time: Utc::now()
+         };
+
         if let Some(producer) = &self.producer {
             let _ = producer
                 .send(
                     FutureRecord::to(env::var("TOPIC").unwrap().as_str())
-                        .payload(&format!("Checkout {:?}", payload))
+                        .payload(&serde_json::to_vec(&complete_message).unwrap())
                         .key("checkout"),
                     Duration::from_secs(0),
                 )
