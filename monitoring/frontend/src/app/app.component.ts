@@ -55,7 +55,6 @@ export class AppComponent implements OnInit, OnDestroy {
           .subscribe((res) => {
             if (res.ok) {
               this.userEvents = res.body as Events[];
-              console.log(this.userEvents);
             } else {
               console.log('HTTP Error', res);
             }
@@ -70,7 +69,6 @@ export class AppComponent implements OnInit, OnDestroy {
           .subscribe((res) => {
             if (res.ok) {
               this.checkoutEvents = res.body as Events[];
-              console.log(this.checkoutEvents);
             } else {
               console.log('HTTP Error', res);
             }
@@ -85,7 +83,6 @@ export class AppComponent implements OnInit, OnDestroy {
           .subscribe((res) => {
             if (res.ok) {
               this.travelEvents = res.body as Events[];
-              console.log(this.travelEvents);
             } else {
               console.log('HTTP Error', res);
             }

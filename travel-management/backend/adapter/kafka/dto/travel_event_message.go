@@ -2,7 +2,7 @@ package dto
 
 import "time"
 
-type HotelEvent struct {
+type HotelTravelEvent struct {
 	Type string    `json:"type"`
 	Log  string    `json:"log"`
 	Time time.Time `json:"time"`

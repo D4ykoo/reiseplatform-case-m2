@@ -58,6 +58,7 @@ services:
   travelmngt-web:
     image: mig3177/travma-travelmanagement-frontend:latest
     container_name: travelmngt-web
+    restart: always
     depends_on: 
       - travelmngt-app
     environment:

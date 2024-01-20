@@ -3,6 +3,7 @@ mod models;
 mod request_helper;
 
 use dotenvy::dotenv;
+use models::HotelTravels;
 use std::env;
 
 use actix_cors::Cors;
@@ -236,10 +237,17 @@ async fn add_to_cart(
     let cart_id = cart_id.unwrap();
 
     // cart id is now available, get hotels and travel slices from api
-    let hoteltravel =
+    let hoteltravel_res =
         request_helper::get_hotel_travel_request_with_cookie(hotel_id, travel_id, cookie.value())
-            .await
-            .unwrap();
+            .await;
+    let hoteltravel: HotelTravels;
+    
+    match hoteltravel_res {
+        Ok(res) => hoteltravel = res,
+        Err(e) => {
+            return HttpResponse::NotFound().status(StatusCode::INTERNAL_SERVER_ERROR).json(e.to_string());
+        }
+    }
 
     let hotel = hoteltravel.to_db_hotel(cart_id);
     let travel_slice = hoteltravel.to_db_travel_slice(hotel_id);
