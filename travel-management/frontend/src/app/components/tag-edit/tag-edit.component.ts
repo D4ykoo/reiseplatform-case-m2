@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { ToastModule } from 'primeng/toast';
 import { Tag } from '../../models/tag';
 import { User } from '../../models/user';
@@ -10,18 +16,23 @@ import { environment } from '../../../environments/environment';
 import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import {  ButtonModule } from 'primeng/button';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-tag-edit',
   standalone: true,
-  imports: [ToastModule, DropdownModule, FormsModule, CommonModule, ButtonModule
+  imports: [
+    ToastModule,
+    DropdownModule,
+    FormsModule,
+    CommonModule,
+    ButtonModule,
   ],
   templateUrl: './tag-edit.component.html',
   styleUrl: './tag-edit.component.css',
-  providers:[MessageService]
+  providers: [MessageService],
 })
-export class TagEditComponent implements OnInit, OnChanges{
+export class TagEditComponent implements OnInit, OnChanges {
   @Input()
   editorMode!: string | undefined;
 
@@ -34,7 +45,7 @@ export class TagEditComponent implements OnInit, OnChanges{
     private httpClient: HttpClient,
     private messageService: MessageService,
     private loginService: LoginService,
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.loginService.user.subscribe((u) => {
@@ -55,7 +66,7 @@ export class TagEditComponent implements OnInit, OnChanges{
       this.clear();
     }
   }
-  
+
   setup() {
     lastValueFrom(this.httpClient.get(environment.Hotel_API + 'tags')).then(
       (res) => {
@@ -68,7 +79,7 @@ export class TagEditComponent implements OnInit, OnChanges{
     if (this.editorMode == 'New') {
       const createTag: Tag = {
         id: 0,
-        name: this.tagname
+        name: this.tagname,
       };
       lastValueFrom(
         this.httpClient.post(environment.Hotel_API + 'tags', createTag, {
@@ -91,7 +102,7 @@ export class TagEditComponent implements OnInit, OnChanges{
     if (this.editorMode == 'Edit') {
       const UpdateHotel: Tag = {
         id: this.tag?.id as number,
-        name: this.tagname
+        name: this.tagname,
       };
       lastValueFrom(
         this.httpClient.put(
@@ -129,7 +140,6 @@ export class TagEditComponent implements OnInit, OnChanges{
     );
     this.tagname = '';
   }
-
 
   loadSettings() {
     if (this.editorMode == 'Edit' && this.tag) {
