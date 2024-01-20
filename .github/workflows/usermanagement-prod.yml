@@ -30,7 +30,7 @@ jobs:
     needs: [usermanagement-backend-workflow]
     defaults:
       run:
-        working-directory: ${{ github.workspace }}/usermanagement
+        working-directory: usermanagement
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -43,7 +43,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN_DAYKOO }}
       - name: Print current directory
         run: |
-          ls
+          pwd
       - name: Build and push
         uses: docker/build-push-action@v5
         with: 
