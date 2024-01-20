@@ -93,4 +93,29 @@ Is documented for every service.
 
 
 ## Project Insights 
-TODO: cloc
+```bash
+❯ cloc --exclude-dir=node_modules,target -exclude-ext=json .
+
+github.com/AlDanial/cloc v 1.98  T=0.20 s (1854.1 files/s, 95300.9 lines/s)
+-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+YAML                           118            342           1825           4294
+Go                              59            720            159           2661
+TypeScript                      72            264             94           2223
+Rust                            18            312             56           1498
+HTML                            19             10              8           1246
+Markdown                        30            289              0           1198
+Vuejs Component                 12             60             14            923
+CSS                              6             40             10            245
+Bourne Shell                     5             30              3            153
+JavaScript                      11             10             18            132
+TOML                            10             17              9            102
+Dockerfile                       7             33              7             98
+SQL                              6             13             26             66
+INI                              1              3              0             13
+-------------------------------------------------------------------------------
+SUM:                           374           2143           2229          14852
+-------------------------------------------------------------------------------
+
+```
