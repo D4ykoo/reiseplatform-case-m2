@@ -17,7 +17,7 @@ on:
 defaults:
   run: 
     shell: bash
-    working-directory: "./usermanagement"
+    # working-directory: "./usermanagement"
 
 jobs:
   usermanagement-frontend-workflow:
