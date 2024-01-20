@@ -17,7 +17,7 @@ on:
 defaults:
   run: 
     shell: bash
-    # working-directory: "./usermanagement"
+    working-directory: "./usermanagement"
 
 jobs:
   usermanagement-frontend-workflow:
@@ -28,9 +28,6 @@ jobs:
     name: Docker Build Backend
     runs-on: ubuntu-latest
     needs: [usermanagement-backend-workflow]
-    defaults:
-      run:
-        working-directory: ../usermanagement
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
