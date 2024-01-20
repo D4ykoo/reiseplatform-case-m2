@@ -1,0 +1,40 @@
+<div>
+    <p-toast position="top-center"></p-toast>
+</div>
+ 
+<div class="formgrid grid" *ngIf="editorMode === 'Edit'">
+    <div class="field col-12 md:col-12" style="margin-top: 1%; margin-bottom: 1%">
+      <label for="hotel">Seclet Tag:</label>
+      <p-dropdown
+        id="hotel"
+        [options]="tags"
+        [(ngModel)]="tag"
+        optionLabel="id"
+        [style]="{ width: '100%' }"
+        (onChange)="loadSettings()"
+      ></p-dropdown>
+    </div>
+</div> 
+<div class="formgrid grid" *ngIf="editorMode === 'New' || tag">
+    <div class="field col-12 md:col-6">
+      <label for="tagname">Tag Name</label>
+      <input
+        id="tagname"
+        type="text"
+        [(ngModel)]="tagname"
+        class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+      />
+    </div>
+</div >
+
+<div class="flex justify-content-center gap-4">
+    <p-button severity="secondary" label="Cancel" (click)="clear()"></p-button>
+    <p-button label="Submit" (click)="submit()"></p-button>
+    <p-button
+      *ngIf="editorMode === 'Edit'"
+      (click)="delete()"
+      class="justify-content-end"
+      severity="danger"
+      label="Delete"
+    ></p-button>
+  </div>

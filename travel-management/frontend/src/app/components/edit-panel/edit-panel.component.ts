@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { HotelEditComponent } from '../hotel-edit/hotel-edit.component';
 import { TravelOfferEditComponent } from '../travel-offer-edit/travel-offer-edit.component';
 import { CommonModule } from '@angular/common';
+import { TagEditComponent } from "../tag-edit/tag-edit.component";
 
 interface TypeEdit {
   id: number;
@@ -14,18 +15,19 @@ interface TypeEdit {
 }
 
 @Component({
-  selector: 'app-edit-panel',
-  standalone: true,
-  templateUrl: './edit-panel.component.html',
-  styleUrl: './edit-panel.component.css',
-  imports: [
-    TabMenuModule,
-    DropdownModule,
-    FormsModule,
-    HotelEditComponent,
-    TravelOfferEditComponent,
-    CommonModule,
-  ],
+    selector: 'app-edit-panel',
+    standalone: true,
+    templateUrl: './edit-panel.component.html',
+    styleUrl: './edit-panel.component.css',
+    imports: [
+        TabMenuModule,
+        DropdownModule,
+        FormsModule,
+        HotelEditComponent,
+        TravelOfferEditComponent,
+        CommonModule,
+        TagEditComponent
+    ]
 })
 export class EditPanelComponent implements OnInit {
   items!: MenuItem[];
@@ -44,6 +46,7 @@ export class EditPanelComponent implements OnInit {
     this.editType = [
       { id: 1, name: 'Hotel' },
       { id: 2, name: 'Travel' },
+      { id: 3, name: 'Tag' }
     ];
   }
 }
