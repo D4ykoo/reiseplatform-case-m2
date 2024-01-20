@@ -15,11 +15,12 @@ var vendor = model.Vendor{Id: 55, Username: "username"}
 var picture1 = model.Picture{Id: 777, Payload: "payload", Description: "des"}
 var picture2 = model.Picture{Id: 888, Payload: "payload2", Description: "des2"}
 var tag1 = model.Tag{Id: 477, Name: "tagname"}
+var hotel = &model.Hotel{Id: 5, Name: name, Address: adress,
+	Description: description, Vendor: vendor, Pictures: []*model.Picture{&picture1, &picture2}, Tags: []*model.Tag{&tag1}}
 
 func toHotelEntity(t *testing.T) {
-	input := &model.Hotel{Id: 5, Name: name, Address: adress,
-		Description: description, Vendor: vendor, Pictures: []*model.Picture{&picture1, &picture2}, Tags: []*model.Tag{&tag1}}
-	output := entities.ToHotelEntity(input)
+
+	output := entities.ToHotelEntity(hotel)
 	if output.ID != 5 {
 		t.Fatalf(`want: %d - got: %d`, 5, output.ID)
 	}

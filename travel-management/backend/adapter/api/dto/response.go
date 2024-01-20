@@ -24,7 +24,7 @@ type HotelResponse struct {
 	Street      string             `json:"street"`
 	State       string             `json:"state"`
 	Land        string             `json:"land"`
-	VendorID    string             `json:"vendorid"`
+	VendorID    uint               `json:"vendorid"`
 	VendorName  string             `json:"vendorname"`
 	Description string             `json:"description"`
 	Pictures    []*PictureResponse `json:"pictures"`
@@ -69,7 +69,7 @@ func ToHotelResoponse(hotel *model.Hotel) *HotelResponse {
 	}
 
 	return &HotelResponse{Id: hotel.Id, HotelName: hotel.Name, Street: hotel.Address.Street, State: hotel.Address.State, Land: hotel.Address.Land,
-		VendorID: hotel.Vendor.Username, VendorName: hotel.Vendor.Username, Description: hotel.Description, Pictures: pics, Travels: travels, Tags: tags}
+		VendorID: hotel.Vendor.Id, VendorName: hotel.Vendor.Username, Description: hotel.Description, Pictures: pics, Travels: travels, Tags: tags}
 }
 
 func ToTravelResoponse(travel *model.Travel) *TravelResponse {
