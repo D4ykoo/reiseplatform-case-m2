@@ -23,7 +23,7 @@ func (service HotelServiceImpl) NewHotel(name string, address model.Address, ven
 	hotel := &model.Hotel{Address: address, Name: name, Description: description, Vendor: vendor, Pictures: pics, Tags: tags}
 
 	hotelres, err := service.hotels.Create(hotel)
-	service.events.HotelAdded(hotelres)
+	service.events.HotelAdded(hotelres, err)
 	return hotelres, err
 }
 
@@ -98,13 +98,13 @@ func containsTag(s []uint, e []*model.Tag) bool {
 func (service HotelServiceImpl) UpdateHotel(hotelUpdate *model.Hotel) (*model.Hotel, error) {
 
 	hotelres, err := service.hotels.Update(hotelUpdate)
-	service.events.HotelUpdated(hotelres)
+	service.events.HotelUpdated(hotelres, err)
 	return hotelres, err
 }
 
-func (service HotelServiceImpl) RemoveHotel(id uint) error {
+func (service HotelServiceImpl) RemoveHotel(id uint, user string) error {
 	err := service.hotels.Delete(id)
-	service.events.HotelRemoved(&model.Hotel{Id: id})
+	service.events.HotelRemoved(id, user, err)
 	return err
 }
 

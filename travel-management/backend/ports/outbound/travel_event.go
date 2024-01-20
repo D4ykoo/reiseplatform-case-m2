@@ -5,8 +5,10 @@ import (
 )
 
 type TravelEvents interface {
-	HotelAdded(event *model.Hotel)
-	HotelRemoved(event *model.Hotel)
-	HotelVisited(event *model.Hotel)
-	HotelUpdated(event *model.Hotel)
+	HotelAdded(*model.Hotel, error)
+	HotelRemoved(uint, string, error)
+	HotelUpdated(*model.Hotel, error)
+	TravelAdded(*model.Travel, error)
+	TravelRemoved(uint, string, error)
+	TravelUpdated(*model.Travel, error)
 }

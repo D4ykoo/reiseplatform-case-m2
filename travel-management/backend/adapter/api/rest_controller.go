@@ -169,10 +169,11 @@ func (ctr RestController) GetHotelById(c *gin.Context) {
 func (ctr RestController) DeleteHotelRequest(c *gin.Context) {
 
 	// Function can only be executed with a valid login status
-	if _, err := ValidateLoginStatus(c); err != nil {
+	claims, err := ValidateLoginStatus(c)
+	if err != nil {
 		return
 	}
-
+	_, username := getUserData(claims)
 	stringId := c.Param("id")
 	id, err := strconv.Atoi(stringId)
 
@@ -180,7 +181,8 @@ func (ctr RestController) DeleteHotelRequest(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	err = ctr.hotelService.RemoveHotel(uint(id))
+
+	err = ctr.hotelService.RemoveHotel(uint(id), username)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -308,9 +310,12 @@ func (ctr RestController) GetTravelById(c *gin.Context) {
 func (ctr RestController) DeleteTravel(c *gin.Context) {
 
 	// Function can only be executed with a valid login status
-	if _, err := ValidateLoginStatus(c); err != nil {
+	claims, err := ValidateLoginStatus(c)
+	if err != nil {
 		return
 	}
+
+	_, username := getUserData(claims)
 
 	travelStrId := c.Param("tid")
 	travelId, err := strconv.Atoi(travelStrId)
@@ -320,7 +325,7 @@ func (ctr RestController) DeleteTravel(c *gin.Context) {
 		return
 	}
 
-	err = ctr.travelService.RemoveTravel(uint(travelId))
+	err = ctr.travelService.RemoveTravel(uint(travelId), username)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

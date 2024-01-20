@@ -13,5 +13,5 @@ type HotelService interface {
 	FindHotelTravel(string, string, *time.Time, *time.Time, []uint) ([]*model.Hotel, error)
 	FindHotelByTravel(uint, uint) (*model.Hotel, error)
 	UpdateHotel(*model.Hotel) (*model.Hotel, error)
-	RemoveHotel(uint) error
+	RemoveHotel(uint, string) error
 }

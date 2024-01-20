@@ -18,7 +18,9 @@ func NewTravelService(trepo outbound.TravelRepository, events outbound.TravelEve
 
 func (service TravelServiceImpl) NewTravel(hotelRef uint, vendor uint, from time.Time, to time.Time, price float32, description string) (*model.Travel, error) {
 	offer := &model.Travel{Vendor: model.Vendor{Id: vendor}, From: from, To: to, Price: price, Description: description}
-	return service.travels.Create(offer, hotelRef)
+	res, err := service.travels.Create(offer, hotelRef)
+	service.events.TravelAdded(res, err)
+	return res, err
 }
 
 func (service TravelServiceImpl) GetTravel(id uint) (*model.Travel, error) {
@@ -26,9 +28,14 @@ func (service TravelServiceImpl) GetTravel(id uint) (*model.Travel, error) {
 }
 
 func (service TravelServiceImpl) UpdateTravel(offerUpdate *model.Travel, id uint, hotelRef uint) (*model.Travel, error) {
-	return service.travels.Update(offerUpdate, id, hotelRef)
+	res, err := service.travels.Update(offerUpdate, id, hotelRef)
+	service.events.TravelUpdated(res, err)
+	return res, err
 }
 
-func (service TravelServiceImpl) RemoveTravel(id uint) error {
-	return service.travels.Delete(id)
+func (service TravelServiceImpl) RemoveTravel(id uint, user string) error {
+	err := service.travels.Delete(id)
+	service.events.TravelRemoved(id, user, err)
+	return err
+
 }

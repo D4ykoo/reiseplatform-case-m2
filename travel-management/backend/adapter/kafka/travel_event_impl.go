@@ -1,6 +1,7 @@
 package kafka
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -26,35 +27,109 @@ func New() TravelEventImpl {
 	}
 }
 
-func (service TravelEventImpl) HotelAdded(obj *model.Hotel) {
-	event := dto.HotelEvent{
-		Type: "Create",
-		Log:  "Create new hotel (" + obj.Name + ")",
+func (service TravelEventImpl) HotelAdded(obj *model.Hotel, err error) {
+	var msg string
+	var typ string
+	if err != nil {
+		typ = "CreateError"
+		msg = "Error creating a new hotel listing"
+	} else {
+		typ = "Create"
+		msg = fmt.Sprintf("User '%s' creates a new hotel listing (ID: %d, Name: '%s')", obj.Vendor.Username, obj.Id, obj.Name)
+	}
+	event := dto.HotelTravelEvent{
+		Type: typ,
+		Log:  msg,
 		Time: time.Now().UTC(),
 	}
 	service.MsgService.PublishAsJSON(event)
 }
 
-func (service TravelEventImpl) HotelRemoved(obj *model.Hotel) {
-	event := dto.HotelEvent{
-		Type: "Remove",
-		Log:  "Removed hotel (" + string(rune(obj.Id)) + ")",
+func (service TravelEventImpl) HotelRemoved(id uint, user string, err error) {
+	var msg string
+	var typ string
+	if err != nil {
+		typ = "RemoveError"
+		msg = "Error removing a hotel listing"
+	} else {
+		typ = "Remove"
+		msg = fmt.Sprintf("User '%s' creates a new hotel listing (ID: %d)", user, id)
+	}
+	event := dto.HotelTravelEvent{
+		Type: typ,
+		Log:  msg,
 		Time: time.Now().UTC(),
 	}
 	service.MsgService.PublishAsJSON(event)
 }
-func (service TravelEventImpl) HotelVisited(obj *model.Hotel) {
-	event := dto.HotelEvent{
-		Type: "Visit",
-		Log:  "Visited offers from hotel (" + obj.Name + ")",
+
+func (service TravelEventImpl) HotelUpdated(obj *model.Hotel, err error) {
+	var msg string
+	var typ string
+	if err != nil {
+		typ = "UpdateError"
+		msg = "Error updating a hotel listing"
+	} else {
+		typ = "Update"
+		msg = fmt.Sprintf("User '%s' creates a new hotel listing (ID: %d, Name: '%s')", obj.Vendor.Username, obj.Id, obj.Name)
+	}
+	event := dto.HotelTravelEvent{
+		Type: typ,
+		Log:  msg,
 		Time: time.Now().UTC(),
 	}
 	service.MsgService.PublishAsJSON(event)
 }
-func (service TravelEventImpl) HotelUpdated(obj *model.Hotel) {
-	event := dto.HotelEvent{
-		Type: "Update",
-		Log:  "Update offers from hotel (" + obj.Name + ")",
+
+func (service TravelEventImpl) TravelAdded(obj *model.Travel, err error) {
+	var msg string
+	var typ string
+	if err != nil {
+		typ = "CreateError"
+		msg = "Error creating a new travel offer"
+	} else {
+		typ = "Create"
+		msg = fmt.Sprintf("User '%s' creates a new travel offer (ID: %d)", obj.Vendor.Username, obj.Id)
+	}
+	event := dto.HotelTravelEvent{
+		Type: typ,
+		Log:  msg,
+		Time: time.Now().UTC(),
+	}
+	service.MsgService.PublishAsJSON(event)
+}
+
+func (service TravelEventImpl) TravelUpdated(obj *model.Travel, err error) {
+	var msg string
+	var typ string
+	if err != nil {
+		typ = "UpdateError"
+		msg = "Error updating a new travel offer"
+	} else {
+		typ = "Update"
+		msg = fmt.Sprintf("User '%s' updated a travel offer (ID: %d)", obj.Vendor.Username, obj.Id)
+	}
+	event := dto.HotelTravelEvent{
+		Type: typ,
+		Log:  msg,
+		Time: time.Now().UTC(),
+	}
+	service.MsgService.PublishAsJSON(event)
+}
+
+func (service TravelEventImpl) TravelRemoved(id uint, user string, err error) {
+	var msg string
+	var typ string
+	if err != nil {
+		typ = "RemoveError"
+		msg = "Error removing a new travel offer"
+	} else {
+		typ = "Remove"
+		msg = fmt.Sprintf("User '%s' removed travel offer (ID: %d)", user, id)
+	}
+	event := dto.HotelTravelEvent{
+		Type: typ,
+		Log:  msg,
 		Time: time.Now().UTC(),
 	}
 	service.MsgService.PublishAsJSON(event)
