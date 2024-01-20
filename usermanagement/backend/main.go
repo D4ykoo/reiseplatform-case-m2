@@ -1,6 +1,10 @@
 package main
 
 import (
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/dbGorm"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/kafka"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/application"
 	"log"
 	"os"
 	"strconv"
@@ -39,6 +43,17 @@ func RunWebServer() {
 	//
 	//_ = dbGorm.Save(user)
 
+	// outgoing
+	userRepo := dbGorm.Init()
+	messageService := kafka.Init()
+	auth := adapter.InitAuth()
+	email := adapter.InitEmail(messageService)
+	userService := application.InitUserService(userRepo)
+	httpUserService := application.InitHttpService(userRepo)
+
+	userServiceHttpController := api.InitHttpUserController(httpUserService, messageService, email, auth)
+	userServiceController := api.Init(userService, messageService, auth)
+
 	router := gin.Default()
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{os.Getenv("DOMAIN"), "http://usermanagement-frontend:8081"}
@@ -50,17 +65,17 @@ func RunWebServer() {
 
 	v1 := router.Group("/api/v1")
 	{
-		v1.GET("/users", api.ListUserRequest)
-		v1.GET("/users/:id", api.GetUserRequest)
-		v1.POST("/users", api.CreateUserRequest)
-		v1.PUT("/users/:id", api.UpdateUserRequest)
-		v1.DELETE("/users/:id", api.DeleteUserRequest)
+		v1.GET("/users", userServiceController.ListUserRequest)
+		v1.GET("/users/:id", userServiceController.GetUserRequest)
+		v1.POST("/users", userServiceController.CreateUserRequest)
+		v1.PUT("/users/:id", userServiceController.UpdateUserRequest)
+		v1.DELETE("/users/:id", userServiceController.DeleteUserRequest)
 
-		v1.POST("/login", api.LoginRequest)
-		v1.POST("/register", api.RegisterRequest)
+		v1.POST("/login", userServiceHttpController.LoginRequest)
+		v1.POST("/register", userServiceHttpController.RegisterRequest)
 
-		v1.PUT("/reset", api.ResetPasswordRequest)
-		v1.GET("/logout", api.LogoutRequest)
+		v1.PUT("/reset", userServiceHttpController.ResetPasswordRequest)
+		v1.GET("/logout", userServiceHttpController.LogoutRequest)
 	}
 	// start server
 	err := router.Run(os.Getenv("API_URL"))

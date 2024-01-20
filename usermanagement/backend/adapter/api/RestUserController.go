@@ -2,21 +2,31 @@ package api
 
 import (
 	"errors"
-	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/api/dto"
-	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/kafka"
-	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/application"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain"
 	model "github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/ports/inbound"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/ports/outbound"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
 	"strconv"
 )
 
+type RestUserController struct {
+	userService domain.IUserService
+	userEvents  outbound.IUserEvents
+	auth        inbound.IUserAuthentication
+}
+
+func Init(userService domain.IUserService, userEvents outbound.IUserEvents, auth inbound.IUserAuthentication) RestUserController {
+	return RestUserController{userService: userService, userEvents: userEvents, auth: auth}
+}
+
 // Checks if the cookie is present and validates the containing JWT.
 //
 // Returned error can be nil.
-func checkCookie(c *gin.Context) error {
+func (userController RestUserController) checkCookie(c *gin.Context) error {
 	var err error
 
 	cookie, cookieErr := c.Cookie("authTravel")
@@ -26,7 +36,7 @@ func checkCookie(c *gin.Context) error {
 		return cookieErr
 	}
 
-	_, valErr, _ := adapter.ValidateJWT(cookie, os.Getenv("JWT_SECRET"))
+	_, valErr, _ := userController.auth.ValidateJWT(cookie, os.Getenv("JWT_SECRET"))
 
 	if valErr != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": valErr.Error()})
@@ -36,11 +46,11 @@ func checkCookie(c *gin.Context) error {
 	return err
 }
 
-func CreateUserRequest(c *gin.Context) {
+func (userController RestUserController) CreateUserRequest(c *gin.Context) {
 
-	if cErr := checkCookie(c); cErr != nil {
+	if cErr := userController.checkCookie(c); cErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": cErr.Error()})
-		kafka.SendEvent(model.EventUserCreate, cErr.Error())
+		userController.userEvents.SendEvent(model.EventUserCreate, cErr.Error())
 		return
 	}
 
@@ -48,7 +58,7 @@ func CreateUserRequest(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		kafka.SendEvent(model.EventUserCreate, err.Error())
+		userController.userEvents.SendEvent(model.EventUserCreate, err.Error())
 		return
 	}
 
@@ -61,22 +71,22 @@ func CreateUserRequest(c *gin.Context) {
 		Password:  user.Password,
 	}
 
-	err := application.CreateUser(saveUser)
+	err := userController.userService.CreateUser(saveUser)
 
 	if err != nil {
-		kafka.SendEvent(model.EventUserCreate, err.Error())
+		userController.userEvents.SendEvent(model.EventUserCreate, err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	kafka.SendEvent(model.EventUserCreate, "")
+	userController.userEvents.SendEvent(model.EventUserCreate, "")
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
-func UpdateUserRequest(c *gin.Context) {
-	if cErr := checkCookie(c); cErr != nil {
+func (userController RestUserController) UpdateUserRequest(c *gin.Context) {
+	if cErr := userController.checkCookie(c); cErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": cErr.Error()})
-		kafka.SendEvent(model.EventUserUpdate, cErr.Error())
+		userController.userEvents.SendEvent(model.EventUserUpdate, cErr.Error())
 		return
 	}
 
@@ -86,13 +96,13 @@ func UpdateUserRequest(c *gin.Context) {
 
 	if errID != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": errID.Error()})
-		kafka.SendEvent(model.EventUserUpdate, errID.Error())
+		userController.userEvents.SendEvent(model.EventUserUpdate, errID.Error())
 		return
 	}
 
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		kafka.SendEvent(model.EventUserUpdate, err.Error())
+		userController.userEvents.SendEvent(model.EventUserUpdate, err.Error())
 		return
 	}
 
@@ -106,34 +116,34 @@ func UpdateUserRequest(c *gin.Context) {
 	}
 
 	//errDBU, dbUser := dbGorm.FindById(uint(id))
-	err := application.ChangeUser(uint(id), updateUser, user.OldPassword)
+	err := userController.userService.ChangeUser(uint(id), updateUser)
 
 	if err != nil {
 		if !errors.Is(err, errors.New("falsePassword")) {
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-			kafka.SendEvent(model.EventUserUpdate, err.Error())
+			userController.userEvents.SendEvent(model.EventUserUpdate, err.Error())
 			return
 		} else {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": err})
-			kafka.SendEvent(model.EventUserUpdate, "invalid password")
+			userController.userEvents.SendEvent(model.EventUserUpdate, "invalid password")
 			return
 		}
 	}
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		kafka.SendEvent(model.EventUserUpdate, err.Error())
+		userController.userEvents.SendEvent(model.EventUserUpdate, err.Error())
 		return
 	}
 
-	kafka.SendEvent(model.EventUserUpdate, user.Username)
+	userController.userEvents.SendEvent(model.EventUserUpdate, user.Username)
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
-func DeleteUserRequest(c *gin.Context) {
-	if cErr := checkCookie(c); cErr != nil {
+func (userController RestUserController) DeleteUserRequest(c *gin.Context) {
+	if cErr := userController.checkCookie(c); cErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": cErr.Error()})
-		kafka.SendEvent(model.EventUserDelete, cErr.Error())
+		userController.userEvents.SendEvent(model.EventUserDelete, cErr.Error())
 		return
 	}
 
@@ -141,26 +151,26 @@ func DeleteUserRequest(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		kafka.SendEvent(model.EventUserDelete, err.Error())
+		userController.userEvents.SendEvent(model.EventUserDelete, err.Error())
 		return
 	}
 
-	err = application.DeleteUser(id)
+	err = userController.userService.DeleteUser(id)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		kafka.SendEvent(model.EventUserDelete, err.Error())
+		userController.userEvents.SendEvent(model.EventUserDelete, err.Error())
 		return
 	}
 
-	kafka.SendEvent(model.EventUserDelete, "")
+	userController.userEvents.SendEvent(model.EventUserDelete, "")
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
-func GetUserRequest(c *gin.Context) {
-	if cErr := checkCookie(c); cErr != nil {
+func (userController RestUserController) GetUserRequest(c *gin.Context) {
+	if cErr := userController.checkCookie(c); cErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": cErr.Error()})
-		kafka.SendEvent(model.EventUserGet, cErr.Error())
+		userController.userEvents.SendEvent(model.EventUserGet, cErr.Error())
 		return
 	}
 
@@ -168,15 +178,15 @@ func GetUserRequest(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		kafka.SendEvent(model.EventUserGet, err.Error())
+		userController.userEvents.SendEvent(model.EventUserGet, err.Error())
 		return
 	}
 
-	dbUser, errGet := application.FindUser(id)
+	dbUser, errGet := userController.userService.FindUser(id)
 
 	if errGet != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": errGet.Error()})
-		kafka.SendEvent(model.EventUserGet, errGet.Error())
+		userController.userEvents.SendEvent(model.EventUserGet, errGet.Error())
 		return
 	}
 
@@ -188,25 +198,25 @@ func GetUserRequest(c *gin.Context) {
 		Email:     dbUser.Email,
 	}
 
-	kafka.SendEvent(model.EventUserGet, "")
+	userController.userEvents.SendEvent(model.EventUserGet, "")
 	c.JSON(http.StatusOK, user)
 }
 
-func ListUserRequest(c *gin.Context) {
+func (userController RestUserController) ListUserRequest(c *gin.Context) {
 
-	if cErr := checkCookie(c); cErr != nil {
+	if cErr := userController.checkCookie(c); cErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": cErr.Error()})
-		kafka.SendEvent(model.EventUserGet, cErr.Error())
+		userController.userEvents.SendEvent(model.EventUserGet, cErr.Error())
 		return
 	}
 
-	dbUsers, err := application.ListAllUser()
+	dbUsers, err := userController.userService.ListAllUser()
 
 	var users []dto.UserResponse
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		kafka.SendEvent(model.EventUserGet, err.Error())
+		userController.userEvents.SendEvent(model.EventUserGet, err.Error())
 		return
 	}
 
@@ -221,6 +231,6 @@ func ListUserRequest(c *gin.Context) {
 		users = append(users, user)
 	}
 
-	kafka.SendEvent(model.EventUserGet, "list all")
+	userController.userEvents.SendEvent(model.EventUserGet, "list all")
 	c.JSON(http.StatusOK, users)
 }

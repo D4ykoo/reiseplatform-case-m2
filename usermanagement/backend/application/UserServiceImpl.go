@@ -2,17 +2,25 @@ package application
 
 import (
 	"errors"
-	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter/dbGorm"
 	model "github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
+	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/ports/outbound"
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/utils"
 	"os"
 	"reflect"
 )
 
-func CreateUser(user model.User) error {
+type UserServiceImpl struct {
+	users outbound.IUserRepository
+}
+
+func InitUserService(userRepo outbound.IUserRepository) UserServiceImpl {
+	return UserServiceImpl{userRepo}
+}
+
+func (service UserServiceImpl) CreateUser(user model.User) error {
 	user.Password = utils.HashPassword(user.Password, []byte(os.Getenv("SALT")))
 
-	err := dbGorm.Save(user)
+	err := service.users.Save(user)
 
 	if err != nil {
 		return err
@@ -20,9 +28,9 @@ func CreateUser(user model.User) error {
 	return nil
 }
 
-func ChangeUser(id uint, user model.User, oldPassword string) error {
+func (service UserServiceImpl) ChangeUser(id uint, user model.User) error {
 	// check if user with id exists
-	dbUser, errDBU := dbGorm.FindById(id)
+	dbUser, errDBU := service.users.FindById(id)
 
 	if errDBU != nil {
 		return errDBU
@@ -39,7 +47,7 @@ func ChangeUser(id uint, user model.User, oldPassword string) error {
 	}
 
 	// update user
-	err := dbGorm.Update(id, user)
+	err := service.users.Update(id, user)
 	if err != nil {
 		return err
 	}
@@ -47,8 +55,8 @@ func ChangeUser(id uint, user model.User, oldPassword string) error {
 	return nil
 }
 
-func DeleteUser(id int) error {
-	err := dbGorm.Delete(id)
+func (service UserServiceImpl) DeleteUser(id int) error {
+	err := service.users.Delete(uint(id))
 
 	if err != nil {
 		return err
@@ -57,11 +65,11 @@ func DeleteUser(id int) error {
 	return nil
 }
 
-func FindUser(identifier interface{}) (*model.User, error) {
+func (service UserServiceImpl) FindUser(identifier interface{}) (*model.User, error) {
 	switch identifier.(type) {
 	case int:
 		id := reflect.ValueOf(identifier).Int()
-		user, err := dbGorm.FindById(uint(id))
+		user, err := service.users.FindById(uint(id))
 
 		if err != nil {
 			return nil, err
@@ -71,7 +79,7 @@ func FindUser(identifier interface{}) (*model.User, error) {
 
 	case string:
 		username := reflect.ValueOf(identifier).String()
-		user, err := dbGorm.FindByUsername(username)
+		user, err := service.users.FindByUsername(username)
 
 		if err != nil {
 			return nil, err
@@ -84,64 +92,6 @@ func FindUser(identifier interface{}) (*model.User, error) {
 	}
 }
 
-func ListAllUser() (*[]model.User, error) {
-	return dbGorm.ListAll()
-}
-
-func RegisterUser(user model.User) (*uint, error) {
-	user.Password = utils.HashPassword(user.Password, []byte(os.Getenv("SALT")))
-
-	err := dbGorm.Save(user)
-
-	if err != nil {
-		return nil, err
-	}
-
-	dbUser, findErr := dbGorm.FindByUsername(user.Username)
-
-	if findErr != nil {
-		return nil, err
-	}
-
-	return &dbUser.Id, nil
-}
-
-func LoginUser(username string, password string) (*uint, error) {
-	dbUser, err := dbGorm.FindByUsername(username)
-
-	if err != nil {
-		return nil, err
-	}
-	salt := []byte(os.Getenv("SALT"))
-
-	isOk := utils.ComparePasswords(dbUser.Password, password, salt)
-	if !isOk {
-		return nil, errors.New("falsePassword")
-	}
-
-	return &dbUser.Id, nil
-}
-
-func ResetPassword(username string, newPassword string) (*uint, error) {
-	dbUser, err := dbGorm.FindByUsername(username)
-
-	if err != nil {
-		return nil, err
-	}
-
-	var updatedUser model.User
-
-	updatedUser.Password = newPassword
-	updatedUser.Username = dbUser.Username
-	updatedUser.Email = dbUser.Email
-	updatedUser.Firstname = dbUser.Firstname
-	updatedUser.Lastname = dbUser.Lastname
-
-	errUpdate := dbGorm.Update(dbUser.Id, updatedUser)
-
-	if errUpdate != nil {
-		return nil, errUpdate
-	}
-
-	return &dbUser.Id, nil
+func (service UserServiceImpl) ListAllUser() (*[]model.User, error) {
+	return service.users.ListAll()
 }

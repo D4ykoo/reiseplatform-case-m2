@@ -9,5 +9,5 @@ type EmailContent struct {
 }
 
 type IEmailNotification interface {
-	sendEmail(content EmailContent)
+	SendEmail(content EmailContent)
 }

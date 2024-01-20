@@ -1,8 +1,9 @@
 package dto
 
-import domain "github.com/D4ykoo/travelplatform-case-m2/usermanagement/domain/model"
+import "time"
 
 type UserEventMessage struct {
-	UserEvent       domain.UserEvent `json:"type"`
-	OptionalContent string           `json:"log"`
+	Type string    `json:"type"`
+	Log  string    `json:"log"`
+	Time time.Time `json:"time"`
 }
