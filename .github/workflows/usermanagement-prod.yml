@@ -28,9 +28,9 @@ jobs:
     name: Docker Build Backend
     runs-on: ubuntu-latest
     needs: [usermanagement-backend-workflow]
-    # defaults:
-    #   run:
-    #     working-directory: "./usermanagement/backend"
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}/usermanagement
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -48,7 +48,7 @@ jobs:
         uses: docker/build-push-action@v5
         with: 
           context: .
-          file: ./usermanagement/backend/Dockerfile
+          file: ./backend/Dockerfile
           platform: linux/amd64,linux/arm64
           push: true
           tags: |
