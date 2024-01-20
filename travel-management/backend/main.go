@@ -18,6 +18,21 @@ func main() {
 
 	// Env
 	utils.LoadFile()
+	ginModeSetup()
+
+	router := gin.Default()
+	corsSetup(router)
+	routingSetup(router)
+
+	// Run
+	err := router.Run(os.Getenv("API_URL"))
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+}
+
+func ginModeSetup() {
 	isDebug, errBool := strconv.ParseBool(os.Getenv("DEBUG"))
 
 	if errBool != nil {
@@ -27,6 +42,21 @@ func main() {
 	if !isDebug {
 		gin.SetMode(gin.ReleaseMode)
 	}
+}
+
+func corsSetup(router *gin.Engine) {
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"http://localhost:8085", "http://localhost:12345"}
+	config.AllowCredentials = true
+	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
+	config.AllowHeaders = []string{"Authorization", "Origin", "Content-Type", "Accept"}
+
+	router.ForwardedByClientIP = true
+	router.SetTrustedProxies([]string{""})
+	router.Use(cors.New(config))
+}
+
+func routingSetup(router *gin.Engine) {
 
 	// Outgoing
 	// Repository
@@ -37,69 +67,53 @@ func main() {
 	eventService := kafka.New()
 	// Application
 	// Service
-	travelService := application.New(hotelRepo, travelRepo, tagRepo, eventService)
+	travelService := application.NewTravelService(travelRepo, eventService)
+	tagService := application.NewTagService(tagRepo)
+	hotelService := application.NewHotelService(hotelRepo, eventService)
 
 	// Incomming
 	// Controller
-	service := api.New(travelService)
-	// Router
-	router := gin.Default()
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:8085", "http://localhost:12345"}
-	config.AllowCredentials = true
-	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
-	config.AllowHeaders = []string{"Authorization", "Origin", "Content-Type", "Accept"}
+	controller := api.New(travelService, tagService, hotelService)
+	api := router.Group("/api/v1")
 
-	// TODO CORS
-	router.ForwardedByClientIP = true
-	router.SetTrustedProxies([]string{""})
-	router.Use(cors.New(config))
-	//router.Use(cors.Default())
-	router.GET("/api/v1/loginstatus", service.CheckLoginStatus)
+	{
+		api.GET("/loginstatus", controller.CheckLoginStatus)
 
-	// CRUD
-	// Create
-	router.POST("/api/v1/hotels", service.CreateHotelRequest)
+		// CRUD
+		// Create
+		api.POST("/hotels", controller.CreateHotelRequest)
 
-	// Read
-	router.GET("/api/v1/hotels", service.FindHotels)
+		// Read
+		api.GET("/hotels", controller.FindHotels)
 
-	router.GET("/api/v1/hotels/:id", service.GetHotelById)
+		api.GET("/hotels/:id", controller.GetHotelById)
 
-	// Update
-	router.PUT("/api/v1/hotels/:id", service.UpdateHotel)
-	// Delete
-	router.DELETE("/api/v1/hotels/:id", service.DeleteHotelRequest)
+		// Update
+		api.PUT("/hotels/:id", controller.UpdateHotel)
+		// Delete
+		api.DELETE("/hotels/:id", controller.DeleteHotelRequest)
 
-	// Offers
-	router.POST("/api/v1/hotels/:id/travels", service.CreateTravelRequest)
-	// Read
-	/*router.GET("/api/v1/hotels/:id/travels", func(c *gin.Context) {
-		c.String(200, "Hello, World!")
-	})*/
+		// Offers
+		api.POST("/hotels/:id/travels", controller.CreateTravelRequest)
 
-	router.GET("/api/v1/hotels/:id/travels/:tid", service.GetTravelById)
+		api.GET("/hotels/:id/travels/:tid", controller.GetTravelById)
 
-	// Update
-	router.PUT("/api/v1/hotels/:id/travels/:tid", service.UpdateTravel)
-	// Delete
-	router.DELETE("/api/v1/hotels/:id/travels/:tid", service.DeleteTravel)
+		// Update
+		api.PUT("/hotels/:id/travels/:tid", controller.UpdateTravel)
+		// Delete
+		api.DELETE("/hotels/:id/travels/:tid", controller.DeleteTravel)
 
-	// Tags
-	router.POST("/api/v1/tags", service.CreateTagRequest)
-	// Read
-	router.GET("/api/v1/tags", service.ListAllTags)
+		// Tags
+		api.POST("/tags", controller.CreateTagRequest)
+		// Read
+		api.GET("/tags", controller.ListAllTags)
 
-	router.GET("/api/v1/tags/:id", service.GetTagById)
+		api.GET("/tags/:id", controller.GetTagById)
 
-	// Update
-	router.PUT("/api/v1/tags/:id", service.UpdateTag)
-	// Delete
-	router.DELETE("/api/v1/tags/:id", service.DeleteTagRequest)
-
-	err := router.Run(os.Getenv("API_URL"))
-	if err != nil {
-		log.Fatal(err)
-		return
+		// Update
+		api.PUT("/tags/:id", controller.UpdateTag)
+		// Delete
+		api.DELETE("/tags/:id", controller.DeleteTagRequest)
 	}
+
 }

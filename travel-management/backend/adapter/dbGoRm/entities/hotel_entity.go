@@ -9,12 +9,13 @@ import (
 
 type HotelEntity struct {
 	gorm.Model
-	Name        string `json:"name" gorm:"not null"`
-	Street      string `json:"street" gorm:"not null"`
-	State       string `json:"state" gorm:"not null"`
-	Land        string `json:"land" gorm:"not null"`
-	VendorRef   uint   `json:"vendorid" gorm:"not null"`
-	Description string
+	Name        string           `json:"name" gorm:"not null"`
+	Street      string           `json:"street" gorm:"not null"`
+	State       string           `json:"state" gorm:"not null"`
+	Land        string           `json:"land" gorm:"not null"`
+	VendorRef   uint             `json:"vendorid" gorm:"not null"`
+	VendorName  string           `json:"vendorname"`
+	Description string           `json:"description"`
 	Pictures    []*PictureEntity `json:"pictures" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;foreignKey:HotelRef"`
 	Travels     []*TravelEntity  `json:"travels" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;foreignKey:HotelRef"`
 	Tags        []*TagEntity     `json:"tags" gorm:"many2many:tag_hotel;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
@@ -46,7 +47,7 @@ func ToHotelEntity(hotel *model.Hotel) *HotelEntity {
 
 	return &HotelEntity{Name: hotel.Name,
 		Street: hotel.Address.Street, State: hotel.Address.State, Land: hotel.Address.Land,
-		VendorRef: hotel.Vendor.Id, Description: hotel.Description, Pictures: pictures, Model: gorm.Model{ID: hotel.Id}, Travels: travels, Tags: tags}
+		VendorRef: hotel.Vendor.Id, VendorName: hotel.Vendor.Username, Description: hotel.Description, Pictures: pictures, Model: gorm.Model{ID: hotel.Id}, Travels: travels, Tags: tags}
 }
 
 func ToHotelModel(entity *HotelEntity) *model.Hotel {
@@ -67,5 +68,5 @@ func ToHotelModel(entity *HotelEntity) *model.Hotel {
 
 	return &model.Hotel{Id: entity.ID, Name: entity.Name,
 		Address: model.Address{Street: entity.Street, State: entity.State, Land: entity.Land},
-		Vendor:  model.Vendor{Id: entity.VendorRef}, Description: entity.Description, Pictures: pictures, Travels: travels, Tags: tags}
+		Vendor:  model.Vendor{Id: entity.VendorRef, Username: entity.VendorName}, Description: entity.Description, Pictures: pictures, Travels: travels, Tags: tags}
 }

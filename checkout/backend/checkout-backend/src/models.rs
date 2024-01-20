@@ -14,7 +14,7 @@ pub struct HotelTravels {
     pub vendorname: String,
     pub description: String,
     pub pictures: Vec<Picture>,
-    pub tags: Vec<String>,
+    pub tags: Vec<Tag>,
     pub travels: Vec<Travel>,
 }
 
@@ -24,6 +24,13 @@ pub struct Picture {
     pub id: i64,
     pub description: String,
     pub payload: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+// #[serde(rename_all = "camelCase")]
+pub struct Tag {
+    pub id: i64,
+    pub name: String,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]

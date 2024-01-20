@@ -227,7 +227,6 @@ export class HotelEditComponent implements OnInit, OnChanges {
     this.loginService.user.subscribe((u) => {
       this.user = u;
     });
-    // this.loginService.checkLoginStatus();
     this.setup();
   }
 

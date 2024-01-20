@@ -18,7 +18,7 @@
       </ng-template>
       <ng-template pTemplate="body" let-event>
         <tr>
-          <td>{{ event.time }}</td>
+          <td>{{ event.time | date: "dd/MM/yyyy hh:mm:ss" }}</td>
           <td>{{ event.type }}</td>
           <td>{{ event.log }}</td>
         </tr>
@@ -36,7 +36,7 @@
       </ng-template>
       <ng-template pTemplate="body" let-event>
         <tr>
-          <td>{{ event.time }}</td>
+          <td>{{ event.time | date: "dd/MM/yyyy hh:mm:ss" }}</td>
           <td>{{ event.type }}</td>
           <td>{{ event.log }}</td>
         </tr>
@@ -54,7 +54,7 @@
       </ng-template>
       <ng-template pTemplate="body" let-event>
         <tr>
-          <td>{{ event.time }}</td>
+          <td>{{ event.time | date: "dd/MM/yyyy hh:mm:ss" }}</td>
           <td>{{ event.type }}</td>
           <td>{{ event.log }}</td>
         </tr>

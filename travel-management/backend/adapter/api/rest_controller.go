@@ -14,12 +14,14 @@ import (
 )
 
 type RestController struct {
-	service domain.TravelService
+	travelService domain.TravelService
+	tagService    domain.TagService
+	hotelService  domain.HotelService
 }
 
-func New(service domain.TravelService) RestController {
+func New(travelService domain.TravelService, tagService domain.TagService, hotelService domain.HotelService) RestController {
 
-	return RestController{service: service}
+	return RestController{travelService: travelService, tagService: tagService, hotelService: hotelService}
 }
 
 func (ctr RestController) CheckLoginStatus(c *gin.Context) {
@@ -30,9 +32,7 @@ func (ctr RestController) CheckLoginStatus(c *gin.Context) {
 		return
 	}
 
-	username := claims["username"].(string)
-	user_id := claims["user_id"].(float64)
-	id := int(user_id)
+	id, username := getUserData(claims)
 
 	c.JSON(http.StatusOK, dto.UserResponse{Id: id, Name: username})
 
@@ -40,7 +40,6 @@ func (ctr RestController) CheckLoginStatus(c *gin.Context) {
 
 func (ctr RestController) CreateHotelRequest(c *gin.Context) {
 	// Function can only be executed with a valid login status
-
 	if _, err := ValidateLoginStatus(c); err != nil {
 		return
 	}
@@ -54,7 +53,7 @@ func (ctr RestController) CreateHotelRequest(c *gin.Context) {
 	pics := dto.ToPictureModel(hotel.Pictures)
 	tags := dto.ToTagsModel(hotel.Tags)
 
-	hotelRes, err := ctr.service.NewHotel(hotel.HotelName, model.Address{Street: hotel.Street, State: hotel.State, Land: hotel.HotelName},
+	hotelRes, err := ctr.hotelService.NewHotel(hotel.HotelName, model.Address{Street: hotel.Street, State: hotel.State, Land: hotel.HotelName},
 		model.Vendor{Id: hotel.VendorId, Username: hotel.VendorName}, hotel.Description, pics, tags)
 
 	if err != nil {
@@ -79,7 +78,7 @@ func (ctr RestController) FindHotels(c *gin.Context) {
 
 	if len(name) == 0 && len(land) == 0 && len(fromStr) == 0 && len(toStr) == 0 && len(tagsStr) == 0 {
 		var err error
-		hotels, err = ctr.service.ListHotelTravel()
+		hotels, err = ctr.hotelService.ListHotelTravel()
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		} else {
@@ -129,7 +128,7 @@ func (ctr RestController) FindHotels(c *gin.Context) {
 		tags = append(tags, uint(i))
 	}
 
-	hotels, err3 := ctr.service.FindHotelTravel(name, land, from, to, tags)
+	hotels, err3 := ctr.hotelService.FindHotelTravel(name, land, from, to, tags)
 
 	if err3 != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err3.Error()})
@@ -155,7 +154,7 @@ func (ctr RestController) GetHotelById(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	hotel, err := ctr.service.GetHotel(uint(id))
+	hotel, err := ctr.hotelService.GetHotel(uint(id))
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -170,10 +169,11 @@ func (ctr RestController) GetHotelById(c *gin.Context) {
 func (ctr RestController) DeleteHotelRequest(c *gin.Context) {
 
 	// Function can only be executed with a valid login status
-	if _, err := ValidateLoginStatus(c); err != nil {
+	claims, err := ValidateLoginStatus(c)
+	if err != nil {
 		return
 	}
-
+	_, username := getUserData(claims)
 	stringId := c.Param("id")
 	id, err := strconv.Atoi(stringId)
 
@@ -181,7 +181,8 @@ func (ctr RestController) DeleteHotelRequest(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	err = ctr.service.RemoveHotel(uint(id))
+
+	err = ctr.hotelService.RemoveHotel(uint(id), username)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -218,7 +219,7 @@ func (ctr RestController) UpdateHotel(c *gin.Context) {
 	}
 
 	fmt.Println("Rst input", hotel.Tags)
-	updatetedHotel, err := ctr.service.UpdateHotel(dto.ToHotelModel(&hotel))
+	updatetedHotel, err := ctr.hotelService.UpdateHotel(dto.ToHotelModel(&hotel))
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -267,7 +268,7 @@ func (ctr RestController) CreateTravelRequest(c *gin.Context) {
 		return
 	}
 
-	travelRes, err := ctr.service.NewTravel(uint(hotelId), uint(travel.VendorId), from, to, travel.Price, travel.Description)
+	travelRes, err := ctr.travelService.NewTravel(uint(hotelId), uint(travel.VendorId), from, to, travel.Price, travel.Description)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -295,7 +296,7 @@ func (ctr RestController) GetTravelById(c *gin.Context) {
 		return
 	}
 
-	hotel, err := ctr.service.FindHotelByTravel(uint(hotelId), uint(travelId))
+	hotel, err := ctr.hotelService.FindHotelByTravel(uint(hotelId), uint(travelId))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -309,9 +310,12 @@ func (ctr RestController) GetTravelById(c *gin.Context) {
 func (ctr RestController) DeleteTravel(c *gin.Context) {
 
 	// Function can only be executed with a valid login status
-	if _, err := ValidateLoginStatus(c); err != nil {
+	claims, err := ValidateLoginStatus(c)
+	if err != nil {
 		return
 	}
+
+	_, username := getUserData(claims)
 
 	travelStrId := c.Param("tid")
 	travelId, err := strconv.Atoi(travelStrId)
@@ -321,7 +325,7 @@ func (ctr RestController) DeleteTravel(c *gin.Context) {
 		return
 	}
 
-	err = ctr.service.RemoveTravel(uint(travelId))
+	err = ctr.travelService.RemoveTravel(uint(travelId), username)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -359,7 +363,7 @@ func (ctr RestController) UpdateTravel(c *gin.Context) {
 		return
 	}
 
-	res, err := ctr.service.UpdateTravel(dto.ToTravelModel(travel), uint(travelId), uint(hotelId))
+	res, err := ctr.travelService.UpdateTravel(dto.ToTravelModel(travel), uint(travelId), uint(hotelId))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -384,7 +388,7 @@ func (ctr RestController) CreateTagRequest(c *gin.Context) {
 		return
 	}
 
-	tagRes, err := ctr.service.NewTag(tag.Name)
+	tagRes, err := ctr.tagService.NewTag(tag.Name)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -404,7 +408,7 @@ func (ctr RestController) GetTagById(c *gin.Context) {
 		return
 	}
 
-	tag, err := ctr.service.GetTag(uint(tagId))
+	tag, err := ctr.tagService.GetTag(uint(tagId))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -426,7 +430,7 @@ func (ctr RestController) DeleteTagRequest(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	err = ctr.service.RemoveTag(uint(id))
+	err = ctr.tagService.RemoveTag(uint(id))
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -438,7 +442,7 @@ func (ctr RestController) DeleteTagRequest(c *gin.Context) {
 
 func (ctr RestController) ListAllTags(c *gin.Context) {
 
-	tags, err := ctr.service.ListTags()
+	tags, err := ctr.tagService.ListTags()
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -480,7 +484,7 @@ func (ctr RestController) UpdateTag(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Id mismatch"})
 	}
 
-	tagUpdate, err := ctr.service.UpdateTags(&model.Tag{Id: tag.Id, Name: tag.Name})
+	tagUpdate, err := ctr.tagService.UpdateTags(&model.Tag{Id: tag.Id, Name: tag.Name})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
