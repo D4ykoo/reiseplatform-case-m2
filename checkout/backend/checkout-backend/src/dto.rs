@@ -1,13 +1,13 @@
 use checkout_db::models::Cart;
 use serde::{Serialize, Deserialize};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq)]
 pub struct CombinedCartResponse {
     pub cart: Cart,
     pub hotel: Option<Vec<HotelResponse>>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq)]
 pub struct HotelResponse {
     pub hotelname: String,
     pub land: String,
@@ -17,7 +17,7 @@ pub struct HotelResponse {
     pub travels: Vec<TravelSliceResponse>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq)]
 pub struct TravelSliceResponse {
     pub vendorname: String,
     pub from: String,
@@ -65,5 +65,35 @@ impl HotelResponse {
         for travel_slice in travel_slices {
             self.travels.push(TravelSliceResponse::from_db_travel_slice(travel_slice));
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_combined_cart_response() {
+        use crate::dto::CombinedCartResponse;
+        use checkout_db::models::Cart;
+
+        let cart = Cart {
+            id: 1,
+            user_id: Some(1),
+            paid: Some(true),
+            payment_method: Some("paypal".to_string()),
+        };
+
+
+        let combined_cart = checkout_db::models::CombinedCart {
+            cart: cart.clone(),
+            hotel: None,
+            travel_slice: None,
+        };
+
+        let combined_cart_response = CombinedCartResponse::from_db_combined_cart(combined_cart);
+
+        assert_eq!(combined_cart_response.cart, cart);
+        assert_eq!(combined_cart_response.hotel, None);
+        
+
     }
 }
