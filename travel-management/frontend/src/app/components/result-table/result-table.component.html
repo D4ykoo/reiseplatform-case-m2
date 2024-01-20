@@ -46,7 +46,7 @@
                 *ngIf="hotel.travels[0]"
               >
                 <span class="text-2xl font-semibold">{{
-                   hotel.travels[0].price | currency:'EUR'
+                  hotel.travels[0].price | currency: "EUR"
                 }}</span>
                 <p-button (click)="detail(hotel.id)">Details</p-button>
               </div>

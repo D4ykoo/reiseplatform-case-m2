@@ -88,7 +88,7 @@
                 class="text-2xl font-semibold"
                 [style]="{ 'margin-bottom': '0.5rem' }"
               >
-                {{ travel.price | currency:'EUR' }}
+                {{ travel.price | currency: "EUR" }}
               </div>
               <p-button [disabled]="!user" (click)="addToCart(i)">Buy</p-button>
             </div>
