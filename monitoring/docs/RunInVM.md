@@ -16,7 +16,7 @@ Follow the instructions of the official nodesource repository: [https://github.c
 1. Download and import GPG key
 ```bash
 sudo apt-get update
-sudo apt-get install -y ca-certificates curl gnupg
+sudo apt-get install -y ca-certificates curl gnupg 
 sudo mkdir -p /etc/apt/keyrings
 curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
 ```
@@ -33,12 +33,22 @@ sudo apt-get update
 sudo apt-get install nodejs -y
 ```
 
+4. Install Angular 
+```bash
+sudo npm install -g @angular/cli
+```
+More Information can be found: https://angular.io/guide/setup-local
+
 ### Rust
+Install Dependencies:
+```bash
+sudo apt install build-essential libpq -y
+```
 Install using rustup:
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
-More information cna be found here:
+More information can be found here:
 [https://www.rust-lang.org/tools/install](https://www.rust-lang.org/tools/install)
 
 **IMPORTANT:** Restart the terminal or log out. Otherwise the compiler and cargo will not be available in current session.
@@ -118,8 +128,9 @@ cargo build
 For quick serve:
 ```bash
 cd ./travelplatform-case-m2/monitoring/frontend
-ng serve
+ng serve --port 8087
 ```
+It is important to use port number 8087. Otherwise your API calls will be blocked by CORS.
 
 For building:
 ```bash
@@ -128,7 +139,6 @@ ng build
 ```
 Now the whole application is located in the dist/ directory.<br>
 The application can be served by any desired webserver by coping the whole directory and renaming it to e.g. usermanagement. 
-
 
 ## Run the travel management services by building on host
 #### 1. Clone the repository if not already done

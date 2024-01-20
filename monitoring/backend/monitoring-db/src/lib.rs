@@ -28,8 +28,9 @@ pub fn get_connection_pool() -> Pool<Manager> {
     let user = env::var("DB_USER").expect("DATABASE_URL must be set");
     let passwd = env::var("DB_PASSWORD").expect("DATABASE_URL must be set");
     let name = env::var("DB_NAME").expect("DATABASE_URL must be set");
+    let port = env::var("DB_PORT").expect("DATABASE_URL must be set");
 
-    let db_url = format!("postgres://{}:{}@{}/{}", user, passwd, host, name);
+    let db_url = format!("postgres://{}:{}@{}:{}/{}", user, passwd, host, port, name);
     // set up connection pool
     let manager =
         deadpool_diesel::postgres::Manager::new(&db_url, deadpool_diesel::Runtime::Tokio1);
@@ -45,8 +46,9 @@ pub fn establish_connection() -> PgConnection {
     let user = env::var("DB_USER").expect("DATABASE_URL must be set");
     let passwd = env::var("DB_PASSWORD").expect("DATABASE_URL must be set");
     let name = env::var("DB_NAME").expect("DATABASE_URL must be set");
+    let port = env::var("DB_PORT").expect("DATABASE_URL must be set");
 
-    let db_url = format!("postgres://{}:{}@{}/{}", user, passwd, host, name);
+    let db_url = format!("postgres://{}:{}@{}:{}/{}", user, passwd, host, port, name);
 
     PgConnection::establish(&db_url).unwrap_or_else(|_| panic!("Error connecting to {db_url}"))
 }
