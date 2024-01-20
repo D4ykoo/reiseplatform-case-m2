@@ -1,8 +1,8 @@
 # Runs when PR open event emits if a PR is on the main branch 
 # Used for production - security, build/ test and deployment
   
-name: Dev - Usermanagement frontend - security and build 
-run-name: ${{ github.actor }} started usermanagement pipeline
+name: 'Prod: Usermanagement' 
+run-name: ${{ github.actor }} started prod usermanagement pipeline
 
 concurrency: production
 
