@@ -14,7 +14,7 @@ pub struct CombinedCart {
 
 }
 
-#[derive(Queryable, Selectable, Debug, Deserialize, Serialize, Clone)]
+#[derive(Queryable, Selectable, Debug, Deserialize, Serialize, Clone, PartialEq, Eq)]
 #[diesel(table_name = checkoutcart)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Cart {
