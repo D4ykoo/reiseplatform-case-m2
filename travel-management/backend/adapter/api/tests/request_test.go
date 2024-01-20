@@ -1,4 +1,4 @@
-package test
+package api_test
 
 import (
 	"testing"
@@ -6,7 +6,7 @@ import (
 	"github.com/mig3177/travelmanagement/adapter/api/dto"
 )
 
-func toRequest(t *testing.T) {
+func TestToRequest(t *testing.T) {
 	input := dto.UpdateHotelRequest{Id: 632, HotelName: "hotel", Street: "street", State: "state", Land: "land",
 		VendorId: 88, VendorName: "vendorname", Description: "description",
 		Pictures: []dto.PictureRequest{{Id: 784, Description: "picDescription", Payload: "payload"}},

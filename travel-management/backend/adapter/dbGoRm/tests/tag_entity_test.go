@@ -1,4 +1,4 @@
-package test
+package entities_test
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func toTagEntity(t *testing.T) {
+func TestToTagEntity(t *testing.T) {
 
 	output := entities.ToTagEntity(&tag1)
 	if output.ID != tag1.Id {
@@ -18,7 +18,7 @@ func toTagEntity(t *testing.T) {
 	}
 }
 
-func toTagModel(t *testing.T) {
+func TestToTagModel(t *testing.T) {
 	input := &entities.TagEntity{Model: gorm.Model{ID: 88}, Name: tag1.Name}
 	output := entities.ToTagModel(input)
 	if output.Id != 88 {

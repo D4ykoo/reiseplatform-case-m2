@@ -1,17 +1,28 @@
-package test
+package api_test
 
 import (
 	"testing"
 
 	"github.com/mig3177/travelmanagement/adapter/api/dto"
+	"github.com/mig3177/travelmanagement/domain/model"
 )
 
-func toResponse(t *testing.T) {
+var name = "test"
+var adress = model.Address{Street: "street", State: "state", Land: "land"}
+var description = "description"
+var vendor = model.Vendor{Id: 55, Username: "username"}
+var picture1 = model.Picture{Id: 777, Payload: "payload", Description: "des"}
+var picture2 = model.Picture{Id: 888, Payload: "payload2", Description: "des2"}
+var tag1 = model.Tag{Id: 477, Name: "tagname"}
+var hotel = &model.Hotel{Id: 5, Name: name, Address: adress,
+	Description: description, Vendor: vendor, Pictures: []*model.Picture{&picture1, &picture2}, Tags: []*model.Tag{&tag1}}
+
+func TestToResponse(t *testing.T) {
 	input := hotel
 	output := dto.ToHotelResoponse(input)
 
-	if output.Id != 638 {
-		t.Fatalf(`want: %d - got: %d`, input.Id, 632)
+	if output.Id != input.Id {
+		t.Fatalf(`want: %d - got: %d`, input.Id, output.Id)
 	}
 	if output.HotelName != input.Name {
 		t.Fatalf(`want: %s - got: %s`, input.Name, output.HotelName)
