@@ -7,7 +7,13 @@ import (
 	"time"
 )
 
-func CreateJWT(username string, userId *uint, secret string, test bool) (string, error) {
+type UserAuthImpl struct{}
+
+func InitAuth() UserAuthImpl {
+	return UserAuthImpl{}
+}
+
+func (userAuth UserAuthImpl) CreateJWT(username string, userId *uint, secret string, test bool) (string, error) {
 	var token *jwt.Token
 
 	if test {
@@ -36,7 +42,7 @@ func CreateJWT(username string, userId *uint, secret string, test bool) (string,
 }
 
 // ValidateJWT last return value is used for testing purposes
-func ValidateJWT(tokenString string, secret string) (bool, error, jwt.MapClaims) {
+func (userAuth UserAuthImpl) ValidateJWT(tokenString string, secret string) (bool, error, jwt.MapClaims) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {

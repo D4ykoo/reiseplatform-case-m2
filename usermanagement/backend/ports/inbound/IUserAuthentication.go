@@ -1,6 +1,8 @@
 package inbound
 
+import "github.com/golang-jwt/jwt/v5"
+
 type IUserAuthentication interface {
-	createJWT(username string, secret string, test bool) (string, error)
-	validateJWT(tokenString string, secret string) (bool, error, any)
+	CreateJWT(username string, userId *uint, secret string, test bool) (string, error)
+	ValidateJWT(tokenString string, secret string) (bool, error, jwt.MapClaims)
 }
