@@ -51,3 +51,7 @@ func ValidateLoginStatus(c *gin.Context) (jwt.MapClaims, error) {
 
 	return claim, nil
 }
+
+func getUserData(claims jwt.MapClaims) (uint, string) {
+	return uint(claims["user_id"].(float64)), claims["username"].(string)
+}

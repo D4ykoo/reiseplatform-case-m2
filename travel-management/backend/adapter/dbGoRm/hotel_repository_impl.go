@@ -61,6 +61,7 @@ func (repo HotelRepositoryImpl) Update(hotel *model.Hotel) (*model.Hotel, error)
 	entity.Land = update.Land
 	entity.Pictures = update.Pictures
 	entity.VendorRef = update.VendorRef
+	entity.VendorName = update.VendorName
 	entity.Travels = update.Travels
 	entity.Description = update.Description
 	entity.Tags = update.Tags

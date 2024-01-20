@@ -43,7 +43,8 @@ func (repo TravelRepositoryImpl) Update(travel *model.Travel, id uint, hotelref 
 	entity.From = update.From
 	entity.To = update.To
 	entity.Price = update.Price
-	entity.Vendor = update.Vendor
+	entity.VendorRef = update.VendorRef
+	entity.VendorName = update.VendorName
 	entity.Description = update.Description
 
 	res := repo.db.Connection.Save(&entity)
