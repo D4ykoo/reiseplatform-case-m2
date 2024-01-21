@@ -1,4 +1,4 @@
-name: 'Prod: Travelmanagenet docker' 
+name: 'Prod: Travelmanagement docker' 
 concurrency: production
 
 on:
@@ -15,7 +15,7 @@ defaults:
     working-directory: "./travel-management"
 jobs:
   usermanagement-docker-backend:
-      name: Docker Build Backend
+      name: Docker Build Travelmanagement Backend
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v4
