@@ -1,4 +1,4 @@
-package tests
+package test
 
 import (
 	"github.com/D4ykoo/travelplatform-case-m2/usermanagement/adapter"
@@ -11,10 +11,11 @@ var jwtSecret = "your-jwt-secret"
 // TestJWTBuilding calls greetings.
 // Checking for a valid return value.
 func TestJWTBuilding(t *testing.T) {
+	auth := adapter.InitAuth()
 	username := "test"
 	var userId uint = 1
 
-	got, err := adapter.CreateJWT(username, &userId, jwtSecret, true)
+	got, err := auth.CreateJWT(username, &userId, jwtSecret, true)
 
 	// generated with: https://jwt.io
 	want := "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjY4NjYyMDgwMCwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJ0ZXN0In0.j1McK-wmsGqNWQ9ir_DqT90uFFvIt7zjYbABe1Lf0iJ8wbZeaqedbTr5v2UB43ZLCySEwTx3QzROTXltzTIXoA"
@@ -25,8 +26,10 @@ func TestJWTBuilding(t *testing.T) {
 }
 
 func TestJWTValidating(t *testing.T) {
+	auth := adapter.InitAuth()
+
 	token := "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjY4NjYyMDgwMCwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJ0ZXN0In0.j1McK-wmsGqNWQ9ir_DqT90uFFvIt7zjYbABe1Lf0iJ8wbZeaqedbTr5v2UB43ZLCySEwTx3QzROTXltzTIXoA"
-	valid, err, claims := adapter.ValidateJWT(token, jwtSecret)
+	valid, err, claims := auth.ValidateJWT(token, jwtSecret)
 
 	if !valid || err != nil {
 		t.Fatalf(`validateJWT(%q, %q) = %t, %q, %q, is not true, nil, claims`, token, jwtSecret, valid, err, claims)

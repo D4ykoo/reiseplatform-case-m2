@@ -25,7 +25,7 @@ cargo build --release
 ```bash
 cd frontend
 npm install
-ng serve
+ng serve --port 8083
 ```
 
 #### Production

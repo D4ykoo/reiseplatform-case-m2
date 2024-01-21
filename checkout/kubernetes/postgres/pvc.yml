@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: postgresql-usermanagement-pvc
-  namespace: usermanagement
-  labels:
-    type: local
-spec:
-  storageClassName: ""
