@@ -15,7 +15,7 @@ defaults:
     working-directory: "./travel-management"
 jobs:
   usermanagement-docker-backend:
-      name: Docker Build Travelmanagement Backend
+      name: Docker Build Travelmanagement Frontend
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v4
