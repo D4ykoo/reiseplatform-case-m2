@@ -48,7 +48,7 @@ export class OfferService {
     }
 
     this.httpClient
-      .get(environment.Hotel_API + 'hotels', { params: params })
+      .get(environment.Travel_API + 'hotels', { params: params })
       .subscribe((hotelsResponse) => {
         // Show only hits
         if (hotelsResponse && (hotelsResponse as Array<Hotel>).length > 0) {

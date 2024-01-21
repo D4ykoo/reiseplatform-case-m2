@@ -64,7 +64,7 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
   }
 
   public setup() {
-    lastValueFrom(this.httpClient.get(environment.Hotel_API + 'hotels')).then(
+    lastValueFrom(this.httpClient.get(environment.Travel_API + 'hotels')).then(
       (hotels) => {
         if (hotels) this.hotels = hotels as Hotel[];
       },
@@ -92,7 +92,7 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
       };
       lastValueFrom(
         this.httpClient.post(
-          environment.Hotel_API +
+          environment.Travel_API +
             'hotels/' +
             this.selectedHotel?.id +
             '/travels',
@@ -124,7 +124,7 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
       };
       lastValueFrom(
         this.httpClient.put(
-          environment.Hotel_API +
+          environment.Travel_API +
             'hotels/' +
             this.selectedHotel?.id +
             '/travels/' +
@@ -195,7 +195,7 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
   }
 
   clear() {
-    lastValueFrom(this.httpClient.get(environment.Hotel_API + 'hotels')).then(
+    lastValueFrom(this.httpClient.get(environment.Travel_API + 'hotels')).then(
       (res) => {
         if (res) this.hotels = res as Hotel[];
       },
@@ -223,7 +223,7 @@ export class TravelOfferEditComponent implements OnInit, OnChanges {
     if (this.selectedHotel && this.selectedTravel) {
       lastValueFrom(
         this.httpClient.delete(
-          environment.Hotel_API +
+          environment.Travel_API +
             'hotels/' +
             this.selectedHotel?.id +
             '/travels/' +

@@ -1,7 +1,7 @@
 export const environment = {
-  Hotel_API:
+  Travel_API:
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    window['env' as any]['API_URL_FR' as any] ||
+    window['env' as any]['TRAVEL_API' as any] ||
     'http://localhost:8086/api/v1/',
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   debug: window['env' as any]['DEBUG_FR' as any] || false,

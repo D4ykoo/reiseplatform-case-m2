@@ -32,7 +32,7 @@ Build the image:
 docker buildx build -t monitoring-backend:latest .
 ```
 
-**THIS WILL GENERATED SECURITY ISSUES IN YOUR NETWORK**
+**THIS WILL GENERATED SECURITY ISSUES IN YOUR NETWORK**<br>
 However, it is necessary to gain access to Kafka if it is not running on the same Docker network.
 Run the container:
 ```bash

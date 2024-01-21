@@ -18,9 +18,9 @@ export Monitor_API="https://localost:8088/api/v1";
 envsubst < assets/env.template.js > assets/env.js
 ```
 The following variables can be set:
-- Monitor_API (Backend API)
-- Checkout_URL
-- Login_URL
+- MONITOR_API (Backend API)
+- CHECKOUT_URL
+- LOGIN_URL
 - TRAVEL_URL
 
 ## Bare Metal
@@ -50,4 +50,4 @@ docker run --name monitoring-frontend -p 8087:8087 -d monitoring-frontend
 
 Optional pass the env file path as argument when chaning the default path:
 ```bash
-docker run --env ENV_FILE="./example.docker.env" --name checkout-frontend --network checkout -p 8087:8087 -d checkout-frontend
+docker run --env ENV_FILE="./example.docker.env" --name monitoring-frontend --network monitoring -p 8087:8087 -d monitoring-frontend

@@ -36,7 +36,7 @@ export class SearchBarComponent implements OnInit {
 
   ngOnInit() {
     this.httpClient
-      .get(environment.Hotel_API + 'tags')
+      .get(environment.Travel_API + 'tags')
       .subscribe((fetchedTags) => {
         this.tags = fetchedTags as Array<Tag>;
       });

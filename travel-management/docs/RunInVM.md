@@ -33,8 +33,16 @@ sudo apt-get update
 sudo apt-get install nodejs -y
 ```
 
+4. Install Angular
+```bash
+sudo npm install -g @angular/cli
+```
 #### Golang
-Install via apt
+Install build dependencies:
+```bash
+sudo apt install build-essential libpq -y
+```
+Install Golang via apt:
 ```bash
 sudo apt install golang 
 ```
@@ -108,15 +116,16 @@ go install
 # create the binary
 go build 
 # run the binary 
-./usermanagement
+./travelmanagement
 ```
 
 #### 3. Install and run frontend
 For quick serve:
 ```bash
 cd ./travelplatform-case-m2/travel-management/frontend
-ng serve
+ng serve --port 8085
 ```
+It is important to use port number 8085. Otherwise your API calls will be blocked by CORS.
 
 For building:
 ```bash
@@ -135,7 +144,7 @@ cd ./travelplatform-case-m2/travel-management/
 ```
 
 #### 2. Run the docker compose
-Optional configure the env vars in the [docker-compose.yml](docker-compose.yml)
+Optional configure the env vars in the [/docker/docker-compose-travelmanagement.yml](../../docker/docker-compose-travelmanagement.yml)
 ```bash
 docker compose up -d
 ```

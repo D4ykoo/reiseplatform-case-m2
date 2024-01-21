@@ -109,7 +109,7 @@ export class HotelEditComponent implements OnInit, OnChanges {
         vendorname: this.user.name,
       };
       lastValueFrom(
-        this.httpClient.post(environment.Hotel_API + 'hotels', createHotel, {
+        this.httpClient.post(environment.Travel_API + 'hotels', createHotel, {
           withCredentials: true,
         }),
       )
@@ -142,7 +142,7 @@ export class HotelEditComponent implements OnInit, OnChanges {
       };
       lastValueFrom(
         this.httpClient.put(
-          environment.Hotel_API + 'hotels/' + this.hotel?.id,
+          environment.Travel_API + 'hotels/' + this.hotel?.id,
           UpdateHotel,
           { withCredentials: true },
         ),
@@ -178,7 +178,7 @@ export class HotelEditComponent implements OnInit, OnChanges {
   }
 
   clear() {
-    lastValueFrom(this.httpClient.get(environment.Hotel_API + 'tags')).then(
+    lastValueFrom(this.httpClient.get(environment.Travel_API + 'tags')).then(
       (res) => {
         if (res) this.tags = res as Tag[];
       },
@@ -194,13 +194,13 @@ export class HotelEditComponent implements OnInit, OnChanges {
   }
 
   setup() {
-    lastValueFrom(this.httpClient.get(environment.Hotel_API + 'tags')).then(
+    lastValueFrom(this.httpClient.get(environment.Travel_API + 'tags')).then(
       (res) => {
         if (res) this.tags = res as Tag[];
       },
     );
 
-    lastValueFrom(this.httpClient.get(environment.Hotel_API + 'hotels')).then(
+    lastValueFrom(this.httpClient.get(environment.Travel_API + 'hotels')).then(
       (res) => {
         if (res) this.hotels = res as Hotel[];
       },
@@ -245,7 +245,7 @@ export class HotelEditComponent implements OnInit, OnChanges {
   delete() {
     lastValueFrom(
       this.httpClient.delete(
-        environment.Hotel_API + 'hotels/' + (this.hotel?.id as number),
+        environment.Travel_API + 'hotels/' + (this.hotel?.id as number),
         { withCredentials: true },
       ),
     )

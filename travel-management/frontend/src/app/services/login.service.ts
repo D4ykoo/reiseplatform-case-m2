@@ -17,7 +17,7 @@ export class LoginService {
 
   checkLoginStatus() {
     this.httpClient
-      .get(environment.Hotel_API + 'loginstatus', { withCredentials: true })
+      .get(environment.Travel_API + 'loginstatus', { withCredentials: true })
       .subscribe((res) => {
         if (res) {
           this.currentUser = res as User;

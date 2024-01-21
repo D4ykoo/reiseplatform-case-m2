@@ -68,7 +68,7 @@ export class TagEditComponent implements OnInit, OnChanges {
   }
 
   setup() {
-    lastValueFrom(this.httpClient.get(environment.Hotel_API + 'tags')).then(
+    lastValueFrom(this.httpClient.get(environment.Travel_API + 'tags')).then(
       (res) => {
         if (res) this.tags = res as Tag[];
       },
@@ -82,7 +82,7 @@ export class TagEditComponent implements OnInit, OnChanges {
         name: this.tagname,
       };
       lastValueFrom(
-        this.httpClient.post(environment.Hotel_API + 'tags', createTag, {
+        this.httpClient.post(environment.Travel_API + 'tags', createTag, {
           withCredentials: true,
         }),
       )
@@ -106,7 +106,7 @@ export class TagEditComponent implements OnInit, OnChanges {
       };
       lastValueFrom(
         this.httpClient.put(
-          environment.Hotel_API + 'tags/' + this.tag?.id,
+          environment.Travel_API + 'tags/' + this.tag?.id,
           UpdateHotel,
           { withCredentials: true },
         ),
@@ -133,7 +133,7 @@ export class TagEditComponent implements OnInit, OnChanges {
   }
 
   clear() {
-    lastValueFrom(this.httpClient.get(environment.Hotel_API + 'tags')).then(
+    lastValueFrom(this.httpClient.get(environment.Travel_API + 'tags')).then(
       (res) => {
         if (res) this.tags = res as Tag[];
       },
@@ -150,7 +150,7 @@ export class TagEditComponent implements OnInit, OnChanges {
   delete() {
     lastValueFrom(
       this.httpClient.delete(
-        environment.Hotel_API + 'tags/' + (this.tag?.id as number),
+        environment.Travel_API + 'tags/' + (this.tag?.id as number),
         { withCredentials: true },
       ),
     )
