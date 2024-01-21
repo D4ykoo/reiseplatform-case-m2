@@ -12,7 +12,7 @@ data:
   KAFKA_URL: kafka-service:9092
   TOPIC: checkout
 
-  TRAVEL_API_URL: travelmngt-app-service:8086/api/v1
+  TRAVEL_API_URL: "http://travelmngt-app-service:8086/api/v1"
   DATABASE_URL: "postgres://checkout:password@checkout-db-service:5432/checkout"
   # DB
   DB_HOST: "checkout-db-service"
