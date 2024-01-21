@@ -12,7 +12,7 @@ The `apiURL` in the frontend: [frontend/src/assets/config.ts](frontend/src/asset
 must match with the config for the `API_URL` line, located in the .env file.
 
 ## How to run - VM
-Follow the instructions in the [RunInVM.md](RunInVM.md) of this directory.
+Follow the instructions in the [RunInVM.md](docs/RunInVM.md).
 
 ## How to run - Docker
 Follow the instructions in the READMEs located at:

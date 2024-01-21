@@ -33,16 +33,10 @@ docker tag local-image:tagname new-repo:tagname
 docker push new-repo:tagname
 ```
 ### Run with local built image
-**THIS WILL GENERATED SECURITY ISSUES IN YOUR NETWORK**  
-Run the container:
+ 
+Make sure the broker and database are accessible, then run the container:
 ```bash
-docker run --name usermgm-backend --network host -p 8082:8082 -d usermanagement-backend 
-```
-
-**CURRENTLY NOT WORKING**  
-Run the container:
-```bash
-docker run --name usermgm-backend --network usermanagement -p 8082:8082 -d usermanagement-backend 
+docker run --name usermgm-backend -p 8082:8082 -d usermanagement-backend 
 ```
 
 ### Run with docker hub image
