@@ -1,0 +1,39 @@
+name: 'Prod: Travelmanagenet docker' 
+concurrency: production
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ./travel-management
+  workflow_dispatch:
+  
+defaults:
+  run: 
+    shell: bash
+    working-directory: "./travel-management/backend"
+jobs:
+  usermanagement-docker-backend:
+      name: Docker Build Backend
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+        - name: Set up QEMU
+          uses: docker/setup-qemu-action@v3
+        - name: Set up Docker Buildx
+          uses: docker/setup-buildx-action@v3
+        - name: Login to DockerHub
+          uses: docker/login-action@v3
+          with:
+            username: ${{ secrets.DOCKERHUB_USERNAME_SEPPMADL }}
+            password: ${{ secrets.DOCKERHUB_TOKEN_SEPPMADL }}
+        - name: Build and push
+          uses: docker/build-push-action@v5
+          with: 
+            file: ./Dockerfile
+            platform: linux/amd64,linux/arm64
+            push: true
+            tags: |
+              ${{ secrets.DOCKERHUB_USERNAME_SEPPMADL }}/travma-travelmanagement-backend:v3.0
+              ${{ secrets.DOCKERHUB_USERNAME_SEPPMADL }}/travma-travelmanagement-backend:latest
