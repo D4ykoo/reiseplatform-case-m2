@@ -22,6 +22,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: checkout-app-config
+            - secretRef:
+                name: checkout-app-secret
           ports:
             - name: checkout-app
               containerPort: 8084
