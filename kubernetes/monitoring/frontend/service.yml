@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: monitor-web-service
+spec:
+  selector:
+    app: monitor-web
+    tier: frontend
+  ports:
+  - port: 8087
+    targetPort: 8087

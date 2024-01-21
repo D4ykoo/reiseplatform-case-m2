@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: travelmngt-db-service
+spec:
+  selector:
+    app: travelmngt-pg
+    tier: backend
+  ports:
+  - protocol: TCP
+    port: 5432
+    targetPort: 5432

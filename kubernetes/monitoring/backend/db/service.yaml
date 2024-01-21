@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: monitor-db-service
+spec:
+  selector:
+    app: monitor-pg
+    tier: backend
+  ports:
+  - protocol: TCP
+    port: 5432
+    targetPort: 5432

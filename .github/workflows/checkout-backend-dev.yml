@@ -1,0 +1,62 @@
+# Runs when PR open event emits if the usermanagement directory changed 
+# Used for development - lint, build and test
+name: Dev - Checkout backend - security and build 
+run-name: ${{ github.actor }} started checkout pipeline
+
+on:
+  pull_request:
+    types: opened
+    branches:
+      - develop
+    paths:
+      - 'checkout/backend/**'
+      - '!checkout/backend/**.md'
+  workflow_call:
+  workflow_dispatch:
+  
+defaults:
+  run: 
+    shell: bash
+    working-directory: "checkout/backend"
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ATiltedTree/setup-rust@v1
+        with:
+          rust-version: stable
+          components: clippy
+      - name: Clippy
+        run: cargo clippy
+
+  compile:
+    name: Compile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ATiltedTree/setup-rust@v1
+        with:
+          rust-version: stable
+      - name: Compile
+        run: cargo check
+
+  test:
+    name: Test
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macOS-latest
+        rust:
+          - stable
+    runs-on: ${{ matrix.os }}
+    needs: [compile]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ATiltedTree/setup-rust@v1
+        with:
+          rust-version: ${{ matrix.rust }}
+      - run: cargo test

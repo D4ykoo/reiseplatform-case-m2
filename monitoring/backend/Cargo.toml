@@ -1,0 +1,8 @@
+[workspace]
+
+members = [
+    "monitoring-db",
+    "monitoring-service",
+    "kafka-consumer"
+]
+resolver = "2"

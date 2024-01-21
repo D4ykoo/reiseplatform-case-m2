@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkout-app
+  labels:
+    app: checkout-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: checkout-app
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: checkout-app
+        tier: backend
+    spec:
+      containers:
+        - name: checkout-app
+          image: dak4408/travma-checkout-backend:latest
+          envFrom:
+            - configMapRef:
+                name: checkout-app-config
+            - secretRef:
+                name: checkout-app-secret
+          ports:
+            - name: checkout-app
+              containerPort: 8084
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              memory: "10Mi"
+              cpu: "100m"
+            limits:
+              memory: "100Mi"
+              cpu: "100Mi"

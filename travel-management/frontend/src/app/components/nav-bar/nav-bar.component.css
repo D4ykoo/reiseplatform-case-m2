@@ -1,0 +1,55 @@
+.flex-container {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  width: 100%;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  height: 20%;
+  max-height: 100px;
+}
+
+.sidbar-btn {
+  width: 10%;
+  max-width: 80px;
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 1%;
+}
+
+.sidbar-icon {
+  width: 15%;
+  left: 0%;
+}
+
+.sidbar-link {
+  font-size: 1.2rem;
+  text-align: left;
+  padding-left: 5%;
+  right: 0;
+  width: 85%;
+}
+
+.header-title {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.login-btn {
+  width: 20%;
+  max-width: 100px;
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.checkout_btn {
+  width: 100%;
+  max-width: 100px;
+  height: 100%;
+  display: grid;
+}

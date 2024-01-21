@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: monitor-app-service
+spec:
+  selector:
+    app: monitor-app
+    tier: backend
+  ports:
+  - port: 8088
+    targetPort: 8088

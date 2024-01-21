@@ -1,0 +1,95 @@
+<div class="flex flex-col justify-center items-center p-8">
+  <h1 class="mb-4 font-bold text-2xl">Cart</h1>
+
+  <div>
+    <div class="mt-8 mb-6">
+      <div class="flow-root">
+        <ul role="list" class="-my-6 divide-y divide-gray-400">
+          <!-- iterate over every travel of a hotel and show information -->
+          <li
+            *ngFor="let hotel of cart.hotel; index as hi"
+            class="flex py-6 md:w-[35rem]"
+          >
+            <div class="flex flex-col">
+              <div
+                *ngFor="let travel of hotel.travels; index as ti"
+                class="flex py-6 md:w-[35rem]"
+              >
+                <div
+                  class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200"
+                >
+                  <img
+                    src="{{ hotel.pictures }}"
+                    alt="Hotel"
+                    class="h-full w-full object-cover object-center"
+                  />
+                </div>
+
+                <div class="ml-4 flex flex-1 flex-col">
+                  <div>
+                    <div
+                      class="flex justify-between text-base font-medium text-white"
+                    >
+                      <h3>
+                        <span>{{ hotel.hotelname }}</span>
+                      </h3>
+                      <p class="ml-4">{{ travel.price }} €</p>
+                    </div>
+                    <p class="mt-1 text-sm text-gray-300">
+                      {{ hotel.vendorname }}
+                    </p>
+                  </div>
+                  <div class="flex flex-1 items-end justify-between text-sm">
+                    <p class="text-gray-500">
+                      {{ travel.from | date: "dd.MM.yyyy" }}
+                      -
+                      {{ travel.to | date: "dd.MM.yyyy" }}
+                    </p>
+
+                    <div class="flex">
+                      <button
+                        (click)="removeFromCart(hi, ti)"
+                        type="button"
+                        class="font-medium text-primary hover:text-indigo-500"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-gray-200 px-4 py-6 sm:px-6 pt-6">
+      <div class="flex justify-between text-base font-medium text-white">
+        <p>Total</p>
+        <p>{{ getTotal() }} €</p>
+      </div>
+      <div class="mt-6">
+        <a
+          routerLink="/pay"
+          routerLinkActive="active"
+          class="flex items-center justify-center rounded-md border border-transparent w-full px-6 py-3 text-base bg-primary font-medium text-white shadow-sm hover:bg-indigo-500 cursor-pointer"
+          >Checkout</a
+        >
+      </div>
+      <div class="mt-6 flex justify-center text-center text-sm text-gray-500">
+        <p>
+          or
+          <a href="{{ hotelmanagementUrl }}">
+            <button
+              type="button"
+              class="font-medium text-primary hover:text-indigo-500"
+            >
+              Continue Shopping
+              <span aria-hidden="true"> &rarr;</span>
+            </button>
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

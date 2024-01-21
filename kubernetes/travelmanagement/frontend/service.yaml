@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: travelmngt-web-service
+spec:
+  selector:
+    app: travelmngt-web
+    tier: frontend
+  ports:
+  - protocol: TCP
+    port: 8085
+    targetPort: 8085

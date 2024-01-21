@@ -1,0 +1,82 @@
+version: '3'
+services:
+  monitor-db:
+    image: postgres
+    container_name: monitor-db
+    environment:
+      POSTGRES_USER: monitor
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: monitor
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U monitor" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - monitor-db:/var/lib/postgresql/data
+    restart: always
+    networks:
+      dbnetmonitor:
+
+  monitor-app:
+    image: mig3177/travma-monitoring-backend:latest
+    container_name: monitor-app
+    restart: always
+    depends_on:
+      monitor-db:
+        condition: service_healthy
+    environment:
+      DOMAIN: :8088
+      API_URL: 0.0.0.0:8088
+      JWT_SECRET: your-jwt-secret
+
+      # Change to true when using tls
+      PRODUCTION: false
+
+      # Gives additional information of the webserver
+      DEBUG: true
+
+      # BROKER Settings
+      BROKERS: kafka:9092
+
+      # DB Settings
+      DB_HOST: monitor-db
+      DB_USER: monitor
+      DB_PASSWORD: password
+      DB_NAME: monitor
+      DB_PORT: 5432
+    ports:
+      - "8088:8088"
+    networks:
+      privatenet:
+      dbnetmonitor:
+
+  monitor-web:
+    image: mig3177/travma-monitoring-frontend:latest
+    container_name: monitor-web
+    restart: always
+    depends_on:
+      - monitor-app
+    environment:
+      MONITOR_API: http://localhost:12345/monitor/api/v1/
+      CHECKOUT_URL: http://localhost:12345/cart
+      LOGIN_URL: http://localhost:12345/users
+      TRAVEL_URL: http://localhost:12345/travma
+    ports:
+      - "8087:8087"
+    networks:
+      - privatenet
+      - publicnet
+    volumes:
+      - "./config/nginx.monitor.conf:/etc/nginx/nginx.conf"
+
+volumes:
+  monitor-db:
+
+networks:
+  publicnet:
+    external: true
+  privatenet:
+    external: true
+  dbnetmonitor:
+    external: true

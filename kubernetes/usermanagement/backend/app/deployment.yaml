@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: usermngt-app
+  labels:
+    app: usermngt-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: usermngt-app
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: usermngt-app
+        tier: backend
+    spec:
+      containers:
+        - name: usermngt-app
+          image: dak4408/travma-usermanagement-backend:latest
+          envFrom:
+            - configMapRef:
+                name: usermngt-app-config
+            - secretRef:
+                name: usermngt-app-secret
+          ports:
+            - name: usermngt-app
+              containerPort: 8082
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "10Mi"
+              cpu: "100m"
+            limits:
+              memory: "100Mi"
+              cpu: "100Mi"

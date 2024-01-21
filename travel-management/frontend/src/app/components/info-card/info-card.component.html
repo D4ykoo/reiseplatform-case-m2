@@ -1,0 +1,100 @@
+<div *ngIf="hotelOffer" style="width: 100%; height: 100%" class="card">
+  <p-card
+    [header]="hotelOffer.hotelname"
+    [subheader]="hotelOffer.vendorname"
+    [style]="{ width: '100%', height: '100%' }"
+  >
+    <ng-template pTemplate="header">
+      <p-galleria
+        [value]="hotelOffer.pictures"
+        [responsiveOptions]="responsiveOptions"
+        [numVisible]="5"
+      >
+        <ng-template pTemplate="item" let-item>
+          <img
+            [src]="item.payload"
+            style="width: auto; max-height: 480px"
+            alt="hotel pic"
+          />
+        </ng-template>
+        <ng-template pTemplate="thumbnail" let-item>
+          <div class="grid grid-nogutter justify-content-center">
+            <img
+              [src]="item.payload"
+              style="max-width: 100px; max-height: 100px"
+              alt="hotel pic"
+            />
+          </div>
+        </ng-template>
+      </p-galleria>
+    </ng-template>
+    <ng-template pTemplate="content">
+      <div class="grid">
+        <div class="col-12 md:col-4 lg:col-4 text-center">
+          {{ hotelOffer.land }}
+        </div>
+        <div class="col-12 md:col-4 lg:col-4 text-center">
+          {{ hotelOffer.state }}
+        </div>
+        <div class="col-12 md:col-4 lg:col-4 text-center">
+          {{ hotelOffer.street }}
+        </div>
+        <div class="col-12 md:col-12 lg:col-12 font-bold">Description:</div>
+        <div
+          class="col-12 md:col-12 lg:col-12"
+          [innerHTML]="hotelOffer.description"
+        ></div>
+      </div>
+      <p-dataView #dv [value]="hotelOffer.travels">
+        <ng-template pTemplate="list" let-travels>
+          <div
+            class="grid"
+            *ngFor="let travel of travels; let first = first; index as i"
+            [style]="{ 'margin-bottom': '1rem' }"
+          >
+            <div
+              class="col-12 md:col-12 lg:col-12 font-bold"
+              [ngClass]="{ 'border-top-1 surface-border': !first }"
+            >
+              {{ travel.vendorname }}
+            </div>
+            <div class="col-12 md:col-2 lg:col-2">
+              <div class="text-center font-bold">
+                {{ travel.from.slice(0, 10) }}
+              </div>
+              <div class="text-center font-bold">-</div>
+              <div class="text-center font-bold">
+                {{ travel.to.slice(0, 10) }}
+              </div>
+            </div>
+            <div class="col-12 md:col-8 lg:col-8">
+              <div class="font-bold">
+                Description:
+                <div
+                  class="font-normal"
+                  style="overflow-wrap: break-word"
+                  [innerHTML]="travel.description"
+                ></div>
+              </div>
+              <div class="font-bold">
+                Vendor:
+                <div class="font-normal" style="overflow-wrap: break-word">
+                  {{ travel.vendorname }}
+                </div>
+              </div>
+            </div>
+            <div class="col-12 md:col-2 lg:col-2 text-center">
+              <div
+                class="text-2xl font-semibold"
+                [style]="{ 'margin-bottom': '0.5rem' }"
+              >
+                {{ travel.price | currency: "EUR" }}
+              </div>
+              <p-button [disabled]="!user" (click)="addToCart(i)">Buy</p-button>
+            </div>
+          </div>
+        </ng-template>
+      </p-dataView>
+    </ng-template>
+  </p-card>
+</div>

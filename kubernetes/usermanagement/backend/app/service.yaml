@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: usermngt-app-service
+spec:
+  selector:
+    app: usermngt-app
+    tier: backend
+  ports:
+  - port: 8082
+    targetPort: 8082

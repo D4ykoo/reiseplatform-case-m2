@@ -1,0 +1,17 @@
+# Persistent Volume example
+# This application uses the Persistent Volume name “Standard”
+# Before use, specify the hostPath for your system
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: travma-pv
+  labels:
+    type: local
+spec:
+  storageClassName: "standard"
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data"

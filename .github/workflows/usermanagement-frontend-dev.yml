@@ -1,0 +1,71 @@
+# Runs when PR open event emits if the usermanagement directory changed 
+# Used for development - security and build
+name: Dev - Usermanagement frontend - security and build 
+run-name: ${{ github.actor }} started usermanagement pipeline
+on:
+  pull_request:
+    types: opened
+    branches:
+      - develop
+      - main
+    paths:
+      - 'usermanagement/frontend/**'
+      - '!usermanagement/frontend/**.md'
+      
+  workflow_call:
+  workflow_dispatch:
+  
+defaults:
+  run: 
+    shell: bash
+    working-directory: "./usermanagement/frontend"
+
+jobs:
+  security:
+    name: Security Information
+    runs-on: ubuntu-latest
+
+    steps: 
+      - uses: actions/checkout@v4
+      - name: Use NodeJS
+        uses: actions/setup-node@v3
+        with: 
+          node-version: '20.x'
+
+      - run: npm ci
+      - run: npm audit --audit-level=high
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+
+      - name: Install Node.js dependencies
+        run: |
+          npm ci
+          npm i eslint
+          npm i prettier
+          npm i eslint-plugin-prettier
+          npm i eslint-config-prettier
+          
+      - name: Run linters
+        run: npm run format
+
+  release-build:
+    name: Build an
+    runs-on: ubuntu-latest
+
+    steps: 
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with: 
+          node-version: '20.x'
+
+      - run: npm ci
+      - run: npm run build --if-present
+      # - run: npm test --if-present
