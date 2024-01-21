@@ -68,7 +68,22 @@ chmod +x start-container.sh && ./start-container.sh
 Further information and instructions can be found in the [README](docker/README.md).
 
 #### Kubernetes
-TODO
+```bash
+cd kubernetes
+```
+
+Run with the start script:
+```bash
+chmod +x start.sh && ./start.sh
+```
+
+When using Minikube:
+```bash
+chmod +x start.sh && ./start.sh -m
+```
+`-m` will automatically create a new or start an existing minikube cluster as well as activating the ingress addon.
+
+Further information and instructions can be found in the [README](kubernetes/README.md).
 
 #### Run in VM
 Is documented for every service. 

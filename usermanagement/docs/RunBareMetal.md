@@ -15,7 +15,7 @@ go build
 #### Development
 ```bash
 cd frontend
-npm run dev
+npm run dev 
 ```
 #### Production
 ```bash
