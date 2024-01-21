@@ -18,7 +18,7 @@ The travel management is a hexagonal service, which has CRUD operations for hote
 They can be stored inside a cart provided by the checkout service.  
 
 **Technology Stack:**  
-Frontend: Angular + Typescript  
+Frontend: Angular + Typescript + PrimeNG
 Backend: Go + Gin + GORM
 
 Author: Michael Gürtner
@@ -37,7 +37,7 @@ Author: Dario Köllner
 This service receives logs provided from the services mentioned above and displays them.
 
 **Technology Stack:**  
-Frontend: Angular + Typescript  
+Frontend: Angular + Typescript + PrimeNG
 Backend: Rust + Diesel
 
 Author: Michael Gürtner
@@ -67,8 +67,15 @@ chmod +x start-container.sh && ./start-container.sh
 ```
 Further information and instructions can be found in the [README](docker/README.md).
 
+## Quick Start
 #### Kubernetes
-TODO
+```bash
+cd kubernetes
+```
+Start the Kubernetes cluster (Minikube):
+```bash
+chmod +x start.sh && ./start.sh
+```
 
 #### Run in VM
 Is documented for every service. 
