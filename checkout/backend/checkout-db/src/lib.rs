@@ -327,7 +327,11 @@ pub fn remove_hotel_and_travel_slice(
 
 
     let _ = delete_travel_slice(conn, &travel_slice.id)?;
-    let _ = delete_hotel(conn, &hotel.id);
+
+    if travel_slices.unwrap().len() == 1 {
+        let _ = delete_hotel(conn, &hotel.id)?;
+    }
+    // let _ = delete_hotel(conn, &hotel.id);
 
     Ok(())
 }
