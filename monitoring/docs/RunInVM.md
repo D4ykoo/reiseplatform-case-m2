@@ -140,7 +140,7 @@ ng build
 Now the whole application is located in the dist/ directory.<br>
 The application can be served by any desired webserver by coping the whole directory and renaming it to e.g. usermanagement. 
 
-## Run the travel management services by building on host
+## Run the monitoring services by building on host
 #### 1. Clone the repository if not already done
 ```bash
 git clone https://github.com/D4ykoo/travelplatform-case-m2.git
