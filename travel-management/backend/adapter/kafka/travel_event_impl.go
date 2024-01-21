@@ -53,7 +53,7 @@ func (service TravelEventImpl) HotelRemoved(id uint, user string, err error) {
 		msg = "Error removing a hotel listing"
 	} else {
 		typ = "Remove"
-		msg = fmt.Sprintf("User '%s' creates a new hotel listing (ID: %d)", user, id)
+		msg = fmt.Sprintf("User '%s' removed a hotel listing (ID: %d)", user, id)
 	}
 	event := dto.HotelTravelEvent{
 		Type: typ,
@@ -71,7 +71,7 @@ func (service TravelEventImpl) HotelUpdated(obj *model.Hotel, err error) {
 		msg = "Error updating a hotel listing"
 	} else {
 		typ = "Update"
-		msg = fmt.Sprintf("User '%s' creates a new hotel listing (ID: %d, Name: '%s')", obj.Vendor.Username, obj.Id, obj.Name)
+		msg = fmt.Sprintf("User '%s' updated a hotel listing (ID: %d, Name: '%s')", obj.Vendor.Username, obj.Id, obj.Name)
 	}
 	event := dto.HotelTravelEvent{
 		Type: typ,

@@ -1,27 +1,53 @@
-# Frontend
+# How to run 
+### Configuration
+There are three different ways for configuration:
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.8.
+#### Development
+Change the values of [`src/environments/environment.ts`](src/environments/enviroment.ts)
 
-## Development server
+#### Production
+The following configuration methods make it possible to set the environment variables in the Dockerfile. That is the reason why this was implemented for production.  
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+The first option is via the [`src/assets/env.js`](src/assets/env.js) file.  
+Or by exporting the following and replacing [`env.js`](src/assets/env.js) with the template:
+```bash
+# example export API_URL
+export Monitor_API="https://localost:8088/api/v1";
 
-## Code scaffolding
+# Replace variables in env.js
+envsubst < assets/env.template.js > assets/env.js
+```
+The following variables can be set:
+- MONITOR_API (Backend API)
+- CHECKOUT_URL
+- LOGIN_URL
+- TRAVEL_URL
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Bare Metal
+```bash
+npm install 
+# now run 
+ng serve --port 8087 
+# or for prod with a webserver like nginx
+npm run build
+```
+Now the whole application is located in the dist/ directory.<br>
+The application can be served by any desired webserver after coping the whole directory to e. g. `var/www/html/`.<br>
+The backend sets the correct HTTP header when the webclient requests arrive via localhost:8087. This prevents CORS errors
 
-## Build
+## Docker
+Create the network if it does not already exist:
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Build the image:
+```bash
+docker buildx build -t monitoring-frontend:latest .
+```
 
-## Running unit tests
+Run the container:
+```bash
+docker run --name monitoring-frontend -p 8087:8087 -d monitoring-frontend
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+Optional pass the env file path as argument when chaning the default path:
+```bash
+docker run --env ENV_FILE="./example.docker.env" --name monitoring-frontend --network monitoring -p 8087:8087 -d monitoring-frontend

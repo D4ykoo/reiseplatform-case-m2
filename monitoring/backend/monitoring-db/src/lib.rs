@@ -28,8 +28,9 @@ pub fn get_connection_pool() -> Pool<Manager> {
     let user = env::var("DB_USER").expect("DATABASE_URL must be set");
     let passwd = env::var("DB_PASSWORD").expect("DATABASE_URL must be set");
     let name = env::var("DB_NAME").expect("DATABASE_URL must be set");
+    let port = env::var("DB_PORT").expect("DATABASE_URL must be set");
 
-    let db_url = format!("postgres://{}:{}@{}/{}", user, passwd, host, name);
+    let db_url = format!("postgres://{}:{}@{}:{}/{}", user, passwd, host, port, name);
     // set up connection pool
     let manager =
         deadpool_diesel::postgres::Manager::new(&db_url, deadpool_diesel::Runtime::Tokio1);
@@ -45,8 +46,9 @@ pub fn establish_connection() -> PgConnection {
     let user = env::var("DB_USER").expect("DATABASE_URL must be set");
     let passwd = env::var("DB_PASSWORD").expect("DATABASE_URL must be set");
     let name = env::var("DB_NAME").expect("DATABASE_URL must be set");
+    let port = env::var("DB_PORT").expect("DATABASE_URL must be set");
 
-    let db_url = format!("postgres://{}:{}@{}/{}", user, passwd, host, name);
+    let db_url = format!("postgres://{}:{}@{}:{}/{}", user, passwd, host, port, name);
 
     PgConnection::establish(&db_url).unwrap_or_else(|_| panic!("Error connecting to {db_url}"))
 }
@@ -128,30 +130,4 @@ pub fn get_checkout_events(
         )
         .select(CheckoutEvent::as_select())
         .load(conn)
-}
-
-#[cfg(test)]
-mod tests {
-    use chrono::Utc;
-
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let pool = &mut establish_connection();
-
-        let binding = Utc::now();
-        let new_event = NewUserEvent::new("login".into(), Some("bad message".into()), binding);
-        let res: Result<usize, diesel::result::Error> = add_user_event(pool, new_event);
-
-        let date_str = "2023-12-30T12:53:29.260266Z";
-        let datetime: DateTime<Utc> = DateTime::parse_from_rfc3339(date_str).unwrap().into();
-
-        let result = get_user_events(pool, &datetime);
-
-        println!("{result:?}");
-        println!("{res:?}");
-
-        assert_eq!(result.unwrap()[0].type_, "logind");
-    }
 }

@@ -1,3 +1,6 @@
+# Persistent Volume example
+# This application uses the Persistent Volume name “Standard”
+# Before use, specify the hostPath for your system
 apiVersion: v1
 kind: PersistentVolume
 metadata:

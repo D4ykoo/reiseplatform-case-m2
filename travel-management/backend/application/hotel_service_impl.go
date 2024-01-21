@@ -77,7 +77,15 @@ func (service HotelServiceImpl) FindHotelTravel(name string, land string, from *
 		}
 		result = append(result, hotel)
 	}
-	return result, error
+
+	var out []*model.Hotel
+	for _, s := range result {
+		if len(s.Travels) > 0 {
+			out = append(out, s)
+		}
+	}
+
+	return out, error
 }
 
 func (service HotelServiceImpl) GetHotel(id uint) (*model.Hotel, error) {

@@ -62,7 +62,7 @@ services:
     depends_on: 
       - travelmngt-app
     environment:
-      API_URL_FR: "http://localhost:12345/travma/api/v1/"
+      TRAVEL_API: "http://localhost:12345/travma/api/v1/"
       CHECKOUT_URL: "http://localhost:12345/cart"
       LOGIN_URL: "http://localhost:12345/users"
       MONITOR_URL: "http://localhost:12345/monitor"

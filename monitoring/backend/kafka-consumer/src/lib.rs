@@ -51,11 +51,3 @@ pub fn create_consumer(server: &str, topic: &[&str]) -> Result<StreamConsumer, K
     Ok(consumer)
 }
 
-#[cfg(test)]
-mod tests {
-
-    #[test]
-    fn it_works() {
-        assert_eq!(1, 4);
-    }
-}

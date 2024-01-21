@@ -26,7 +26,6 @@ kubectl apply -f infrastructure/kafka-topic.yaml
 
 echo "Create Checkout"
 sleep 3
-# travelplatform-case-m2/kubernetes/
 kubectl apply -f checkout/frontend/config.yaml
 kubectl apply -f checkout/frontend/nginx.conf.yml
 kubectl apply -f checkout/frontend/deployment.yaml
@@ -106,10 +105,11 @@ kubectl apply -f monitoring/backend/app/ingress.yaml
 
 if [ "$minikube" = true ] ; then
     echo "To Access the cluster execute minikube tunnel in a separate terminal"
-    echo "The DNS name is current mini.local (Todo change name)"
+    echo "The DNS name is current mini.local"
     echo "Add an Host in your /etc/hosts"
     echo "eg.: 192.168.49.2 mini.local"
     echo "the travelmanagement is now reachable at mini.local/travma"
 else
     echo "the travelmanagement is now reachable at sub.domain/travma"
+    echo "Make sure your domain is configured in the web applications configmaps"
 fi

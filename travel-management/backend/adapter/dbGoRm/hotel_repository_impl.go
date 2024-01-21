@@ -41,9 +41,6 @@ func (repo HotelRepositoryImpl) Update(hotel *model.Hotel) (*model.Hotel, error)
 		return hotel, result.Error
 	}
 
-	//repo.db.Connection.Model(&entity).Association("Pictures").Clear()
-	//repo.db.Connection.Model(&entity).Association("Hotels").Clear()
-
 	update := entities.ToHotelEntity(hotel)
 
 	rPicIds := findRemovedPics(update.Pictures, entity.Pictures)

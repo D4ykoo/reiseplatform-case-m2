@@ -10,7 +10,7 @@ pub struct HotelTravels {
     pub street: String,
     pub state: String,
     pub land: String,
-    pub vendorid: String,
+    pub vendorid: i64,
     pub vendorname: String,
     pub description: String,
     pub pictures: Vec<Picture>,
