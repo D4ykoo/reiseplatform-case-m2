@@ -12,7 +12,7 @@ on:
 defaults:
   run: 
     shell: bash
-    working-directory: "./travel-management/backend"
+    working-directory: "./travel-management"
 jobs:
   usermanagement-docker-backend:
       name: Docker Build Backend
@@ -30,8 +30,9 @@ jobs:
             password: ${{ secrets.DOCKERHUB_TOKEN_SEPPMADL }}
         - name: Build and push
           uses: docker/build-push-action@v5
-          with: 
-            file: ./Dockerfile
+          with:
+            context: .
+            file: ./backend/Dockerfile
             platform: linux/amd64,linux/arm64
             push: true
             tags: |
