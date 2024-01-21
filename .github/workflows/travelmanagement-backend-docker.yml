@@ -1,4 +1,4 @@
-name: 'Prod: Travelmanagement docker' 
+name: 'Prod: Travelmanagement Backend Docker' 
 concurrency: production
 
 on:
