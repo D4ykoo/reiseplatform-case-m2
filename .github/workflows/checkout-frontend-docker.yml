@@ -41,5 +41,5 @@ jobs:
           platform: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME_DAYKOO }}/travma-usermanagement-checkout:v3.0
-            ${{ secrets.DOCKERHUB_USERNAME_DAYKOO }}/travma-usermanagement-checkout:latest
+            ${{ secrets.DOCKERHUB_USERNAME_DAYKOO }}/travma-checkout-frontend:v3.0
+            ${{ secrets.DOCKERHUB_USERNAME_DAYKOO }}/travma-usermanagement-frontend:latest
