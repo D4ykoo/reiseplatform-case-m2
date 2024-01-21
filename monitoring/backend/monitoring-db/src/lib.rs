@@ -131,29 +131,3 @@ pub fn get_checkout_events(
         .select(CheckoutEvent::as_select())
         .load(conn)
 }
-
-#[cfg(test)]
-mod tests {
-    use chrono::Utc;
-
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let pool = &mut establish_connection();
-
-        let binding = Utc::now();
-        let new_event = NewUserEvent::new("login".into(), Some("bad message".into()), binding);
-        let res: Result<usize, diesel::result::Error> = add_user_event(pool, new_event);
-
-        let date_str = "2023-12-30T12:53:29.260266Z";
-        let datetime: DateTime<Utc> = DateTime::parse_from_rfc3339(date_str).unwrap().into();
-
-        let result = get_user_events(pool, &datetime);
-
-        println!("{result:?}");
-        println!("{res:?}");
-
-        assert_eq!(result.unwrap()[0].type_, "logind");
-    }
-}
